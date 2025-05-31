@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { projects, Project } from '../data/projects'
+import { 
+  BsHeadsetVr, 
+  BsMusicNoteBeamed, 
+  BsBagFill, 
+  BsCameraReelsFill 
+} from 'react-icons/bs'
+import { FaGamepad } from 'react-icons/fa'
 
 /**
  * ProjectNodes2D Component
@@ -202,10 +209,10 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
       }
     }
   }
-  
-  const { x, y } = getDisplacedPosition()
+    const { x, y } = getDisplacedPosition()
   const isExpanded = hoveredIndex === index
-    const getSize = () => {
+
+  const getSize = () => {
     if (isExpanded) {
       // Calculate dynamic height based on content
       const baseHeight = 60 // Icon space
@@ -228,14 +235,14 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
   }
 
   const getProjectIcon = () => {
-    const iconMap: { [key: string]: string } = {
-      'holoportation': '🥽',
-      'daily-ball': '🎮',
-      'vibe': '🎵',
-      'unitrade': '🛒',
-      'choose-movie': '🎬'
+    const iconMap: { [key: string]: JSX.Element } = {
+      'holoportation': <BsHeadsetVr className="text-purple-400" />,
+      'daily-ball': <FaGamepad className="text-blue-400" />,
+      'vibe': <BsMusicNoteBeamed className="text-cyan-400" />,
+      'unitrade': <BsBagFill className="text-emerald-400" />,
+      'choose-movie': <BsCameraReelsFill className="text-amber-400" />
     }
-    return iconMap[project.id] || '💼'
+    return iconMap[project.id] || <FaGamepad className="text-gray-400" />
   }
 
   const getTechIcons = () => {
