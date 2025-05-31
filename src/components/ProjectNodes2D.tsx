@@ -5,17 +5,55 @@ import { projects, Project } from '../data/projects'
 interface ProjectNode2DProps {
   project: Project
   index: number
-  onHover: (project: Project | null, position?: { x: number; y: number }) => void
+  hoveredIndex: number | null
+  onHover: (index: number | null) => void
 }
 
-const ProjectNode2D = ({ project, index, onHover }: ProjectNode2DProps) => {
-  const [isHovered, setIsHovered] = useState(false)  // Calculate position in a larger circle, further from center
+const ProjectNode2D = ({ project, index, hoveredIndex, onHover }: ProjectNode2DProps) => {
+  const [isHovered, setIsHovered] = useState(false)
+  
+  // Calculate base position in a circle
   const angle = (index / projects.length) * 2 * Math.PI
-  const radius = 330 // Increased to accommodate larger nodes
-  const x = Math.cos(angle) * radius
-  const y = Math.sin(angle) * radius
-
+  const baseRadius = 330
+  const baseX = Math.cos(angle) * baseRadius
+  const baseY = Math.sin(angle) * baseRadius
+  
+  // Calculate displaced position when another node is hovered
+  const getDisplacedPosition = () => {
+    if (hoveredIndex === null || hoveredIndex === index) {
+      return { x: baseX, y: baseY }
+    }
+    
+    // Calculate position of hovered node
+    const hoveredAngle = (hoveredIndex / projects.length) * 2 * Math.PI
+    const hoveredX = Math.cos(hoveredAngle) * baseRadius
+    const hoveredY = Math.sin(hoveredAngle) * baseRadius
+    
+    // Calculate vector from hovered node to this node
+    const dx = baseX - hoveredX
+    const dy = baseY - hoveredY
+    const distance = Math.sqrt(dx * dx + dy * dy)
+    
+    // If too close, push away
+    const minDistance = 200 // Minimum distance from expanded node
+    if (distance < minDistance && distance > 0) {
+      const pushFactor = (minDistance - distance) / distance
+      const pushX = dx * pushFactor * 0.5
+      const pushY = dy * pushFactor * 0.5
+      return {
+        x: baseX + pushX,
+        y: baseY + pushY
+      }
+    }
+    
+    return { x: baseX, y: baseY }
+  }
+  
+  const { x, y } = getDisplacedPosition()
+  const isExpanded = hoveredIndex === index
+  
   const getSize = () => {
+    if (isExpanded) return 300 // Expanded size
     switch (project.size) {
       case 'large': return 120
       case 'medium': return 100
@@ -26,14 +64,15 @@ const ProjectNode2D = ({ project, index, onHover }: ProjectNode2DProps) => {
 
   const getProjectIcon = () => {
     const iconMap: { [key: string]: string } = {
-      'holoportation': '🥽', // VR/AR headset
-      'daily-ball': '🎮', // Gaming
-      'vibe': '🎵', // Music
-      'unitrade': '🛒', // Shopping/marketplace
-      'choose-movie': '🎬' // Movies
+      'holoportation': '🥽',
+      'daily-ball': '🎮',
+      'vibe': '🎵',
+      'unitrade': '🛒',
+      'choose-movie': '🎬'
     }
     return iconMap[project.id] || '💼'
   }
+
   const getTechIcons = () => {
     const techIconMap: { [key: string]: string } = {
       'C++': 'devicon-cplusplus-plain',
@@ -49,13 +88,12 @@ const ProjectNode2D = ({ project, index, onHover }: ProjectNode2DProps) => {
       'PostgreSQL': 'devicon-postgresql-plain',
       'Pandas': 'devicon-pandas-plain',
       'NumPy': 'devicon-numpy-original',
-      'Streamlit': 'devicon-streamlit-plain', // Streamlit uses Python icon as fallback
+      'Streamlit': 'devicon-streamlit-plain',
       'WinForms': 'devicon-dot-net-plain',
-      'SciPy': 'devicon-pandas-plain' // SciPy uses Pandas icon as fallback
+      'SciPy': 'devicon-pandas-plain'
     }
     
-    // Get the 3 most prominent technologies for display
-    return project.techStack.slice(0, 3).map(tech => {
+    return project.techStack.map(tech => {
       const iconClass = techIconMap[tech]
       return iconClass ? { tech, iconClass } : { tech, iconClass: 'devicon-code-plain' }
     })
@@ -69,10 +107,7 @@ const ProjectNode2D = ({ project, index, onHover }: ProjectNode2DProps) => {
 
   const handleHoverStart = () => {
     setIsHovered(true)
-    // Calculate the actual screen position of the node
-    const nodeScreenX = window.innerWidth / 2 + x
-    const nodeScreenY = window.innerHeight / 2 + y
-    onHover(project, { x: nodeScreenX, y: nodeScreenY })
+    onHover(index)
   }
 
   const handleHoverEnd = () => {
@@ -82,15 +117,28 @@ const ProjectNode2D = ({ project, index, onHover }: ProjectNode2DProps) => {
 
   return (
     <motion.div
-      className="absolute"
+      className="absolute z-20"
       style={{
         left: `calc(50% + ${x}px)`,
         top: `calc(50% + ${y}px)`,
         transform: 'translate(-50%, -50%)'
       }}
       initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: index * 0.3, duration: 0.8, type: "spring" }}
+      animate={{ 
+        scale: 1, 
+        opacity: 1,
+        left: `calc(50% + ${x}px)`,
+        top: `calc(50% + ${y}px)`,
+        zIndex: isExpanded ? 50 : 20
+      }}
+      transition={{ 
+        delay: index * 0.3, 
+        duration: 0.8, 
+        type: "spring",
+        left: { duration: 0.6, ease: "easeOut" },
+        top: { duration: 0.6, ease: "easeOut" },
+        zIndex: { duration: 0 }
+      }}
     >
       <motion.div
         className="relative cursor-pointer"
@@ -98,80 +146,146 @@ const ProjectNode2D = ({ project, index, onHover }: ProjectNode2DProps) => {
         onHoverEnd={handleHoverEnd}
         onClick={handleClick}
         animate={{
-          y: [0, -15, 0],
-          rotate: [0, 2, 0, -2, 0]
+          y: isExpanded ? 0 : [0, -15, 0],
+          rotate: isExpanded ? 0 : [0, 2, 0, -2, 0]
         }}
         transition={{
-          duration: 6 + index * 0.8,
-          repeat: Infinity,
+          duration: isExpanded ? 0.3 : 6 + index * 0.8,
+          repeat: isExpanded ? 0 : Infinity,
           ease: "easeInOut"
         }}
       >
-        {/* Main project node - transparent ring */}
+        {/* Main project node */}
         <motion.div
           className="relative flex items-center justify-center"
           style={{ width: getSize(), height: getSize() }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          animate={{
+            width: getSize(),
+            height: getSize()
+          }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
           {/* Outer glow ring */}
           <motion.div
-            className="absolute inset-0 rounded-full"
+            className="absolute inset-0 rounded-xl"
             style={{
               border: `3px solid ${project.color}`,
               background: `radial-gradient(circle, ${project.color}15, transparent 70%)`,
             }}
             animate={{
-              boxShadow: isHovered
-                ? [`0 0 20px ${project.color}60, 0 0 40px ${project.color}30`, `0 0 30px ${project.color}80, 0 0 60px ${project.color}40`]
-                : [`0 0 15px ${project.color}40`, `0 0 20px ${project.color}30`]
+              borderRadius: isExpanded ? '12px' : '50%',
+              boxShadow: isHovered || isExpanded
+                ? `0 0 30px ${project.color}80, 0 0 60px ${project.color}40`
+                : `0 0 20px ${project.color}30`
             }}
-            transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-          />          {/* Inner content area */}
-          <div className="relative z-10 text-center p-2 flex flex-col items-center justify-center h-full">
-            {/* Project icon */}            <motion.div
-              className="text-lg mb-1"
-              animate={{
-                scale: isHovered ? 1.1 : 1
-              }}
-            >
-              {getProjectIcon()}
-            </motion.div>
+            transition={{ 
+              duration: 1.5, 
+              repeat: Infinity, 
+              repeatType: "reverse",
+              borderRadius: { duration: 0.4, ease: "easeOut" }
+            }}
+          />
 
-            {/* Project name */}
-            <motion.div
-              className="text-white font-bold mb-2 leading-tight text-center px-1"              style={{
-                fontSize: project.size === 'large' ? '13px' : project.size === 'medium' ? '12px' : '11px',
-                color: project.color,
-                maxWidth: '90%',
-                lineHeight: '1.2'
-              }}
-              animate={{
-                textShadow: isHovered
-                  ? `0 0 10px ${project.color}80`
-                  : `0 0 5px ${project.color}40`
-              }}
-            >
-              {project.name}
-            </motion.div>            {/* Tech stack icons */}
-            <div className="flex gap-1.5 justify-center">
-              {getTechIcons().map(({ tech, iconClass }, index) => (
-                <motion.i
-                  key={tech}
-                  className={`${iconClass} text-gray-300`}                  style={{ 
-                    fontSize: project.size === 'large' ? '20px' : project.size === 'medium' ? '16px' : '14px'
-                  }}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ 
-                    opacity: 1, 
-                    scale: 1,
-                    color: isHovered ? project.color : '#d1d5db'
-                  }}
-                  transition={{ delay: index * 0.1 }}
-                  title={tech}
-                />
-              ))}
-            </div>
+          {/* Content area */}
+          <div className="relative z-10 text-center p-4 flex flex-col items-center justify-center h-full w-full">
+            {/* Normal state content */}
+            <AnimatePresence>
+              {!isExpanded && (
+                <motion.div
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex flex-col items-center justify-center h-full"
+                >
+                  {/* Project icon */}
+                  <motion.div
+                    className="text-lg mb-1"
+                    animate={{
+                      scale: isHovered ? 1.1 : 1
+                    }}
+                  >
+                    {getProjectIcon()}
+                  </motion.div>
+
+                  {/* Project title */}
+                  <h3 className="text-white text-xs font-medium mb-1 leading-tight">
+                    {project.name}
+                  </h3>
+
+                  {/* Quick tech icons */}
+                  <div className="flex items-center justify-center gap-1">
+                    {getTechIcons().slice(0, 3).map(({ tech, iconClass }, iconIndex) => (
+                      <i
+                        key={iconIndex}
+                        className={`${iconClass} text-xs opacity-70`}
+                        style={{ color: project.color }}
+                        title={tech}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Expanded state content */}
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                  className="flex flex-col items-center justify-start h-full w-full"
+                >
+                  {/* Project icon - larger */}
+                  <motion.div
+                    className="text-3xl mb-3"
+                    initial={{ scale: 1 }}
+                    animate={{ scale: 1.2 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {getProjectIcon()}
+                  </motion.div>
+
+                  {/* Project title - larger */}
+                  <h3 className="text-white text-lg font-bold mb-2 text-center leading-tight">
+                    {project.name}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-gray-300 text-xs mb-3 text-center leading-relaxed px-2">
+                    {project.description}
+                  </p>
+
+                  {/* Tech stack */}
+                  <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
+                    {getTechIcons().slice(0, 6).map(({ tech, iconClass }, iconIndex) => (
+                      <div
+                        key={iconIndex}
+                        className="flex items-center gap-1 bg-gray-800/50 rounded-md px-2 py-1"
+                      >
+                        <i
+                          className={`${iconClass} text-sm`}
+                          style={{ color: project.color }}
+                        />
+                        <span className="text-gray-300 text-xs">{tech}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Link hint */}
+                  {project.link && (
+                    <motion.div
+                      className="text-xs text-gray-400 opacity-80"
+                      animate={{ opacity: [0.8, 1, 0.8] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      Click to visit →
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </motion.div>
@@ -179,139 +293,22 @@ const ProjectNode2D = ({ project, index, onHover }: ProjectNode2DProps) => {
   )
 }
 
-// Separate tooltip component that renders at the top level with higher z-index
-const ProjectTooltip = ({ project, position }: { project: Project | null; position?: { x: number; y: number } }) => {
-  if (!project || !position) return null
-
-  // Determine the best position for the tooltip
-  const isRightSide = position.x > window.innerWidth / 2
-  const tooltipX = isRightSide ? position.x - 370 : position.x + 50 // 370 = tooltip width + some margin
-  const tooltipY = Math.max(20, Math.min(position.y - 200, window.innerHeight - 420)) // Keep tooltip on screen
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed z-[9999] pointer-events-none"
-        style={{
-          left: `${tooltipX}px`,
-          top: `${tooltipY}px`,
-          width: '350px'
-        }}
-        initial={{ opacity: 0, x: isRightSide ? 50 : -50, scale: 0.9 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        exit={{ opacity: 0, x: isRightSide ? 50 : -50, scale: 0.9 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-      >
-        {/* Backdrop for better visibility - now solid and no blur */}
-        <div className="absolute inset-0 bg-slate-900 rounded-xl" />
-
-        <div
-          className="relative bg-slate-900 rounded-xl border-2 shadow-2xl overflow-hidden pointer-events-auto"
-          style={{ borderColor: `${project.color}60` }}
-        >
-          {/* Header */}
-          <div
-            className="p-4 border-b"
-            style={{
-              background: `linear-gradient(135deg, ${project.color}20, ${project.color}05)`,
-              borderBottomColor: `${project.color}30`
-            }}
-          >
-            <h3 className="text-white font-bold text-xl mb-1">{project.name}</h3>
-            <p className="text-gray-300 text-sm">{project.timeline}</p>
-          </div>
-
-          {/* Content */}
-          <div className="p-4">
-            <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-              {project.description}
-            </p>
-
-            {/* Tech stack */}
-            <div className="mb-4">
-              <h4 className="text-gray-200 font-semibold text-sm mb-2">Tech Stack</h4>
-              <div className="flex flex-wrap gap-2">
-                {project.techStack.map((tech, i) => (
-                  <motion.span
-                    key={tech}
-                    className="text-xs px-3 py-1 rounded-full border"
-                    style={{
-                      backgroundColor: `${project.color}15`,
-                      borderColor: `${project.color}40`,
-                      color: project.color
-                    }}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    {tech}
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-
-            {/* Action button */}
-            {project.link && (
-              <motion.button
-                className="w-full py-2 px-4 rounded-lg font-medium text-white border-2 transition-all duration-200"
-                style={{
-                  backgroundColor: `${project.color}20`,
-                  borderColor: project.color,
-                  color: project.color
-                }}
-                whileHover={{
-                  backgroundColor: `${project.color}30`,
-                  scale: 1.02
-                }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Visit Live Demo →
-              </motion.button>
-            )}
-
-            {!project.link && (
-              <div className="w-full py-2 px-4 rounded-lg font-medium text-center border-2 border-gray-600 text-gray-400">
-                Private Project
-              </div>
-            )}
-          </div>
-        </div>
-      </motion.div>
-    </AnimatePresence>
-  )
-}
-
+// Main container component
 const ProjectNodes2D = () => {
-  const [hoveredProject, setHoveredProject] = useState<Project | null>(null)
-  const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | undefined>(undefined)
-
-  const handleHover = (project: Project | null, position?: { x: number; y: number }) => {
-    setHoveredProject(project)
-    setTooltipPosition(position)
-  }
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
-    <>
-      <div className="absolute inset-0 z-10">
-        {/* Central connection point */}
-        <motion.div
-          className="absolute top-1/2 left-1/2 w-4 h-4 rounded-full border-2 border-gray-400 bg-gray-500/20 backdrop-blur-sm"
-          style={{ transform: 'translate(-50%, -50%)' }}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 0.8, 0.5]
-          }}
-          transition={{ duration: 3, repeat: Infinity }}
+    <div className="relative w-full h-full">
+      {projects.map((project, index) => (
+        <ProjectNode2D
+          key={project.id}
+          project={project}
+          index={index}
+          hoveredIndex={hoveredIndex}
+          onHover={setHoveredIndex}
         />
-
-        {projects.map((project, index) => (
-          <ProjectNode2D key={project.id} project={project} index={index} onHover={handleHover} />
-        ))}
-      </div>
-      
-      {/* Tooltip rendered at the top level to avoid z-index conflicts */}
-      <ProjectTooltip project={hoveredProject} position={tooltipPosition} />
-    </>
+      ))}
+    </div>
   )
 }
 

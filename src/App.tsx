@@ -16,11 +16,10 @@ function App() {
           <div className="absolute top-40 right-32 w-3 h-3 bg-blue-400 rounded-full animate-pulse delay-300"></div>
           <div className="absolute bottom-32 left-1/3 w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-700"></div>
           <div className="absolute top-1/3 right-20 w-5 h-5 bg-purple-300 rounded-full animate-pulse delay-1000"></div>
-          <div className="absolute bottom-20 right-1/4 w-3 h-3 bg-blue-300 rounded-full animate-pulse delay-500"></div>
-        </div>
+          <div className="absolute bottom-20 right-1/4 w-3 h-3 bg-blue-300 rounded-full animate-pulse delay-500"></div>        </div>
 
-        <ProjectNodes2D />
         <ProfileSection />
+        <ProjectNodes2D />
       </section>
 
       <ScrollSections />
