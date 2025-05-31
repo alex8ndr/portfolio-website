@@ -23,14 +23,36 @@ interface ProjectNode2DProps {
 
 const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds }: ProjectNode2DProps) => {
   const [isHovered, setIsHovered] = useState(false)
-    // Dynamic positioning based on viewport and number of projects
+    // Helper function to calculate expanded size for any project
+  const getExpandedSize = (proj: Project) => {
+    const baseHeight = 60 // Icon space
+    const titleHeight = proj.name.length > 15 ? 50 : 35 // Multi-line vs single line title
+    
+    // More accurate description height calculation
+    const maxCharsPerLine = 42 // Accounting for padding and font size
+    const descriptionLines = Math.ceil(proj.description.length / maxCharsPerLine)
+    const descriptionHeight = Math.max(descriptionLines * 14 + 16, 40) // 14px line height + margin, min 40px
+    
+    // Tech stack height based on actual number of items and wrapping
+    const maxItemsPerRow = 2 // Conservative estimate for smaller badges
+    const techStackRows = Math.ceil(proj.techStack.length / maxItemsPerRow)
+    const techStackHeight = techStackRows * 24 + 16 // 24px per row + margin
+    
+    const linkHeight = proj.link ? 20 : 0 // Link hint height
+    const paddingHeight = 20 // Top and bottom padding
+    
+    const calculatedHeight = baseHeight + titleHeight + descriptionHeight + techStackHeight + linkHeight + paddingHeight
+    return Math.max(calculatedHeight, 260) // Minimum height of 260px
+  }
+  
+  // Dynamic positioning based on viewport and number of projects
   const getBasePosition = () => {
     const { width, height } = containerBounds
     const totalProjects = projects.length
     
-    // Calculate safe area boundaries (accounting for expanded node size)
-    const expandedSize = 300
-    const margin = expandedSize / 2 // Extra margin for safety
+    // Calculate safe area boundaries (accounting for largest possible expanded node size)
+    const maxExpandedSize = Math.max(...projects.map(p => getExpandedSize(p)))
+    const margin = maxExpandedSize / 2 // Extra margin for safety
 
     // Reserve center area for profile section (roughly 600x600px)
     const profileCenterWidth = 600
@@ -80,9 +102,9 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
       }
     }
   }
-  
   const basePosition = getBasePosition()
-    // Enhanced collision avoidance
+  
+  // Enhanced collision avoidance
   const getDisplacedPosition = () => {
     if (hoveredIndex === null || hoveredIndex === index) {
       return basePosition
@@ -93,8 +115,10 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
     const dy = basePosition.y - hoveredPosition.y
     const distance = Math.sqrt(dx * dx + dy * dy)
     
-    // Expanded node takes up more space
-    const expandedRadius = 180 // Increased from 150 for better spacing
+    // Get the actual expanded size of the hovered node
+    const hoveredProject = projects[hoveredIndex]
+    const hoveredExpandedSize = getExpandedSize(hoveredProject)
+    const expandedRadius = hoveredExpandedSize / 2
     const nodeRadius = 60 // Half of normal node size
     const minDistance = expandedRadius + nodeRadius + 40 // Increased padding
     
@@ -133,14 +157,14 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
     
     return basePosition
   }
-    const getHoveredNodePosition = () => {
+  const getHoveredNodePosition = () => {
     if (hoveredIndex === null) return { x: 0, y: 0 }
     
     // Use the same positioning logic as getBasePosition for the hovered node
     const { width, height } = containerBounds
     const totalProjects = projects.length
-    const expandedSize = 300
-    const margin = expandedSize / 2 + 50
+    const maxExpandedSize = Math.max(...projects.map(p => getExpandedSize(p)))
+    const margin = maxExpandedSize / 2 + 50
     const profileCenterWidth = 400
     const profileCenterHeight = 400
     const safeWidth = width - margin * 2
@@ -181,9 +205,20 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
   
   const { x, y } = getDisplacedPosition()
   const isExpanded = hoveredIndex === index
-  
-  const getSize = () => {
-    if (isExpanded) return 300 // Expanded size
+    const getSize = () => {
+    if (isExpanded) {
+      // Calculate dynamic height based on content
+      const baseHeight = 60 // Icon space
+      const titleHeight = project.name.length > 15 ? 50 : 35 // Multi-line vs single line title
+      const descriptionLines = Math.ceil(project.description.length / 45) // Approx 45 chars per line
+      const descriptionHeight = descriptionLines * 16 + 20 // 16px per line + margin
+      const techStackRows = Math.ceil(project.techStack.length / 3) // Up to 3 tech items per row
+      const techStackHeight = techStackRows * 28 + 20 // 28px per row + margin
+      const linkHeight = project.link ? 25 : 0 // Link hint height
+      
+      const calculatedHeight = baseHeight + titleHeight + descriptionHeight + techStackHeight + linkHeight
+      return Math.max(calculatedHeight, 250) // Minimum height of 250px
+    }
     switch (project.size) {
       case 'large': return 120
       case 'medium': return 100
@@ -364,7 +399,7 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.3, delay: 0.1 }}
-                  className="flex flex-col items-center justify-start h-full w-full"
+                  className="flex flex-col items-center justify-start h-full w-full py-2"
                 >
                   {/* Project icon - larger */}
                   <motion.div
@@ -379,25 +414,21 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                   {/* Project title - larger */}
                   <h3 className="text-white text-lg font-bold mb-2 text-center leading-tight">
                     {project.name}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-gray-300 text-xs mb-3 text-center leading-relaxed px-2">
+                  </h3>                  {/* Description */}
+                  <p className="text-gray-300 text-xs mb-2 text-center leading-relaxed px-3 max-w-full">
                     {project.description}
-                  </p>
-
-                  {/* Tech stack */}
-                  <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
-                    {getTechIcons().slice(0, 6).map(({ tech, iconClass }, iconIndex) => (
+                  </p>{/* Tech stack */}
+                  <div className="flex flex-wrap items-center justify-center gap-1.5 mb-3 px-2">
+                    {getTechIcons().map(({ tech, iconClass }, iconIndex) => (
                       <div
                         key={iconIndex}
-                        className="flex items-center gap-1 bg-gray-800/50 rounded-md px-2 py-1"
+                        className="flex items-center gap-1 bg-gray-800/50 rounded-md px-1.5 py-0.5 text-xs"
                       >
                         <i
-                          className={`${iconClass} text-sm`}
+                          className={`${iconClass} text-xs`}
                           style={{ color: project.color }}
                         />
-                        <span className="text-gray-300 text-xs">{tech}</span>
+                        <span className="text-gray-300 text-xs whitespace-nowrap">{tech}</span>
                       </div>
                     ))}
                   </div>
