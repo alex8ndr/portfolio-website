@@ -1,11 +1,20 @@
-import { motion } from 'framer-motion'
+import { motion } from 'framer-motion';
 
 const ScrollSections = () => {
   const skills = {
     programming: ['Python', 'Java', 'C#', 'TypeScript', 'C/C++', 'SQL', 'Bash'],
     frameworks: ['Angular', '.NET', 'Spring Boot', 'React', 'Unity'],
-    tools: ['Git', 'PostgreSQL', 'Postman', 'Selenium', 'JUnit', 'Pandas', 'NumPy', 'Unix']
-  }
+    tools: [
+      'Git',
+      'PostgreSQL',
+      'Postman',
+      'Selenium',
+      'JUnit',
+      'Pandas',
+      'NumPy',
+      'Unix',
+    ],
+  };
 
   const experiences = [
     {
@@ -13,33 +22,36 @@ const ScrollSections = () => {
       role: 'Software Developer Intern',
       period: 'May 2025 – Aug 2025',
       location: 'Montreal, QC',
-      description: 'Enhancing real-time collaboration in Fusion, Autodesk\'s cloud-based design platform (TypeScript, React, C++).'
+      description:
+        "Enhancing real-time collaboration in Fusion, Autodesk's cloud-based design platform (TypeScript, React, C++).",
     },
     {
       company: 'Matrox',
       role: 'Software Engineering Intern',
       period: 'Jan 2024 – Aug 2024',
       location: 'Montreal, QC',
-      description: 'Engineered TypeScript applications and C# WebSocket loggers, optimized log storage by 75%, built Angular components with NgRx.'
+      description:
+        'Engineered TypeScript applications and C# WebSocket loggers, optimized log storage by 75%, built Angular components with NgRx.',
     },
     {
       company: 'Hydro-Québec',
       role: 'Software Development Intern',
       period: 'May 2023 – Aug 2023',
       location: 'Montreal, QC',
-      description: 'Automated Excel validation tasks with VBA macros, reducing processing time by 95%. Built testing tools with Windows Forms.'
-    }
-  ]
+      description:
+        'Automated Excel validation tasks with VBA macros, reducing processing time by 95%. Built testing tools with Windows Forms.',
+    },
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2
-      }
-    }
-  }
+        staggerChildren: 0.2,
+      },
+    },
+  };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -47,10 +59,10 @@ const ScrollSections = () => {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.6
-      }
-    }
-  }
+        duration: 0.6,
+      },
+    },
+  };
 
   return (
     <div className="relative z-10 bg-slate-900/50 backdrop-blur-sm">
@@ -59,7 +71,7 @@ const ScrollSections = () => {
         className="py-20 px-6"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: '-100px' }}
         variants={containerVariants}
       >
         <div className="max-w-6xl mx-auto">
@@ -101,7 +113,7 @@ const ScrollSections = () => {
         className="py-20 px-6 bg-slate-800/30"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: '-100px' }}
         variants={containerVariants}
       >
         <div className="max-w-6xl mx-auto">
@@ -121,7 +133,9 @@ const ScrollSections = () => {
               >
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-3">
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-200">{exp.role}</h3>
+                    <h3 className="text-xl font-semibold text-gray-200">
+                      {exp.role}
+                    </h3>
                     <p className="text-lg text-purple-400">{exp.company}</p>
                   </div>
                   <div className="text-right">
@@ -141,7 +155,7 @@ const ScrollSections = () => {
         className="py-20 px-6"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: '-100px' }}
         variants={containerVariants}
       >
         <div className="max-w-6xl mx-auto">
@@ -160,9 +174,12 @@ const ScrollSections = () => {
               Bachelor of Engineering in Software Engineering Co-op
             </h3>
             <p className="text-xl text-purple-400 mb-3">McGill University</p>
-            <p className="text-gray-300 mb-4">GPA: 3.68/4.00 | Aug 2021 – Dec 2025</p>
+            <p className="text-gray-300 mb-4">
+              GPA: 3.68/4.00 | Aug 2021 – Dec 2025
+            </p>
             <p className="text-gray-400">
-              Key Courses: Algorithms and Data Structures, Operating Systems, Database Systems, Applied Machine Learning
+              Key Courses: Algorithms and Data Structures, Operating Systems,
+              Database Systems, Applied Machine Learning
             </p>
           </motion.div>
         </div>
@@ -181,26 +198,42 @@ const ScrollSections = () => {
             Let's Connect
           </h3>
           <div className="flex justify-center space-x-6 text-gray-300">
-            <a href="mailto:alex.turianskyj@gmail.com" className="hover:text-purple-400 transition-colors">
+            <a
+              href="mailto:alex.turianskyj@gmail.com"
+              className="hover:text-purple-400 transition-colors"
+            >
               alex.turianskyj@gmail.com
             </a>
             <span>|</span>
-            <a href="tel:+15148948508" className="hover:text-purple-400 transition-colors">
+            <a
+              href="tel:+15148948508"
+              className="hover:text-purple-400 transition-colors"
+            >
               (514) 894-8508
             </a>
             <span>|</span>
-            <a href="https://linkedin.com/in/alex-turianskyj" className="hover:text-purple-400 transition-colors" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://linkedin.com/in/alex-turianskyj"
+              className="hover:text-purple-400 transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               LinkedIn
             </a>
             <span>|</span>
-            <a href="https://github.com/alex8ndr" className="hover:text-purple-400 transition-colors" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://github.com/alex8ndr"
+              className="hover:text-purple-400 transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               GitHub
             </a>
           </div>
         </motion.div>
       </motion.footer>
     </div>
-  )
-}
+  );
+};
 
-export default ScrollSections
+export default ScrollSections;

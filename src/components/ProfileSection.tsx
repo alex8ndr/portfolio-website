@@ -18,12 +18,12 @@ const ProfileSection = () => {
       <p className="text-xl md:text-2xl text-gray-300 mb-3">
         Software Developer
       </p>
-      
+
       <div className="text-sm text-gray-400 max-w-md mx-auto">
         <p>Hover over the nodes to explore my projects</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default ProfileSection;

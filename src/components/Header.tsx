@@ -1,25 +1,24 @@
-import { motion } from 'framer-motion'
+import { motion } from 'framer-motion';
 
 const Header = () => {
   const handleResumeDownload = () => {
-    // For now, we'll create a placeholder - in production this would link to your actual resume
-    const link = document.createElement('a')
-    link.href = '/resume.pdf' // You'll need to add your resume to the public folder
-    link.download = 'Alex_Turianskyj_Resume.pdf'
-    link.click()
-  }
+    const link = document.createElement('a');
+    link.href = '/resume.pdf';
+    link.download = 'Alex_Turianskyj_Resume.pdf';
+    link.click();
+  };
 
   return (
     <motion.header
       className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center bg-slate-900/80 backdrop-blur-sm"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
     >
       <motion.div
         className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400"
         whileHover={{ scale: 1.05 }}
-        transition={{ type: "spring", stiffness: 300 }}
+        transition={{ type: 'spring', stiffness: 300 }}
       >
         alext.dev
       </motion.div>
@@ -33,7 +32,7 @@ const Header = () => {
         Download Resume
       </motion.button>
     </motion.header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

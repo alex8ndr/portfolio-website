@@ -7,8 +7,17 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist", ".next", "node_modules", "build", "src/generated/**"],
-    "include": ["src/**/*.ts", "src/**/*.tsx"]
+    "ignore": [
+      "dist",
+      ".next",
+      "node_modules",
+      "build",
+      "src/generated/**"
+    ],
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -48,7 +57,7 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double"
+      "quoteStyle": "single"
     }
   }
 }
