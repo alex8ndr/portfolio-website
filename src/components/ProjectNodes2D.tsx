@@ -521,8 +521,8 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
               duration: animation.sizeDuration, 
               ease: "easeOut" 
             }}
-          />{/* Content area */}
-          <div className={`relative z-10 text-center flex flex-col items-center ${isExpanded ? 'justify-start h-full' : 'justify-center h-full'} w-full`}>            {/* Normal state content */}
+          />          {/* Content area */}
+          <div className="relative z-10 w-full h-full">            {/* Normal state content */}
             <AnimatePresence>
               {!isExpanded && (
                 <motion.div
@@ -531,10 +531,10 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                   animate={{ 
                     opacity: 1, 
                     scale: 1, 
-                    transition: { delay: NODE_CONFIG.animation.sizeDuration * 0.5, duration: 0.2 } // Delay appearance
+                    transition: { delay: NODE_CONFIG.animation.sizeDuration * 0.7, duration: NODE_CONFIG.animation.sizeDuration * 0.3 } // Delay appearance
                   }}
                   exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.05 } }} // Exit quickly
-                  className="flex flex-col items-center justify-center h-full p-4"
+                  className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center"
                 >
                   {/* Project icon */}
                   <motion.div
@@ -575,9 +575,9 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                   }}
                   exit={{ 
                     opacity: 0, 
-                    transition: { duration: NODE_CONFIG.animation.sizeDuration * 0, ease: "easeOut" } 
+                    transition: { duration: NODE_CONFIG.animation.sizeDuration * 0.5, delay: NODE_CONFIG.animation.sizeDuration * 0, ease: "easeOut" }
                   }}
-                  className="flex flex-col items-center justify-between w-full h-full p-4 overflow-hidden"
+                  className="absolute inset-0 flex flex-col items-center justify-start p-4 overflow-hidden"
                 >
                   {/* Top section: Icon and Title */}
                   <div className="flex flex-col items-center space-y-2">
