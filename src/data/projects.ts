@@ -16,7 +16,7 @@ export const projects: Project[] = [
     description: 'Augmented reality app for real-time 3D reconstruction on HoloLens 2 using RGBD cameras',
     techStack: ['C++', 'C#', 'WinForms', 'Python', 'OpenCV'],
     timeline: 'Sep 2024 – Apr 2025',
-    size: 'large',
+    size: 'medium',
     color: '#8b5cf6', // Purple
   },
   {
@@ -45,7 +45,7 @@ export const projects: Project[] = [
     description: 'Student marketplace built with 8-person Agile team using modern web technologies',
     techStack: ['Java', 'Spring Boot', 'React', 'PostgreSQL'],
     timeline: 'Jan 2023 – Apr 2023',
-    size: 'medium',
+    size: 'small',
     color: '#10b981', // Emerald
   },
   {
@@ -55,7 +55,7 @@ export const projects: Project[] = [
     techStack: ['JavaScript', 'HTML/CSS'],
     timeline: 'Jan 2022',
     link: 'https://choosemeamovie.alext.dev',
-    size: 'medium',
+    size: 'large',
     color: '#f59e0b', // Amber
   }
 ]

@@ -10,6 +10,129 @@ import {
 import { FaGamepad } from 'react-icons/fa'
 
 /**
+ * Configuration object for easy customization of project nodes
+ * Edit these values to adjust the appearance and behavior of project nodes
+ */
+const NODE_CONFIG = {
+  // Node sizes for different project sizes
+  sizes: {
+    small: 85,
+    medium: 100,
+    large: 120,
+  },
+  
+  // Expanded node configuration
+  expanded: {
+    minHeight: 260,
+    baseHeight: 60, // Icon space
+    padding: 20,
+  },
+    // Typography sizes for each node size
+  typography: {
+    // Typography for small nodes
+    small: {
+      normal: {
+        iconSize: 'text-sm',
+        titleSize: 'text-xs',
+        techIconSize: 'text-xs',
+      },
+      expanded: {
+        iconSize: 'text-2xl',
+        titleSize: 'text-base',
+        descriptionSize: 'text-xs',
+        techIconSize: 'text-xs',
+        techTextSize: 'text-xs',
+        linkHintSize: 'text-xs',
+      }
+    },
+    // Typography for medium nodes
+    medium: {
+      normal: {
+        iconSize: 'text-lg',
+        titleSize: 'text-xs',
+        techIconSize: 'text-sm',
+      },
+      expanded: {
+        iconSize: 'text-2xl',
+        titleSize: 'text-base',
+        descriptionSize: 'text-xs',
+        techIconSize: 'text-xs',
+        techTextSize: 'text-xs',
+        linkHintSize: 'text-xs',
+      }
+    },
+    // Typography for large nodes
+    large: {
+      normal: {
+        iconSize: 'text-xl',
+        titleSize: 'text-sm',
+        techIconSize: 'text-lg',
+      },
+      expanded: {
+        iconSize: 'text-2xl',
+        titleSize: 'text-base',
+        descriptionSize: 'text-xs',
+        techIconSize: 'text-xs',
+        techTextSize: 'text-xs',
+        linkHintSize: 'text-xs',
+      }
+    }
+  },
+  
+  // Layout spacing
+  spacing: {
+    // Normal state spacing
+    normal: {
+      iconMarginBottom: 'mb-2',
+      titleMarginBottom: 'mb-1',
+      techIconGap: 'gap-1',
+    },
+    // Expanded state spacing
+    expanded: {
+      iconMarginBottom: 'mb-3',
+      titleMarginBottom: 'mb-2',
+      descriptionMarginBottom: 'mb-2',
+      techStackMarginBottom: 'mb-3',
+      techItemGap: 'gap-1.5',
+      techItemPadding: 'px-1.5 py-0.5',
+    }
+  },
+  
+  // Layout calculations
+  layout: {
+    profileCenter: {
+      width: 600,
+      height: 600,
+    },
+    collisionPadding: 40,
+    nodeRadius: 60,
+    // Text calculations for expanded size
+    text: {
+      titleHeightSingle: 35,
+      titleHeightMultiLine: 50,
+      titleCharThreshold: 15,
+      descriptionCharsPerLine: 42,
+      descriptionLineHeight: 14,
+      descriptionMinHeight: 40,
+      techItemsPerRow: 2,
+      techRowHeight: 24,
+      linkHeight: 20,
+    }
+  },
+  
+  // Animation settings
+  animation: {
+    initialDelay: 0.2, // Delay between each node appearing
+    positionDuration: 0.4,
+    sizeDuration: 0.4,
+    hoverDuration: 0.3,
+    expandedContentDelay: 0.1,
+    floatDuration: 6, // Base duration for floating animation
+    floatOffset: 15, // Pixels to float up/down
+  }
+}
+
+/**
  * ProjectNodes2D Component
  * 
  * Features:
@@ -30,40 +153,52 @@ interface ProjectNode2DProps {
 
 const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds }: ProjectNode2DProps) => {
   const [isHovered, setIsHovered] = useState(false)
-    // Helper function to calculate expanded size for any project
+  // Helper function to calculate expanded size for any project using configuration
   const getExpandedSize = (proj: Project) => {
-    const baseHeight = 60 // Icon space
-    const titleHeight = proj.name.length > 15 ? 50 : 35 // Multi-line vs single line title
+    const { expanded, layout } = NODE_CONFIG
+    const { text } = layout
     
-    // More accurate description height calculation
-    const maxCharsPerLine = 42 // Accounting for padding and font size
-    const descriptionLines = Math.ceil(proj.description.length / maxCharsPerLine)
-    const descriptionHeight = Math.max(descriptionLines * 14 + 16, 40) // 14px line height + margin, min 40px
+    let calculatedHeight = expanded.baseHeight + expanded.padding
     
-    // Tech stack height based on actual number of items and wrapping
-    const maxItemsPerRow = 2 // Conservative estimate for smaller badges
-    const techStackRows = Math.ceil(proj.techStack.length / maxItemsPerRow)
-    const techStackHeight = techStackRows * 24 + 16 // 24px per row + margin
+    // Add title height
+    const titleHeight = proj.name.length > text.titleCharThreshold 
+      ? text.titleHeightMultiLine 
+      : text.titleHeightSingle
+    calculatedHeight += titleHeight
     
-    const linkHeight = proj.link ? 20 : 0 // Link hint height
-    const paddingHeight = 20 // Top and bottom padding
+    // Add description height
+    const descriptionLines = Math.ceil(proj.description.length / text.descriptionCharsPerLine)
+    const descriptionHeight = Math.max(
+      descriptionLines * text.descriptionLineHeight + 16, 
+      text.descriptionMinHeight
+    )
+    calculatedHeight += descriptionHeight
     
-    const calculatedHeight = baseHeight + titleHeight + descriptionHeight + techStackHeight + linkHeight + paddingHeight
-    return Math.max(calculatedHeight, 260) // Minimum height of 260px
+    // Add tech stack height
+    const techStackRows = Math.ceil(proj.techStack.length / text.techItemsPerRow)
+    const techStackHeight = techStackRows * text.techRowHeight + 16
+    calculatedHeight += techStackHeight
+    
+    // Add link height if present
+    if (proj.link) {
+      calculatedHeight += text.linkHeight
+    }
+    
+    return calculatedHeight
   }
   
   // Dynamic positioning based on viewport and number of projects
   const getBasePosition = () => {
     const { width, height } = containerBounds
+    const { layout } = NODE_CONFIG
     const totalProjects = projects.length
     
     // Calculate safe area boundaries (accounting for largest possible expanded node size)
     const maxExpandedSize = Math.max(...projects.map(p => getExpandedSize(p)))
     const margin = maxExpandedSize / 2 // Extra margin for safety
 
-    // Reserve center area for profile section (roughly 600x600px)
-    const profileCenterWidth = 600
-    const profileCenterHeight = 600
+    // Reserve center area for profile section
+    const { profileCenter } = layout
     
     // Calculate available areas around the profile
     const safeWidth = width - margin * 2
@@ -82,8 +217,8 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
     } else if (totalProjects <= 8) {
       // Octagon layout around the profile center
       const angle = (index / totalProjects) * 2 * Math.PI
-      const radiusX = Math.max(profileCenterWidth / 2 + 120, 250)
-      const radiusY = Math.max(profileCenterHeight / 2 + 100, 200)
+      const radiusX = Math.max(profileCenter.width / 2 + 120, 250)
+      const radiusY = Math.max(profileCenter.height / 2 + 100, 200)
       
       // Ensure we don't go beyond safe bounds
       const maxRadiusX = Math.min(radiusX, safeWidth / 2.2)
@@ -96,8 +231,8 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
     } else {
       // For many projects, use a larger circle/ellipse
       const angle = (index / totalProjects) * 2 * Math.PI
-      const radiusX = Math.max(profileCenterWidth / 2 + 180, 320)
-      const radiusY = Math.max(profileCenterHeight / 2 + 140, 260)
+      const radiusX = Math.max(profileCenter.width / 2 + 180, 320)
+      const radiusY = Math.max(profileCenter.height / 2 + 140, 260)
       
       // Ensure we don't go beyond safe bounds
       const maxRadiusX = Math.min(radiusX, safeWidth / 2.1)
@@ -109,14 +244,16 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
       }
     }
   }
+  
   const basePosition = getBasePosition()
   
-  // Enhanced collision avoidance
+  // Enhanced collision avoidance using configuration
   const getDisplacedPosition = () => {
     if (hoveredIndex === null || hoveredIndex === index) {
       return basePosition
     }
     
+    const { layout } = NODE_CONFIG
     const hoveredPosition = getHoveredNodePosition()
     const dx = basePosition.x - hoveredPosition.x
     const dy = basePosition.y - hoveredPosition.y
@@ -126,8 +263,8 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
     const hoveredProject = projects[hoveredIndex]
     const hoveredExpandedSize = getExpandedSize(hoveredProject)
     const expandedRadius = hoveredExpandedSize / 2
-    const nodeRadius = 60 // Half of normal node size
-    const minDistance = expandedRadius + nodeRadius + 40 // Increased padding
+    const nodeRadius = layout.nodeRadius / 2 // Half of normal node size
+    const minDistance = expandedRadius + nodeRadius + layout.collisionPadding
     
     if (distance < minDistance && distance > 0) {
       // Push away from expanded node with stronger force
@@ -164,16 +301,17 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
     
     return basePosition
   }
+
   const getHoveredNodePosition = () => {
     if (hoveredIndex === null) return { x: 0, y: 0 }
     
     // Use the same positioning logic as getBasePosition for the hovered node
     const { width, height } = containerBounds
+    const { layout } = NODE_CONFIG
     const totalProjects = projects.length
     const maxExpandedSize = Math.max(...projects.map(p => getExpandedSize(p)))
     const margin = maxExpandedSize / 2 + 50
-    const profileCenterWidth = 400
-    const profileCenterHeight = 400
+    const { profileCenter } = layout
     const safeWidth = width - margin * 2
     const safeHeight = height - margin * 2
     
@@ -187,8 +325,8 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
       return positions[hoveredIndex] || { x: 0, y: 0 }
     } else if (totalProjects <= 8) {
       const angle = (hoveredIndex / totalProjects) * 2 * Math.PI
-      const radiusX = Math.max(profileCenterWidth / 2 + 120, 250)
-      const radiusY = Math.max(profileCenterHeight / 2 + 100, 200)
+      const radiusX = Math.max(profileCenter.width / 2 + 120, 250)
+      const radiusY = Math.max(profileCenter.height / 2 + 100, 200)
       const maxRadiusX = Math.min(radiusX, safeWidth / 2.2)
       const maxRadiusY = Math.min(radiusY, safeHeight / 2.2)
       
@@ -198,8 +336,8 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
       }
     } else {
       const angle = (hoveredIndex / totalProjects) * 2 * Math.PI
-      const radiusX = Math.max(profileCenterWidth / 2 + 180, 320)
-      const radiusY = Math.max(profileCenterHeight / 2 + 140, 260)
+      const radiusX = Math.max(profileCenter.width / 2 + 180, 320)
+      const radiusY = Math.max(profileCenter.height / 2 + 140, 260)
       const maxRadiusX = Math.min(radiusX, safeWidth / 2.1)
       const maxRadiusY = Math.min(radiusY, safeHeight / 2.1)
       
@@ -209,40 +347,63 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
       }
     }
   }
-    const { x, y } = getDisplacedPosition()
-  const isExpanded = hoveredIndex === index
 
+  const { x, y } = getDisplacedPosition()
+  const isExpanded = hoveredIndex === index
   const getSize = () => {
     if (isExpanded) {
-      // Calculate dynamic height based on content
-      const baseHeight = 60 // Icon space
-      const titleHeight = project.name.length > 15 ? 50 : 35 // Multi-line vs single line title
-      const descriptionLines = Math.ceil(project.description.length / 45) // Approx 45 chars per line
-      const descriptionHeight = descriptionLines * 16 + 20 // 16px per line + margin
-      const techStackRows = Math.ceil(project.techStack.length / 3) // Up to 3 tech items per row
-      const techStackHeight = techStackRows * 28 + 20 // 28px per row + margin
-      const linkHeight = project.link ? 25 : 0 // Link hint height
+      // Calculate dynamic height based on actual content using configuration
+      const { expanded, layout } = NODE_CONFIG
+      const { text } = layout
+      const nodeSize = project.size as keyof typeof NODE_CONFIG.sizes
+      const typography = NODE_CONFIG.typography[nodeSize].expanded
       
-      const calculatedHeight = baseHeight + titleHeight + descriptionHeight + techStackHeight + linkHeight
-      return Math.max(calculatedHeight, 250) // Minimum height of 250px
+      let calculatedHeight = expanded.baseHeight + expanded.padding
+      
+      // Add title height
+      const titleHeight = project.name.length > text.titleCharThreshold 
+        ? text.titleHeightMultiLine 
+        : text.titleHeightSingle
+      calculatedHeight += titleHeight
+      
+      // Add description height
+      const descriptionLines = Math.ceil(project.description.length / text.descriptionCharsPerLine)
+      const descriptionHeight = Math.max(
+        descriptionLines * text.descriptionLineHeight + 16, 
+        text.descriptionMinHeight
+      )
+      calculatedHeight += descriptionHeight
+      
+      // Add tech stack height
+      const techStackRows = Math.ceil(project.techStack.length / text.techItemsPerRow)
+      const techStackHeight = techStackRows * text.techRowHeight + 16
+      calculatedHeight += techStackHeight
+      
+      // Add link height if present
+      if (project.link) {
+        calculatedHeight += text.linkHeight
+      }
+      
+      return calculatedHeight
     }
-    switch (project.size) {
-      case 'large': return 120
-      case 'medium': return 100
-      case 'small': return 85
-      default: return 100
-    }
+    
+    const { sizes } = NODE_CONFIG
+    return sizes[project.size as keyof typeof sizes] || sizes.medium
   }
-
   const getProjectIcon = () => {
+    const { typography } = NODE_CONFIG
+    const nodeSize = project.size as keyof typeof typography
+    const sizeTypography = typography[nodeSize]
+    const iconClass = isExpanded ? sizeTypography.expanded.iconSize : sizeTypography.normal.iconSize
+    
     const iconMap: { [key: string]: JSX.Element } = {
-      'holoportation': <BsHeadsetVr className="text-purple-400" />,
-      'daily-ball': <FaGamepad className="text-blue-400" />,
-      'vibe': <BsMusicNoteBeamed className="text-cyan-400" />,
-      'unitrade': <BsBagFill className="text-emerald-400" />,
-      'choose-movie': <BsCameraReelsFill className="text-amber-400" />
+      'holoportation': <BsHeadsetVr className={`text-purple-400 ${iconClass}`} />,
+      'daily-ball': <FaGamepad className={`text-blue-400 ${iconClass}`} />,
+      'vibe': <BsMusicNoteBeamed className={`text-cyan-400 ${iconClass}`} />,
+      'unitrade': <BsBagFill className={`text-emerald-400 ${iconClass}`} />,
+      'choose-movie': <BsCameraReelsFill className={`text-amber-400 ${iconClass}`} />
     }
-    return iconMap[project.id] || <FaGamepad className="text-gray-400" />
+    return iconMap[project.id] || <FaGamepad className={`text-gray-400 ${iconClass}`} />
   }
 
   const getTechIcons = () => {
@@ -265,7 +426,7 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
       'SciPy': 'devicon-pandas-plain'
     }
     
-    return project.techStack.map(tech => {
+    return project.techStack.map((tech: string) => {
       const iconClass = techIconMap[tech]
       return iconClass ? { tech, iconClass } : { tech, iconClass: 'devicon-code-plain' }
     })
@@ -286,6 +447,9 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
     setIsHovered(false)
     onHover(null)
   }
+  const { animation, typography, spacing } = NODE_CONFIG
+  const nodeSize = project.size as keyof typeof typography
+  const sizeTypography = typography[nodeSize]
 
   return (
     <motion.div
@@ -295,7 +459,8 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
         top: `calc(50% + ${y}px)`,
         transform: 'translate(-50%, -50%)'
       }}
-      initial={{ scale: 0, opacity: 0 }}      animate={{ 
+      initial={{ scale: 0, opacity: 0 }}      
+      animate={{ 
         scale: 1, 
         opacity: 1,
         left: `calc(50% + ${x}px)`,
@@ -303,11 +468,11 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
         zIndex: isExpanded ? 50 : 20
       }}
       transition={{ 
-        delay: index * 0.2, // Reduced delay for faster initial animation
+        delay: index * animation.initialDelay,
         duration: 0.8, 
         type: "spring",
-        left: { duration: 0.4, ease: "easeOut" }, // Faster position transitions
-        top: { duration: 0.4, ease: "easeOut" },
+        left: { duration: animation.positionDuration, ease: "easeOut" },
+        top: { duration: animation.positionDuration, ease: "easeOut" },
         zIndex: { duration: 0 }
       }}
     >
@@ -317,11 +482,11 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
         onHoverEnd={handleHoverEnd}
         onClick={handleClick}
         animate={{
-          y: isExpanded ? 0 : [0, -15, 0],
+          y: isExpanded ? 0 : [0, -animation.floatOffset, 0],
           rotate: isExpanded ? 0 : [0, 2, 0, -2, 0]
         }}
         transition={{
-          duration: isExpanded ? 0.3 : 6 + index * 0.8,
+          duration: isExpanded ? animation.hoverDuration : animation.floatDuration + index * 0.8,
           repeat: isExpanded ? 0 : Infinity,
           ease: "easeInOut"
         }}
@@ -334,8 +499,9 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
             width: getSize(),
             height: getSize()
           }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-        >          {/* Outer glow ring with opaque background */}
+          transition={{ duration: animation.sizeDuration, ease: "easeOut" }}
+        >          
+          {/* Outer glow ring with opaque background */}
           <motion.div
             className="absolute inset-0 rounded-xl"
             style={{
@@ -352,10 +518,9 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
               duration: 1.5, 
               repeat: Infinity, 
               repeatType: "reverse",
-              borderRadius: { duration: 0.4, ease: "easeOut" }
+              borderRadius: { duration: animation.sizeDuration, ease: "easeOut" }
             }}
           />
-
 
           {/* Content area */}
           <div className="relative z-10 text-center p-4 flex flex-col items-center justify-center h-full w-full">
@@ -370,25 +535,23 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                 >
                   {/* Project icon */}
                   <motion.div
-                    className="text-lg mb-1"
+                    className={spacing.normal.iconMarginBottom}
                     animate={{
                       scale: isHovered ? 1.1 : 1
                     }}
                   >
                     {getProjectIcon()}
-                  </motion.div>
-
-                  {/* Project title */}
-                  <h3 className="text-white text-xs font-medium mb-1 leading-tight">
+                  </motion.div>                  {/* Project title */}
+                  <h3 className={`text-white ${sizeTypography.normal.titleSize} font-medium ${spacing.normal.titleMarginBottom} leading-tight`}>
                     {project.name}
                   </h3>
 
                   {/* Quick tech icons */}
-                  <div className="flex items-center justify-center gap-1">
+                  <div className={`flex items-center justify-center ${spacing.normal.techIconGap}`}>
                     {getTechIcons().slice(0, 3).map(({ tech, iconClass }, iconIndex) => (
                       <i
                         key={iconIndex}
-                        className={`${iconClass} text-xs opacity-70`}
+                        className={`${iconClass} ${sizeTypography.normal.techIconSize} opacity-70`}
                         style={{ color: project.color }}
                         title={tech}
                       />
@@ -405,37 +568,39 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
+                  transition={{ duration: animation.hoverDuration, delay: animation.expandedContentDelay }}
                   className="flex flex-col items-center justify-start h-full w-full py-2"
                 >
                   {/* Project icon - larger */}
                   <motion.div
-                    className="text-3xl mb-3"
+                    className={spacing.expanded.iconMarginBottom}
                     initial={{ scale: 1 }}
                     animate={{ scale: 1.2 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: animation.hoverDuration }}
                   >
                     {getProjectIcon()}
-                  </motion.div>
-
-                  {/* Project title - larger */}
-                  <h3 className="text-white text-lg font-bold mb-2 text-center leading-tight">
+                  </motion.div>                  {/* Project title - larger */}
+                  <h3 className={`text-white ${sizeTypography.expanded.titleSize} font-bold ${spacing.expanded.titleMarginBottom} text-center leading-tight`}>
                     {project.name}
-                  </h3>                  {/* Description */}
-                  <p className="text-gray-300 text-xs mb-2 text-center leading-relaxed px-3 max-w-full">
+                  </h3>                  
+
+                  {/* Description */}
+                  <p className={`text-gray-300 ${sizeTypography.expanded.descriptionSize} ${spacing.expanded.descriptionMarginBottom} text-center leading-relaxed px-3 max-w-full`}>
                     {project.description}
-                  </p>{/* Tech stack */}
-                  <div className="flex flex-wrap items-center justify-center gap-1.5 mb-3 px-2">
+                  </p>
+
+                  {/* Tech stack */}
+                  <div className={`flex flex-wrap items-center justify-center ${spacing.expanded.techItemGap} ${spacing.expanded.techStackMarginBottom} px-2`}>
                     {getTechIcons().map(({ tech, iconClass }, iconIndex) => (
                       <div
                         key={iconIndex}
-                        className="flex items-center gap-1 bg-gray-800/50 rounded-md px-1.5 py-0.5 text-xs"
+                        className={`flex items-center gap-1 bg-gray-800/50 rounded-md ${spacing.expanded.techItemPadding} ${sizeTypography.expanded.techTextSize}`}
                       >
                         <i
-                          className={`${iconClass} text-xs`}
+                          className={`${iconClass} ${sizeTypography.expanded.techIconSize}`}
                           style={{ color: project.color }}
                         />
-                        <span className="text-gray-300 text-xs whitespace-nowrap">{tech}</span>
+                        <span className={`text-gray-300 ${sizeTypography.expanded.techTextSize} whitespace-nowrap`}>{tech}</span>
                       </div>
                     ))}
                   </div>
@@ -443,7 +608,7 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                   {/* Link hint */}
                   {project.link && (
                     <motion.div
-                      className="text-xs text-gray-400 opacity-80"
+                      className={`${sizeTypography.expanded.linkHintSize} text-gray-400 opacity-80`}
                       animate={{ opacity: [0.8, 1, 0.8] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     >
