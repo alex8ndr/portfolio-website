@@ -526,9 +526,14 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
             <AnimatePresence>
               {!isExpanded && (
                 <motion.div
-                  initial={{ opacity: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.2 }}
+                  key="normal-content" // Added key for explicit animation control
+                  initial={{ opacity: 0, scale: 0.8 }} // Start slightly scaled down and invisible
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1, 
+                    transition: { delay: NODE_CONFIG.animation.sizeDuration * 0.5, duration: 0.2 } // Delay appearance
+                  }}
+                  exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.05 } }} // Exit quickly
                   className="flex flex-col items-center justify-center h-full p-4"
                 >
                   {/* Project icon */}
@@ -561,12 +566,20 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: animation.hoverDuration, delay: animation.sizeDuration * 0.7 }}
+                  key="expanded-content" // Added key
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1,
+                    transition: { duration: NODE_CONFIG.animation.hoverDuration, delay: NODE_CONFIG.animation.sizeDuration * 0.1 } 
+                  }}
+                  exit={{ 
+                    opacity: 0, 
+                    transition: { duration: NODE_CONFIG.animation.sizeDuration * 0, ease: "easeOut" } 
+                  }}
                   className="flex flex-col items-center justify-between w-full h-full p-4 overflow-hidden"
-                >                  {/* Top section: Icon and Title */}
+                >
+                  {/* Top section: Icon and Title */}
                   <div className="flex flex-col items-center space-y-2">
                     {/* Project icon - larger */}
                     <motion.div
