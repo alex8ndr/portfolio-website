@@ -20,11 +20,13 @@ const NODE_CONFIG = {
     small: 80,
     medium: 100,
     large: 125,
-  },
-  // Expanded node configuration
+  },  // Expanded node configuration
   expanded: {
-    minHeight: 280, // Reduced from 300 since buttons are now smaller
-    baseHeight: 60, // Icon space
+    width: 255, // Fixed width for all expanded nodes
+    baseHeight: 180, // Base height for minimal content
+    heightPerTechItem: 20, // Additional height per tech stack item
+    heightPerButton: 35, // Height for button section
+    maxHeight: 350, // Maximum height to prevent overly tall nodes
     padding: 20,
   },
     // Typography sizes for each node size
@@ -97,8 +99,7 @@ const NODE_CONFIG = {
       techItemPadding: 'px-1.5 py-0.5',
     }
   },
-  
-  // Layout calculations
+    // Layout calculations
   layout: {
     profileCenter: {
       width: 600,
@@ -106,18 +107,6 @@ const NODE_CONFIG = {
     },
     collisionPadding: 40,
     nodeRadius: 60,
-    // Text calculations for expanded size
-    text: {
-      titleHeightSingle: 35,
-      titleHeightMultiLine: 50,
-      titleCharThreshold: 15,
-      descriptionCharsPerLine: 42,
-      descriptionLineHeight: 14,
-      descriptionMinHeight: 40,
-      techItemsPerRow: 2,
-      techRowHeight: 24,
-      linkHeight: 20,
-    }
   },
   
   // Animation settings
@@ -170,39 +159,34 @@ interface ProjectNode2DProps {
 }
 
 const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds }: ProjectNode2DProps) => {
-  const [isHovered, setIsHovered] = useState(false)
-  // Helper function to calculate expanded size for any project using configuration
+  const [isHovered, setIsHovered] = useState(false)  // Helper function to calculate expanded size for any project - returns height for collision detection
   const getExpandedSize = (proj: Project) => {
-    const { expanded, layout } = NODE_CONFIG
-    const { text } = layout
+    return getExpandedHeight(proj) // Use height for collision detection since it's typically larger
+  }
+  // Helper function to calculate optimal height for expanded projects
+  const getExpandedHeight = (proj: Project) => {
+    const { expanded } = NODE_CONFIG
+    let height = expanded.baseHeight
     
-    let calculatedHeight = expanded.baseHeight + expanded.padding
-    
-    // Add title height
-    const titleHeight = proj.name.length > text.titleCharThreshold 
-      ? text.titleHeightMultiLine 
-      : text.titleHeightSingle
-    calculatedHeight += titleHeight
-    
-    // Add description height
-    const descriptionLines = Math.ceil(proj.description.length / text.descriptionCharsPerLine)
-    const descriptionHeight = Math.max(
-      descriptionLines * text.descriptionLineHeight + 16, 
-      text.descriptionMinHeight
-    )
-    calculatedHeight += descriptionHeight
-    
-    // Add tech stack height
-    const techStackRows = Math.ceil(proj.techStack.length / text.techItemsPerRow)
-    const techStackHeight = techStackRows * text.techRowHeight + 16
-    calculatedHeight += techStackHeight
-    
-    // Add link height if present
-    if (proj.link) {
-      calculatedHeight += text.linkHeight
+    // Add height based on description length (longer descriptions need more space)
+    const descriptionLines = Math.ceil(proj.description.length / 40) // ~40 chars per line
+    if (descriptionLines > 2) {
+      height += (descriptionLines - 2) * 15 // Add 15px per extra line
     }
     
-    return calculatedHeight
+    // Add height based on tech stack size (more items = more height)
+    const techItemsShown = Math.min(proj.techStack.length, 5) // We show max 5 items
+    if (techItemsShown > 2) {
+      height += expanded.heightPerTechItem * Math.floor((techItemsShown - 2) / 2) // 12px per extra item, every 2 items
+    }
+    
+    // Add height if there are buttons
+    if (proj.buttons && proj.buttons.length > 0) {
+      height += expanded.heightPerButton
+    }
+    
+    // Ensure within reasonable bounds
+    return Math.max(expanded.baseHeight, Math.min(height, expanded.maxHeight))
   }
   
   // Dynamic positioning based on viewport and number of projects
@@ -365,44 +349,13 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
       }
     }
   }
-
   const { x, y } = getDisplacedPosition()
   const isExpanded = hoveredIndex === index
+  
   const getSize = () => {
     if (isExpanded) {
-      // Calculate dynamic height based on actual content using configuration
-      const { expanded, layout } = NODE_CONFIG
-      const { text } = layout
-      const nodeSize = project.size as keyof typeof NODE_CONFIG.sizes
-      const typography = NODE_CONFIG.typography[nodeSize].expanded
-      
-      let calculatedHeight = expanded.baseHeight + expanded.padding
-      
-      // Add title height
-      const titleHeight = project.name.length > text.titleCharThreshold 
-        ? text.titleHeightMultiLine 
-        : text.titleHeightSingle
-      calculatedHeight += titleHeight
-      
-      // Add description height
-      const descriptionLines = Math.ceil(project.description.length / text.descriptionCharsPerLine)
-      const descriptionHeight = Math.max(
-        descriptionLines * text.descriptionLineHeight + 16, 
-        text.descriptionMinHeight
-      )
-      calculatedHeight += descriptionHeight
-      
-      // Add tech stack height
-      const techStackRows = Math.ceil(project.techStack.length / text.techItemsPerRow)
-      const techStackHeight = techStackRows * text.techRowHeight + 16
-      calculatedHeight += techStackHeight
-      
-      // Add link height if present
-      if (project.link) {
-        calculatedHeight += text.linkHeight
-      }
-      
-      return calculatedHeight
+      // Return fixed width and let height be determined by CSS flexbox
+      return NODE_CONFIG.expanded.width
     }
     
     const { sizes } = NODE_CONFIG
@@ -507,49 +460,76 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
           duration: isExpanded ? animation.hoverDuration : animation.floatDuration + index * 0.8,
           repeat: isExpanded ? 0 : Infinity,
           ease: "easeInOut"
-        }}
-      >
+        }}      >        
         {/* Main project node */}
         <motion.div
           className="relative flex items-center justify-center"
-          style={{ width: getSize(), height: getSize() }}
+          style={{ 
+            width: isExpanded ? NODE_CONFIG.expanded.width : getSize(), 
+            height: isExpanded ? getExpandedHeight(project) : getSize(),
+          }}
           animate={{
-            width: getSize(),
-            height: getSize()
+            width: isExpanded ? NODE_CONFIG.expanded.width : getSize(),
+            height: isExpanded ? getExpandedHeight(project) : getSize(),
           }}
           transition={{ duration: animation.sizeDuration, ease: "easeOut" }}
-        >          
-          {/* Outer glow ring with opaque background */}
+        >{/* Background layer */}
           <motion.div
-            className="absolute inset-0 rounded-xl"
+            className="absolute inset-0"
             style={{
-              border: `3px solid ${project.color}`,
               background: `linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)`,
             }}
             animate={{
               borderRadius: isExpanded ? '12px' : '50%',
-              boxShadow: isHovered || isExpanded
-                ? `0 0 30px ${project.color}80, 0 0 60px ${project.color}40`
-                : `0 0 20px ${project.color}30`
             }}
             transition={{ 
-              duration: 1.5, 
-              repeat: Infinity, 
-              repeatType: "reverse",
-              borderRadius: { duration: animation.sizeDuration, ease: "easeOut" }
+              duration: animation.sizeDuration, 
+              ease: "easeOut" 
+            }}
+          />          {/* Glow that transitions with the node */}
+          <motion.div
+            className="absolute"
+            style={{
+              left: 0,
+              top: 0,
+              zIndex: -1
+            }}            
+            animate={{
+              width: (isExpanded ? NODE_CONFIG.expanded.width : getSize()),
+              height: (isExpanded ? getExpandedHeight(project) : getSize()),
+              borderRadius: isExpanded ? '22px' : '50%',
+              boxShadow: isExpanded 
+                ? `0 0 40px ${project.color}80`
+                : `0 0 20px ${project.color}60`
+            }}
+            transition={{ 
+              duration: animation.sizeDuration, 
+              ease: "easeOut" 
             }}
           />
-
-          {/* Content area */}
-          <div className="relative z-10 text-center p-4 flex flex-col items-center justify-center h-full w-full">
-            {/* Normal state content */}
+          
+          {/* Border layer */}
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              border: `3px solid ${project.color}`,
+            }}
+            animate={{
+              borderRadius: isExpanded ? '12px' : '50%',
+            }}
+            transition={{ 
+              duration: animation.sizeDuration, 
+              ease: "easeOut" 
+            }}
+          />{/* Content area */}
+          <div className={`relative z-10 text-center flex flex-col items-center ${isExpanded ? 'justify-start h-full' : 'justify-center h-full'} w-full`}>            {/* Normal state content */}
             <AnimatePresence>
               {!isExpanded && (
                 <motion.div
                   initial={{ opacity: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.2 }}
-                  className="flex flex-col items-center justify-center h-full"
+                  className="flex flex-col items-center justify-center h-full p-4"
                 >
                   {/* Project icon */}
                   <motion.div
@@ -577,57 +557,66 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                   </div>
                 </motion.div>
               )}
-            </AnimatePresence>
-
-            {/* Expanded state content */}
+            </AnimatePresence>            {/* Expanded state content */}
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: animation.hoverDuration, delay: animation.expandedContentDelay }}
-                  className="flex flex-col items-center justify-start h-full w-full py-2"
-                >
-                  {/* Project icon - larger */}
-                  <motion.div
-                    className={spacing.expanded.iconMarginBottom}
-                    initial={{ scale: 1 }}
-                    animate={{ scale: 1.2 }}
-                    transition={{ duration: animation.hoverDuration }}
-                  >
-                    {getProjectIcon()}
-                  </motion.div>                  {/* Project title - larger */}
-                  <h3 className={`text-white ${sizeTypography.expanded.titleSize} font-bold ${spacing.expanded.titleMarginBottom} text-center leading-tight`}>
-                    {project.name}
-                  </h3>                  
+                  transition={{ duration: animation.hoverDuration, delay: animation.sizeDuration * 0.7 }}
+                  className="flex flex-col items-center justify-between w-full h-full p-4 overflow-hidden"
+                >                  {/* Top section: Icon and Title */}
+                  <div className="flex flex-col items-center space-y-2">
+                    {/* Project icon - larger */}
+                    <motion.div
+                      initial={{ scale: 1 }}
+                      animate={{ scale: 1.2 }}
+                      transition={{ duration: animation.hoverDuration }}
+                    >
+                      {getProjectIcon()}
+                    </motion.div>
 
-                  {/* Description */}
-                  <p className={`text-gray-300 ${sizeTypography.expanded.descriptionSize} ${spacing.expanded.descriptionMarginBottom} text-center leading-relaxed px-3 max-w-full`}>
-                    {project.description}
-                  </p>
+                    {/* Project title - larger */}
+                    <h3 className={`text-white ${sizeTypography.expanded.titleSize} font-bold text-center leading-tight`}>
+                      {project.name}
+                    </h3>
+                  </div>
 
-                  {/* Tech stack */}
-                  <div className={`flex flex-wrap items-center justify-center ${spacing.expanded.techItemGap} ${spacing.expanded.techStackMarginBottom} px-2`}>
-                    {getTechIcons().map(({ tech, iconClass }, iconIndex) => (
-                      <div
-                        key={iconIndex}
-                        className={`flex items-center gap-1 bg-gray-800/50 rounded-md ${spacing.expanded.techItemPadding} ${sizeTypography.expanded.techTextSize}`}
-                      >
-                        <i
-                          className={`${iconClass} ${sizeTypography.expanded.techIconSize}`}
-                          style={{ color: project.color }}
-                        />
-                        <span className={`text-gray-300 ${sizeTypography.expanded.techTextSize} whitespace-nowrap`}>{tech}</span>
-                      </div>
-                    ))}
-                  </div>                  {/* Action Buttons */}
-                  {project.buttons && project.buttons.length > 0 && (
-                    <div className={`flex ${project.buttons.length === 1 ? 'justify-center' : 'gap-1'} w-full px-2 mt-1`}>
+                  {/* Middle section: Description and Tech */}
+                  <div className="flex flex-col items-center space-y-2 flex-1 justify-center">                    {/* Description */}
+                    <p className={`text-gray-300 ${sizeTypography.expanded.descriptionSize} text-center leading-relaxed px-2 overflow-hidden`}
+                       style={{ 
+                         display: '-webkit-box',
+                         WebkitLineClamp: 3,
+                         WebkitBoxOrient: 'vertical' as const,
+                         maxHeight: '3.6rem'
+                       }}>
+                      {project.description}
+                    </p>
+
+                    {/* Tech stack */}
+                    <div className="flex flex-wrap items-center justify-center gap-1 px-2">
+                      {getTechIcons().slice(0, 5).map(({ tech, iconClass }, iconIndex) => (
+                        <div
+                          key={iconIndex}
+                          className={`flex items-center gap-1 bg-gray-800/50 rounded-md px-1.5 py-0.5 ${sizeTypography.expanded.techTextSize}`}
+                        >
+                          <i
+                            className={`${iconClass} ${sizeTypography.expanded.techIconSize}`}
+                            style={{ color: project.color }}
+                          />
+                          <span className={`text-gray-300 ${sizeTypography.expanded.techTextSize} whitespace-nowrap`}>{tech}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>                  {/* Bottom section: Action Buttons */}
+                  {project.buttons && project.buttons.length > 0 ? (
+                    <div className={`flex ${project.buttons.length === 1 ? 'justify-center' : 'gap-2'} w-full px-2`}>
                       {project.buttons.slice(0, 2).map((button, buttonIndex) => (
                         <motion.button
                           key={buttonIndex}
-                          className={`${project.buttons!.length === 1 ? 'w-full max-w-24' : 'flex-1'} bg-gray-800/70 hover:bg-gray-700/80 text-white px-2 py-1 rounded text-xs font-medium border border-gray-600/50 hover:border-gray-500/70 flex items-center justify-center gap-1 min-h-[24px] transition-colors duration-200`}
+                          className={`${project.buttons!.length === 1 ? 'px-4' : 'flex-1 max-w-[120px]'} bg-gray-800/70 hover:bg-gray-700/80 text-white px-3 py-1.5 rounded text-xs font-medium border border-gray-600/50 hover:border-gray-500/70 flex items-center justify-center gap-1.5 transition-colors duration-200`}
                           onClick={(e) => {
                             e.stopPropagation()
                             window.open(button.url, '_blank')
@@ -636,14 +625,11 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                           whileTap={{ scale: 0.98 }}
                         >
                           <span className="text-xs flex-shrink-0">{getButtonIcon(button.type)}</span>
-                          <span className="truncate text-xs leading-none">{button.label}</span>
+                          <span className="text-xs leading-none">{button.label}</span>
                         </motion.button>
                       ))}
                     </div>
-                  )}
-
-                  {/* Legacy link hint - only show if no buttons but has link */}
-                  {!project.buttons && project.link && (
+                  ) : project.link ? (
                     <motion.div
                       className={`${sizeTypography.expanded.linkHintSize} text-gray-400 opacity-80`}
                       animate={{ opacity: [0.8, 1, 0.8] }}
@@ -651,7 +637,7 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                     >
                       Click to visit →
                     </motion.div>
-                  )}
+                  ) : null}
                 </motion.div>
               )}
             </AnimatePresence>
