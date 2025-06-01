@@ -11,17 +11,16 @@ const ProfileSection = () => {
         </div>
       </div>
 
-      <h1 className="text-4xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
+      <h1 className="text-4xl md:text-5xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
         Alex Turianskyj
       </h1>
 
-      <p className="text-xl md:text-2xl text-gray-300 mb-8">
-        Software Developer & Engineer
+      <p className="text-xl md:text-2xl text-gray-300 mb-3">
+        Software Developer
       </p>
       
       <div className="text-sm text-gray-400 max-w-md mx-auto">
-        <p>Hover over the project nodes to explore my work</p>
-        <p className="mt-2">Click to visit live demos</p>
+        <p>Hover over the nodes to explore my projects</p>
       </div>
     </div>
   )
