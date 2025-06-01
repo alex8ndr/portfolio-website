@@ -33,8 +33,8 @@ export const projects: Project[] = [  {
     techStack: ['Unity', 'C#'],
     timeline: 'May 2023 – Jul 2024',
     link: 'https://dailyball.alext.dev',    buttons: [
-      { label: 'Demo', url: 'https://dailyball.alext.dev', type: 'demo' },
-      { label: 'Play Store', url: 'https://play.google.com/store/apps/details?id=com.AlexTurianskyj.DailyBall', type: 'googleplay' }
+      { label: 'Play Store', url: 'https://play.google.com/store/apps/details?id=com.AlexTurianskyj.DailyBall', type: 'googleplay' },
+      { label: 'Demo', url: 'https://dailyball.alext.dev', type: 'demo' }
     ],
     size: 'large',
     color: '#3b82f6', // Blue
@@ -45,8 +45,8 @@ export const projects: Project[] = [  {
     techStack: ['Python', 'Streamlit', 'Pandas', 'NumPy', 'SciPy'],
     timeline: 'Sep 2023 – Nov 2023',
     link: 'https://vibe.alext.dev',    buttons: [
-      { label: 'Devpost', url: 'https://devpost.com/software/vibe-nk5j07', type: 'devpost' },
-      { label: 'Demo', url: 'https://vibe.alext.dev', type: 'demo' }
+      { label: 'Code', url: 'https://github.com/alex8ndr/vibe', type: 'github' },
+      { label: 'View', url: 'https://vibe.alext.dev', type: 'demo' }
     ],
     size: 'large',
     color: '#06b6d4', // Cyan
@@ -68,7 +68,7 @@ export const projects: Project[] = [  {
     timeline: 'Jan 2022',
     link: 'https://choosemeamovie.alext.dev',    buttons: [
       { label: 'Code', url: 'https://github.com/alex8ndr/choose-me-a-movie', type: 'github' },
-      { label: 'Demo', url: 'https://choosemeamovie.alext.dev', type: 'demo' }
+      { label: 'View', url: 'https://choosemeamovie.alext.dev', type: 'demo' }
     ],
     size: 'large',
     color: '#f59e0b', // Amber
