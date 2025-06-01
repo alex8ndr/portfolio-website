@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { projects, Project } from '../data/projects'
+import { projects, Project, ProjectButton } from '../data/projects'
 import { 
   BsHeadsetVr, 
   BsMusicNoteBeamed, 
   BsBagFill, 
   BsCameraReelsFill 
 } from 'react-icons/bs'
-import { FaGamepad } from 'react-icons/fa'
+import { FaGamepad, FaGithub, FaExternalLinkAlt, FaGooglePlay } from 'react-icons/fa'
+import { SiDevpost } from 'react-icons/si'
 
 /**
  * Configuration object for easy customization of project nodes
@@ -16,14 +17,13 @@ import { FaGamepad } from 'react-icons/fa'
 const NODE_CONFIG = {
   // Node sizes for different project sizes
   sizes: {
-    small: 85,
+    small: 80,
     medium: 100,
-    large: 120,
+    large: 125,
   },
-  
   // Expanded node configuration
   expanded: {
-    minHeight: 260,
+    minHeight: 280, // Reduced from 300 since buttons are now smaller
     baseHeight: 60, // Icon space
     padding: 20,
   },
@@ -142,6 +142,24 @@ const NODE_CONFIG = {
  * - Stays within viewport bounds regardless of screen size
  * - Flexible layout that works with any number of projects
  */
+
+/**
+ * Helper function to get the appropriate icon for a button type
+ */
+const getButtonIcon = (type: ProjectButton['type']) => {
+  switch (type) {
+    case 'github':
+      return <FaGithub />
+    case 'devpost':
+      return <SiDevpost />
+    case 'demo':
+      return <FaExternalLinkAlt />
+    case 'googleplay':
+      return <FaGooglePlay />
+    default:
+      return <FaExternalLinkAlt />
+  }
+}
 
 interface ProjectNode2DProps {
   project: Project
@@ -603,10 +621,29 @@ const ProjectNode2D = ({ project, index, hoveredIndex, onHover, containerBounds 
                         <span className={`text-gray-300 ${sizeTypography.expanded.techTextSize} whitespace-nowrap`}>{tech}</span>
                       </div>
                     ))}
-                  </div>
+                  </div>                  {/* Action Buttons */}
+                  {project.buttons && project.buttons.length > 0 && (
+                    <div className={`flex ${project.buttons.length === 1 ? 'justify-center' : 'gap-1'} w-full px-2 mt-1`}>
+                      {project.buttons.slice(0, 2).map((button, buttonIndex) => (
+                        <motion.button
+                          key={buttonIndex}
+                          className={`${project.buttons!.length === 1 ? 'w-full max-w-24' : 'flex-1'} bg-gray-800/70 hover:bg-gray-700/80 text-white px-2 py-1 rounded text-xs font-medium border border-gray-600/50 hover:border-gray-500/70 flex items-center justify-center gap-1 min-h-[24px] transition-colors duration-200`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            window.open(button.url, '_blank')
+                          }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <span className="text-xs flex-shrink-0">{getButtonIcon(button.type)}</span>
+                          <span className="truncate text-xs leading-none">{button.label}</span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  )}
 
-                  {/* Link hint */}
-                  {project.link && (
+                  {/* Legacy link hint - only show if no buttons but has link */}
+                  {!project.buttons && project.link && (
                     <motion.div
                       className={`${sizeTypography.expanded.linkHintSize} text-gray-400 opacity-80`}
                       animate={{ opacity: [0.8, 1, 0.8] }}
