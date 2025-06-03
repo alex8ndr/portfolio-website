@@ -1,7 +1,7 @@
 import Header from './components/Header';
 import ProfileSection from './components/ProfileSection';
-import ScrollSections from './components/ScrollSections';
 import ProjectNodes2D from './components/ProjectNodes2D';
+import ScrollSections from './components/ScrollSections';
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
+      <section className="relative h-screen flex items-center justify-center pt-16">
         {/* Animated background pattern */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-20 w-4 h-4 bg-purple-400 rounded-full animate-pulse"></div>

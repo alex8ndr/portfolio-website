@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { projects, type Project, type ProjectButton } from '../data/projects';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import {
-  BsHeadsetVr,
-  BsMusicNoteBeamed,
   BsBagFill,
   BsCameraReelsFill,
+  BsHeadsetVr,
+  BsMusicNoteBeamed,
+  BsRobot,
 } from 'react-icons/bs';
 import {
+  FaCalendarAlt,
+  FaCode,
+  FaExternalLinkAlt,
   FaGamepad,
   FaGithub,
-  FaExternalLinkAlt,
   FaGooglePlay,
 } from 'react-icons/fa';
 import { SiDevpost } from 'react-icons/si';
+import { projects, type Project, type ProjectButton } from '../data/projects';
 
 /**
  * Configuration object for easy customization of project nodes
@@ -22,62 +25,71 @@ import { SiDevpost } from 'react-icons/si';
 const NODE_CONFIG = {
   // Node sizes for different project sizes
   sizes: {
-    small: 80,
+    small: 82,
     medium: 100,
     large: 125,
-  }, // Expanded node configuration
+  },  // Simple circular ring configuration
+  rings: {
+    large: { radius: 250 },   // Outer ring for large projects
+    medium: { radius: 400 },  // Middle ring for medium projects  
+    small: { radius: 550 },   // Far ring for small projects
+  },  // Margins to keep nodes on screen
+  margins: {
+    top: 80, // Increased to account for header height
+    bottom: 80,
+    sides: 80,
+  },
+
+  // Expanded node configuration
   expanded: {
-    width: 255, // Fixed width for all expanded nodes
-    baseHeight: 180, // Base height for minimal content
-    heightPerTechItem: 20, // Additional height per tech stack item
-    heightPerButton: 35, // Height for button section
-    maxHeight: 350, // Maximum height to prevent overly tall nodes
+    width: 255,
+    baseHeight: 180,
+    heightPerTechItem: 20,
+    heightPerButton: 35,
+    maxHeight: 350,
     padding: 20,
   },
+
   // Typography sizes for each node size
   typography: {
-    // Typography for small nodes
     small: {
       normal: {
         iconSize: 'text-sm',
-        titleSize: 'text-xs',
+        titleSize: 'text-xs/3',
         techIconSize: 'text-xs',
       },
       expanded: {
         iconSize: 'text-2xl',
-        titleSize: 'text-base',
+        titleSize: 'text-base/5',
         descriptionSize: 'text-xs',
         techIconSize: 'text-xs',
         techTextSize: 'text-xs',
         linkHintSize: 'text-xs',
       },
     },
-    // Typography for medium nodes
     medium: {
       normal: {
         iconSize: 'text-lg',
-        titleSize: 'text-xs',
+        titleSize: 'text-xs/4',
         techIconSize: 'text-sm',
       },
       expanded: {
         iconSize: 'text-2xl',
-        titleSize: 'text-base',
+        titleSize: 'text-base/5',
         descriptionSize: 'text-xs',
         techIconSize: 'text-xs',
         techTextSize: 'text-xs',
         linkHintSize: 'text-xs',
       },
-    },
-    // Typography for large nodes
-    large: {
+    }, large: {
       normal: {
         iconSize: 'text-xl',
-        titleSize: 'text-sm',
+        titleSize: 'text-sm/5',
         techIconSize: 'text-lg',
       },
       expanded: {
         iconSize: 'text-2xl',
-        titleSize: 'text-base',
+        titleSize: 'text-base/5',
         descriptionSize: 'text-xs',
         techIconSize: 'text-xs',
         techTextSize: 'text-xs',
@@ -88,13 +100,11 @@ const NODE_CONFIG = {
 
   // Layout spacing
   spacing: {
-    // Normal state spacing
     normal: {
-      iconMarginBottom: 'mb-2',
+      iconMarginBottom: 'mb-1.5',
       titleMarginBottom: 'mb-1',
       techIconGap: 'gap-1',
     },
-    // Expanded state spacing
     expanded: {
       iconMarginBottom: 'mb-3',
       titleMarginBottom: 'mb-2',
@@ -104,38 +114,18 @@ const NODE_CONFIG = {
       techItemPadding: 'px-1.5 py-0.5',
     },
   },
-  // Layout calculations
-  layout: {
-    profileCenter: {
-      width: 600,
-      height: 600,
-    },
-    collisionPadding: 40,
-    nodeRadius: 60,
-  },
 
   // Animation settings
   animation: {
-    initialDelay: 0.2, // Delay between each node appearing
+    initialDelay: 0.2,
     positionDuration: 0.4,
     sizeDuration: 0.4,
     hoverDuration: 0.3,
     expandedContentDelay: 0.1,
-    floatDuration: 6, // Base duration for floating animation
-    floatOffset: 15, // Pixels to float up/down
+    floatDuration: 6,
+    floatOffset: 15,
   },
 };
-
-/**
- * ProjectNodes2D Component
- *
- * Features:
- * - Dynamic positioning that adapts to the number of projects
- * - Avoids overlapping with the central profile section
- * - Responsive collision detection that moves nodes away when one expands
- * - Stays within viewport bounds regardless of screen size
- * - Flexible layout that works with any number of projects
- */
 
 /**
  * Helper function to get the appropriate icon for a button type
@@ -170,10 +160,8 @@ const ProjectNode2D = ({
   onHover,
   containerBounds,
 }: ProjectNode2DProps) => {
-  const [isHovered, setIsHovered] = useState(false); // Helper function to calculate expanded size for any project - returns height for collision detection
-  const getExpandedSize = (proj: Project) => {
-    return getExpandedHeight(proj); // Use height for collision detection since it's typically larger
-  };
+  const [isHovered, setIsHovered] = useState(false);
+
   // Helper function to calculate optimal height for expanded projects
   const getExpandedHeight = (proj: Project) => {
     const { expanded } = NODE_CONFIG;
@@ -199,182 +187,36 @@ const ProjectNode2D = ({
 
     // Ensure within reasonable bounds
     return Math.max(expanded.baseHeight, Math.min(height, expanded.maxHeight));
-  };
-
-  // Dynamic positioning based on viewport and number of projects
-  const getBasePosition = () => {
+  };  // Simple positioning - get position from project data and radius from config
+  const getPosition = () => {
     const { width, height } = containerBounds;
-    const { layout } = NODE_CONFIG;
-    const totalProjects = projects.length;
+    const { rings, margins } = NODE_CONFIG;
 
-    // Calculate safe area boundaries (accounting for largest possible expanded node size)
-    const maxExpandedSize = Math.max(
-      ...projects.map((p) => getExpandedSize(p)),
-    );
-    const margin = maxExpandedSize / 2; // Extra margin for safety
+    // Get the ring radius for this project's size
+    const ringConfig = rings[project.size as keyof typeof rings];
+    const radius = ringConfig.radius;    // Convert position (0-4) to angle in radians
+    // 0 = top (270°), 1 = right (0°), 2 = bottom (90°), 3 = left (180°)
+    // Each unit is 90 degrees, decimals allow fine-tuning
+    const angleInDegrees = (project.position * 90) - 90; // Subtract 90 to make 0 = top
+    const angleInRadians = (angleInDegrees * Math.PI) / 180;
 
-    // Reserve center area for profile section
-    const { profileCenter } = layout;
+    // Calculate position
+    const x = Math.cos(angleInRadians) * radius;
+    const y = Math.sin(angleInRadians) * radius;
 
-    // Calculate available areas around the profile
-    const safeWidth = width - margin * 2;
-    const safeHeight = height - margin * 2;
+    // Apply bounds checking with margins to keep nodes on screen
+    const maxX = (width / 2) - margins.sides;
+    const maxY = (height / 2) - margins.bottom;
+    const minX = -(width / 2) + margins.sides;
+    const minY = -(height / 2) + margins.top;
 
-    // Use different layouts based on number of projects
-    if (totalProjects <= 4) {
-      // Place nodes in corners around profile
-      const positions = [
-        { x: -safeWidth / 3, y: -safeHeight / 3 }, // Top left
-        { x: safeWidth / 3, y: -safeHeight / 3 }, // Top right
-        { x: -safeWidth / 3, y: safeHeight / 3 }, // Bottom left
-        { x: safeWidth / 3, y: safeHeight / 3 }, // Bottom right
-      ];
-      return positions[index] || { x: 0, y: 0 };
-    } else if (totalProjects <= 8) {
-      // Octagon layout around the profile center
-      const angle = (index / totalProjects) * 2 * Math.PI;
-      const radiusX = Math.max(profileCenter.width / 2 + 120, 250);
-      const radiusY = Math.max(profileCenter.height / 2 + 100, 200);
+    const clampedX = Math.max(minX, Math.min(maxX, x));
+    const clampedY = Math.max(minY, Math.min(maxY, y));
 
-      // Ensure we don't go beyond safe bounds
-      const maxRadiusX = Math.min(radiusX, safeWidth / 2.2);
-      const maxRadiusY = Math.min(radiusY, safeHeight / 2.2);
-
-      return {
-        x: Math.cos(angle) * maxRadiusX,
-        y: Math.sin(angle) * maxRadiusY,
-      };
-    } else {
-      // For many projects, use a larger circle/ellipse
-      const angle = (index / totalProjects) * 2 * Math.PI;
-      const radiusX = Math.max(profileCenter.width / 2 + 180, 320);
-      const radiusY = Math.max(profileCenter.height / 2 + 140, 260);
-
-      // Ensure we don't go beyond safe bounds
-      const maxRadiusX = Math.min(radiusX, safeWidth / 2.1);
-      const maxRadiusY = Math.min(radiusY, safeHeight / 2.1);
-
-      return {
-        x: Math.cos(angle) * maxRadiusX,
-        y: Math.sin(angle) * maxRadiusY,
-      };
-    }
+    return { x: clampedX, y: clampedY };
   };
 
-  const basePosition = getBasePosition();
-
-  // Enhanced collision avoidance using configuration
-  const getDisplacedPosition = () => {
-    if (hoveredIndex === null || hoveredIndex === index) {
-      return basePosition;
-    }
-
-    const { layout } = NODE_CONFIG;
-    const hoveredPosition = getHoveredNodePosition();
-    const dx = basePosition.x - hoveredPosition.x;
-    const dy = basePosition.y - hoveredPosition.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    // Get the actual expanded size of the hovered node
-    const hoveredProject = projects[hoveredIndex];
-    const hoveredExpandedSize = getExpandedSize(hoveredProject);
-    const expandedRadius = hoveredExpandedSize / 2;
-    const nodeRadius = layout.nodeRadius / 2; // Half of normal node size
-    const minDistance = expandedRadius + nodeRadius + layout.collisionPadding;
-
-    if (distance < minDistance && distance > 0) {
-      // Push away from expanded node with stronger force
-      const pushFactor = ((minDistance - distance) / distance) * 1.2; // Increased multiplier
-      const pushX = dx * pushFactor;
-      const pushY = dy * pushFactor;
-
-      // Ensure pushed position stays within bounds
-      const { width, height } = containerBounds;
-      const maxX = width / 2 - 120; // Increased margin
-      const maxY = height / 2 - 120;
-
-      // Clamp to bounds but allow more movement
-      const clampedPushX = Math.max(
-        -maxX - basePosition.x,
-        Math.min(maxX - basePosition.x, pushX),
-      );
-      const clampedPushY = Math.max(
-        -maxY - basePosition.y,
-        Math.min(maxY - basePosition.y, pushY),
-      );
-
-      // If clamping reduced the push significantly, try to push in the perpendicular direction
-      if (
-        Math.abs(clampedPushX) < Math.abs(pushX) * 0.5 ||
-        Math.abs(clampedPushY) < Math.abs(pushY) * 0.5
-      ) {
-        // Push perpendicular to the line connecting the nodes
-        const perpX = (-dy / distance) * (minDistance - distance) * 0.8;
-        const perpY = (dx / distance) * (minDistance - distance) * 0.8;
-
-        return {
-          x: Math.max(-maxX, Math.min(maxX, basePosition.x + perpX)),
-          y: Math.max(-maxY, Math.min(maxY, basePosition.y + perpY)),
-        };
-      }
-
-      return {
-        x: basePosition.x + clampedPushX,
-        y: basePosition.y + clampedPushY,
-      };
-    }
-
-    return basePosition;
-  };
-
-  const getHoveredNodePosition = () => {
-    if (hoveredIndex === null) return { x: 0, y: 0 };
-
-    // Use the same positioning logic as getBasePosition for the hovered node
-    const { width, height } = containerBounds;
-    const { layout } = NODE_CONFIG;
-    const totalProjects = projects.length;
-    const maxExpandedSize = Math.max(
-      ...projects.map((p) => getExpandedSize(p)),
-    );
-    const margin = maxExpandedSize / 2 + 50;
-    const { profileCenter } = layout;
-    const safeWidth = width - margin * 2;
-    const safeHeight = height - margin * 2;
-
-    if (totalProjects <= 4) {
-      const positions = [
-        { x: -safeWidth / 3, y: -safeHeight / 3 },
-        { x: safeWidth / 3, y: -safeHeight / 3 },
-        { x: -safeWidth / 3, y: safeHeight / 3 },
-        { x: safeWidth / 3, y: safeHeight / 3 },
-      ];
-      return positions[hoveredIndex] || { x: 0, y: 0 };
-    } else if (totalProjects <= 8) {
-      const angle = (hoveredIndex / totalProjects) * 2 * Math.PI;
-      const radiusX = Math.max(profileCenter.width / 2 + 120, 250);
-      const radiusY = Math.max(profileCenter.height / 2 + 100, 200);
-      const maxRadiusX = Math.min(radiusX, safeWidth / 2.2);
-      const maxRadiusY = Math.min(radiusY, safeHeight / 2.2);
-
-      return {
-        x: Math.cos(angle) * maxRadiusX,
-        y: Math.sin(angle) * maxRadiusY,
-      };
-    } else {
-      const angle = (hoveredIndex / totalProjects) * 2 * Math.PI;
-      const radiusX = Math.max(profileCenter.width / 2 + 180, 320);
-      const radiusY = Math.max(profileCenter.height / 2 + 140, 260);
-      const maxRadiusX = Math.min(radiusX, safeWidth / 2.1);
-      const maxRadiusY = Math.min(radiusY, safeHeight / 2.1);
-
-      return {
-        x: Math.cos(angle) * maxRadiusX,
-        y: Math.sin(angle) * maxRadiusY,
-      };
-    }
-  };
-  const { x, y } = getDisplacedPosition();
+  const { x, y } = getPosition();
   const isExpanded = hoveredIndex === index;
 
   const getSize = () => {
@@ -392,17 +234,18 @@ const ProjectNode2D = ({
     const sizeTypography = typography[nodeSize];
     const iconClass = isExpanded
       ? sizeTypography.expanded.iconSize
-      : sizeTypography.normal.iconSize;
-
-    const iconMap: { [key: string]: JSX.Element } = {
-      holoportation: <BsHeadsetVr className={`text-purple-400 ${iconClass}`} />,
-      'daily-ball': <FaGamepad className={`text-blue-400 ${iconClass}`} />,
-      vibe: <BsMusicNoteBeamed className={`text-cyan-400 ${iconClass}`} />,
-      unitrade: <BsBagFill className={`text-emerald-400 ${iconClass}`} />,
-      'choose-movie': (
-        <BsCameraReelsFill className={`text-amber-400 ${iconClass}`} />
-      ),
-    };
+      : sizeTypography.normal.iconSize; const iconMap: { [key: string]: JSX.Element } = {
+        holoportation: <BsHeadsetVr className={`text-purple-400 ${iconClass}`} />,
+        'daily-ball': <FaGamepad className={`text-blue-400 ${iconClass}`} />,
+        vibe: <BsMusicNoteBeamed className={`text-cyan-400 ${iconClass}`} />,
+        unitrade: <BsBagFill className={`text-emerald-400 ${iconClass}`} />,
+        'choose-movie': (
+          <BsCameraReelsFill className={`text-amber-400 ${iconClass}`} />
+        ),
+        'personal-website': <FaCode className={`text-red-400 ${iconClass}`} />,
+        'event-horizons': <FaCalendarAlt className={`text-green-400 ${iconClass}`} />,
+        'impostorbot': <BsRobot className={`text-violet-400 ${iconClass}`} />,
+      };
     return (
       iconMap[project.id] || (
         <FaGamepad className={`text-gray-400 ${iconClass}`} />
@@ -419,15 +262,22 @@ const ProjectNode2D = ({
       Unity: 'devicon-unity-plain',
       JavaScript: 'devicon-javascript-plain',
       'HTML/CSS': 'devicon-html5-plain',
+      HTML: 'devicon-html5-plain',
+      CSS: 'devicon-css3-plain',
+      TypeScript: 'devicon-typescript-plain',
+      'Node.js': 'devicon-nodejs-plain',
+      Tailwind: 'devicon-tailwindcss-plain',
+      Vite: 'devicon-vitejs-plain',
       Java: 'devicon-java-plain',
       'Spring Boot': 'devicon-spring-plain',
       React: 'devicon-react-original',
       PostgreSQL: 'devicon-postgresql-plain',
       Pandas: 'devicon-pandas-plain',
-      NumPy: 'devicon-numpy-original',
+      NumPy: 'devicon-numpy-plain',
       Streamlit: 'devicon-streamlit-plain',
       WinForms: 'devicon-dot-net-plain',
-      SciPy: 'devicon-pandas-plain',
+      Django: 'devicon-django-plain',
+      SciPy: 'devicon-swiper-plain',
     };
 
     return project.techStack.map((tech: string) => {
@@ -456,21 +306,19 @@ const ProjectNode2D = ({
   const { animation, typography, spacing } = NODE_CONFIG;
   const nodeSize = project.size as keyof typeof typography;
   const sizeTypography = typography[nodeSize];
-
   return (
     <motion.div
       className="absolute z-20"
       style={{
-        left: `calc(50% + ${x}px)`,
-        top: `calc(50% + ${y}px)`,
-        transform: 'translate(-50%, -50%)',
+        left: `calc(50% + ${x}px - ${isExpanded ? NODE_CONFIG.expanded.width / 2 : getSize() / 2}px)`,
+        top: `calc(50% + ${y}px - ${isExpanded ? getExpandedHeight(project) / 2 : getSize() / 2}px)`,
       }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{
         scale: 1,
         opacity: 1,
-        left: `calc(50% + ${x}px)`,
-        top: `calc(50% + ${y}px)`,
+        left: `calc(50% + ${x}px - ${isExpanded ? NODE_CONFIG.expanded.width / 2 : getSize() / 2}px)`,
+        top: `calc(50% + ${y}px - ${isExpanded ? getExpandedHeight(project) / 2 : getSize() / 2}px)`,
         zIndex: isExpanded ? 50 : 20,
       }}
       transition={{
@@ -594,9 +442,8 @@ const ProjectNode2D = ({
                   >
                     {getProjectIcon()}
                   </motion.div>{' '}
-                  {/* Project title */}
-                  <h3
-                    className={`text-white ${sizeTypography.normal.titleSize} font-medium ${spacing.normal.titleMarginBottom} leading-tight`}
+                  {/* Project title */}                  <h3
+                    className={`text-white ${sizeTypography.normal.titleSize} font-medium ${spacing.normal.titleMarginBottom}`}
                   >
                     {project.name}
                   </h3>
@@ -653,9 +500,8 @@ const ProjectNode2D = ({
                       {getProjectIcon()}
                     </motion.div>
 
-                    {/* Project title - larger */}
-                    <h3
-                      className={`text-white ${sizeTypography.expanded.titleSize} font-bold text-center leading-tight`}
+                    {/* Project title - larger */}                    <h3
+                      className={`text-white ${sizeTypography.expanded.titleSize} font-bold text-center`}
                     >
                       {project.name}
                     </h3>
