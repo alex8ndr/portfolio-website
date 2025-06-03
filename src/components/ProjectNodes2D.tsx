@@ -5,8 +5,11 @@ import {
   BsCameraReelsFill,
   BsHeadsetVr,
   BsMusicNoteBeamed,
+  BsRobot,
 } from 'react-icons/bs';
 import {
+  FaCalendarAlt,
+  FaCode,
   FaExternalLinkAlt,
   FaGamepad,
   FaGithub,
@@ -22,7 +25,7 @@ import { projects, type Project, type ProjectButton } from '../data/projects';
 const NODE_CONFIG = {
   // Node sizes for different project sizes
   sizes: {
-    small: 80,
+    small: 82,
     medium: 100,
     large: 125,
   },  // Simple circular ring configuration
@@ -30,12 +33,11 @@ const NODE_CONFIG = {
     large: { radius: 250 },   // Outer ring for large projects
     medium: { radius: 400 },  // Middle ring for medium projects  
     small: { radius: 550 },   // Far ring for small projects
-  },
-  // Margins to keep nodes on screen
+  },  // Margins to keep nodes on screen
   margins: {
-    top: 100,
-    bottom: 100,
-    sides: 100,
+    top: 80, // Increased to account for header height
+    bottom: 80,
+    sides: 80,
   },
 
   // Expanded node configuration
@@ -53,12 +55,12 @@ const NODE_CONFIG = {
     small: {
       normal: {
         iconSize: 'text-sm',
-        titleSize: 'text-xs',
+        titleSize: 'text-xs/3',
         techIconSize: 'text-xs',
       },
       expanded: {
         iconSize: 'text-2xl',
-        titleSize: 'text-base',
+        titleSize: 'text-base/5',
         descriptionSize: 'text-xs',
         techIconSize: 'text-xs',
         techTextSize: 'text-xs',
@@ -68,27 +70,26 @@ const NODE_CONFIG = {
     medium: {
       normal: {
         iconSize: 'text-lg',
-        titleSize: 'text-xs',
+        titleSize: 'text-xs/4',
         techIconSize: 'text-sm',
       },
       expanded: {
         iconSize: 'text-2xl',
-        titleSize: 'text-base',
+        titleSize: 'text-base/5',
         descriptionSize: 'text-xs',
         techIconSize: 'text-xs',
         techTextSize: 'text-xs',
         linkHintSize: 'text-xs',
       },
-    },
-    large: {
+    }, large: {
       normal: {
         iconSize: 'text-xl',
-        titleSize: 'text-sm',
+        titleSize: 'text-sm/5',
         techIconSize: 'text-lg',
       },
       expanded: {
         iconSize: 'text-2xl',
-        titleSize: 'text-base',
+        titleSize: 'text-base/5',
         descriptionSize: 'text-xs',
         techIconSize: 'text-xs',
         techTextSize: 'text-xs',
@@ -100,7 +101,7 @@ const NODE_CONFIG = {
   // Layout spacing
   spacing: {
     normal: {
-      iconMarginBottom: 'mb-2',
+      iconMarginBottom: 'mb-1.5',
       titleMarginBottom: 'mb-1',
       techIconGap: 'gap-1',
     },
@@ -186,18 +187,18 @@ const ProjectNode2D = ({
 
     // Ensure within reasonable bounds
     return Math.max(expanded.baseHeight, Math.min(height, expanded.maxHeight));
-  };
-  // Simple positioning - get angle from project data and radius from config
+  };  // Simple positioning - get position from project data and radius from config
   const getPosition = () => {
     const { width, height } = containerBounds;
     const { rings, margins } = NODE_CONFIG;
 
     // Get the ring radius for this project's size
     const ringConfig = rings[project.size as keyof typeof rings];
-    const radius = ringConfig.radius;
-
-    // Convert angle from degrees to radians (project.angle is in degrees 0-360)
-    const angleInRadians = (project.angle * Math.PI) / 180;
+    const radius = ringConfig.radius;    // Convert position (0-4) to angle in radians
+    // 0 = top (270°), 1 = right (0°), 2 = bottom (90°), 3 = left (180°)
+    // Each unit is 90 degrees, decimals allow fine-tuning
+    const angleInDegrees = (project.position * 90) - 90; // Subtract 90 to make 0 = top
+    const angleInRadians = (angleInDegrees * Math.PI) / 180;
 
     // Calculate position
     const x = Math.cos(angleInRadians) * radius;
@@ -233,17 +234,18 @@ const ProjectNode2D = ({
     const sizeTypography = typography[nodeSize];
     const iconClass = isExpanded
       ? sizeTypography.expanded.iconSize
-      : sizeTypography.normal.iconSize;
-
-    const iconMap: { [key: string]: JSX.Element } = {
-      holoportation: <BsHeadsetVr className={`text-purple-400 ${iconClass}`} />,
-      'daily-ball': <FaGamepad className={`text-blue-400 ${iconClass}`} />,
-      vibe: <BsMusicNoteBeamed className={`text-cyan-400 ${iconClass}`} />,
-      unitrade: <BsBagFill className={`text-emerald-400 ${iconClass}`} />,
-      'choose-movie': (
-        <BsCameraReelsFill className={`text-amber-400 ${iconClass}`} />
-      ),
-    };
+      : sizeTypography.normal.iconSize; const iconMap: { [key: string]: JSX.Element } = {
+        holoportation: <BsHeadsetVr className={`text-purple-400 ${iconClass}`} />,
+        'daily-ball': <FaGamepad className={`text-blue-400 ${iconClass}`} />,
+        vibe: <BsMusicNoteBeamed className={`text-cyan-400 ${iconClass}`} />,
+        unitrade: <BsBagFill className={`text-emerald-400 ${iconClass}`} />,
+        'choose-movie': (
+          <BsCameraReelsFill className={`text-amber-400 ${iconClass}`} />
+        ),
+        'personal-website': <FaCode className={`text-red-400 ${iconClass}`} />,
+        'event-horizons': <FaCalendarAlt className={`text-green-400 ${iconClass}`} />,
+        'impostorbot': <BsRobot className={`text-violet-400 ${iconClass}`} />,
+      };
     return (
       iconMap[project.id] || (
         <FaGamepad className={`text-gray-400 ${iconClass}`} />
@@ -260,15 +262,22 @@ const ProjectNode2D = ({
       Unity: 'devicon-unity-plain',
       JavaScript: 'devicon-javascript-plain',
       'HTML/CSS': 'devicon-html5-plain',
+      HTML: 'devicon-html5-plain',
+      CSS: 'devicon-css3-plain',
+      TypeScript: 'devicon-typescript-plain',
+      'Node.js': 'devicon-nodejs-plain',
+      Tailwind: 'devicon-tailwindcss-plain',
+      Vite: 'devicon-vitejs-plain',
       Java: 'devicon-java-plain',
       'Spring Boot': 'devicon-spring-plain',
       React: 'devicon-react-original',
       PostgreSQL: 'devicon-postgresql-plain',
       Pandas: 'devicon-pandas-plain',
-      NumPy: 'devicon-numpy-original',
+      NumPy: 'devicon-numpy-plain',
       Streamlit: 'devicon-streamlit-plain',
       WinForms: 'devicon-dot-net-plain',
-      SciPy: 'devicon-pandas-plain',
+      Django: 'devicon-django-plain',
+      SciPy: 'devicon-swiper-plain',
     };
 
     return project.techStack.map((tech: string) => {
@@ -433,9 +442,8 @@ const ProjectNode2D = ({
                   >
                     {getProjectIcon()}
                   </motion.div>{' '}
-                  {/* Project title */}
-                  <h3
-                    className={`text-white ${sizeTypography.normal.titleSize} font-medium ${spacing.normal.titleMarginBottom} leading-tight`}
+                  {/* Project title */}                  <h3
+                    className={`text-white ${sizeTypography.normal.titleSize} font-medium ${spacing.normal.titleMarginBottom}`}
                   >
                     {project.name}
                   </h3>
@@ -492,9 +500,8 @@ const ProjectNode2D = ({
                       {getProjectIcon()}
                     </motion.div>
 
-                    {/* Project title - larger */}
-                    <h3
-                      className={`text-white ${sizeTypography.expanded.titleSize} font-bold text-center leading-tight`}
+                    {/* Project title - larger */}                    <h3
+                      className={`text-white ${sizeTypography.expanded.titleSize} font-bold text-center`}
                     >
                       {project.name}
                     </h3>
