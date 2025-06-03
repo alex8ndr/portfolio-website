@@ -1,6 +1,6 @@
 const ProfileSection = () => {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-10 pt-24">
+    <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-10 pt-16">
       <div className="mb-6">
         <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1">
           <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">

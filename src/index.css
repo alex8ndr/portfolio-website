@@ -7,6 +7,12 @@ body {
 }
 
 :root {
+  /* Site link colors */
+  --site-link-gradient: linear-gradient(to right, #a855f7, #3b82f6);
+  --site-link-size: 1.4rem;
+  --site-link-weight: 700;
+  --site-link-hover-scale: 1.05;
+  
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
@@ -59,4 +65,43 @@ body {
   --chart-3: 30 80% 55%;
   --chart-4: 280 65% 60%;
   --chart-5: 340 75% 55%;
+}
+
+.website-link {
+  position: fixed;
+  top: 1.2rem;
+  left: 2vw;
+  background: none;
+  border-radius: 5px;
+  box-shadow: none;
+  padding: 0;
+  min-width: 0;
+  z-index: 1001;
+  display: none; /* Hidden by default for mobile */
+  font-family: 'Montserrat', sans-serif;
+}
+
+.header-link {
+  text-decoration: none;
+  font-size: var(--site-link-size);
+  font-weight: var(--site-link-weight);
+  padding: 0.18em 0.4em;
+  background: var(--site-link-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.header-link:hover {
+  transform: translateY(-1px) scale(var(--site-link-hover-scale));
+  opacity: 0.9;
+}
+
+/* Show website link on desktop */
+@media (min-width: 768px) {
+  .website-link {
+    display: block;
+  }
 }
