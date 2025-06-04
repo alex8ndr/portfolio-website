@@ -38,12 +38,14 @@ export const projectLayouts: ProjectLayout[] = [
 
   // MEDIUM PROJECTS (middle ring)
   { id: 'personal-website', size: 'medium', position: 1.05 },  // Right
-  { id: 'holoportation', size: 'medium', position: 2.75 },    // Bottom-left
+  { id: 'holoportation', size: 'medium', position: 2.7 },    // Bottom-left
 
   // SMALL PROJECTS (outer ring)
-  { id: 'event-horizons', size: 'small', position: 3.5 },  // Left-top
-  { id: 'unitrade', size: 'small', position: 0.75 },       // Top-right
+  { id: 'event-horizons', size: 'small', position: 3.45 },  // Left-top
+  { id: 'unitrade', size: 'small', position: 0.7 },       // Top-right
   { id: 'impostorbot', size: 'small', position: 1.3 },     // Right-bottom
+  { id: 'slightly-edited-songs', size: 'small', position: 3 },     // Right-bottom
+
 ];
 
 // ============================================================================
@@ -185,6 +187,20 @@ export const projectContent: ProjectContent[] = [
       },
     ],
     color: '#7c3aed', // Violet
+  }, {
+    id: 'slightly-edited-songs',
+    name: 'Slightly Edited Songs',
+    description: 'YouTube channel featuring edits of existing songs with 500+ subscribers',
+    techStack: [],
+    timeline: '2023',
+    buttons: [
+      {
+        label: 'View Channel',
+        url: 'https://www.youtube.com/@SlightlyEditedSongs',
+        type: 'demo',
+      },
+    ],
+    color: '#ef4444', // Red
   },
 ];
 
