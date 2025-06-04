@@ -125,8 +125,8 @@ const NODE_CONFIG = {
     sizeDuration: 0.4,
     hoverDuration: 0.3,
     expandedContentDelay: 0.1,
-    floatDuration: 6,
-    floatOffset: 15,
+    floatDuration: 5,
+    floatOffset: 10,
   },
 };
 
@@ -338,7 +338,7 @@ const ProjectNode2D = ({
         onClick={handleClick}
         animate={{
           y: isExpanded ? 0 : [0, -animation.floatOffset, 0],
-          rotate: isExpanded ? 0 : [0, 2, 0, -2, 0],
+          rotate: isExpanded ? 0 : [0, 1, 0, -1, 0],
         }}
         transition={{
           duration: isExpanded
@@ -577,11 +577,6 @@ const ProjectNode2D = ({
                   ) : project.link ? (
                     <motion.div
                       className={`${sizeTypography.expanded.linkHintSize} text-gray-400 opacity-80`}
-                      animate={{ opacity: [0.8, 1, 0.8] }}
-                      transition={{
-                        duration: 2,
-                        repeat: Number.POSITIVE_INFINITY,
-                      }}
                     >
                       Click to visit →
                     </motion.div>
