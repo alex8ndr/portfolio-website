@@ -14,6 +14,7 @@ import {
   FaGamepad,
   FaGithub,
   FaGooglePlay,
+  FaYoutube,
 } from 'react-icons/fa';
 import { SiDevpost } from 'react-icons/si';
 import { projects, type Project, type ProjectButton } from '../data/projects';
@@ -43,7 +44,9 @@ const NODE_CONFIG = {
   // Expanded node configuration
   expanded: {
     width: 255,
-    baseHeight: 180,
+    baseHeight: 115,
+    charsPerLine: 40,
+    heightPerLine: 15,
     heightPerTechItem: 20,
     heightPerButton: 35,
     maxHeight: 350,
@@ -70,7 +73,7 @@ const NODE_CONFIG = {
     medium: {
       normal: {
         iconSize: 'text-lg',
-        titleSize: 'text-xs/4',
+        titleSize: 'text-xs/3',
         techIconSize: 'text-sm',
       },
       expanded: {
@@ -84,7 +87,7 @@ const NODE_CONFIG = {
     }, large: {
       normal: {
         iconSize: 'text-xl',
-        titleSize: 'text-sm/5',
+        titleSize: 'text-sm/4',
         techIconSize: 'text-lg',
       },
       expanded: {
@@ -107,7 +110,7 @@ const NODE_CONFIG = {
     },
     expanded: {
       iconMarginBottom: 'mb-3',
-      titleMarginBottom: 'mb-2',
+      titleMarginBottom: 'mb-1',
       descriptionMarginBottom: 'mb-2',
       techStackMarginBottom: 'mb-3',
       techItemGap: 'gap-1.5',
@@ -168,17 +171,12 @@ const ProjectNode2D = ({
     let height = expanded.baseHeight;
 
     // Add height based on description length (longer descriptions need more space)
-    const descriptionLines = Math.ceil(proj.description.length / 40); // ~40 chars per line
-    if (descriptionLines > 2) {
-      height += (descriptionLines - 2) * 15; // Add 15px per extra line
-    }
+    const descriptionLines = Math.ceil(proj.description.length / expanded.charsPerLine);
+    height += descriptionLines * expanded.heightPerLine;
 
     // Add height based on tech stack size (more items = more height)
     const techItemsShown = Math.min(proj.techStack.length, 5); // We show max 5 items
-    if (techItemsShown > 2) {
-      height +=
-        expanded.heightPerTechItem * Math.floor((techItemsShown - 2) / 2); // 12px per extra item, every 2 items
-    }
+    height += expanded.heightPerTechItem * Math.min(Math.ceil(techItemsShown / 2), 2); // 2 items per row, max 2 rows
 
     // Add height if there are buttons
     if (proj.buttons && proj.buttons.length > 0) {
@@ -245,6 +243,9 @@ const ProjectNode2D = ({
         'personal-website': <FaCode className={`text-red-400 ${iconClass}`} />,
         'event-horizons': <FaCalendarAlt className={`text-green-400 ${iconClass}`} />,
         'impostorbot': <BsRobot className={`text-violet-400 ${iconClass}`} />,
+        'slightly-edited-songs': (
+          <FaYoutube className={`text-red-400 ${iconClass}`} />
+        ),
       };
     return (
       iconMap[project.id] || (
@@ -442,7 +443,8 @@ const ProjectNode2D = ({
                   >
                     {getProjectIcon()}
                   </motion.div>{' '}
-                  {/* Project title */}                  <h3
+                  {/* Project title */}
+                  <h3
                     className={`text-white ${sizeTypography.normal.titleSize} font-medium ${spacing.normal.titleMarginBottom}`}
                   >
                     {project.name}
@@ -500,8 +502,10 @@ const ProjectNode2D = ({
                       {getProjectIcon()}
                     </motion.div>
 
-                    {/* Project title - larger */}                    <h3
-                      className={`text-white ${sizeTypography.expanded.titleSize} font-bold text-center`}
+                    {/* Project title - larger */}
+                    <h3
+                      className={`text-white ${sizeTypography.expanded.titleSize} leading-none font-bold text-center ${spacing.expanded.titleMarginBottom}`}
+                      style={{ lineHeight: '0.8' }}
                     >
                       {project.name}
                     </h3>
