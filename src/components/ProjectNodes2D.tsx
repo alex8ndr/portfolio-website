@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { BiCode } from 'react-icons/bi';
 import {
   BsBagFill,
   BsCameraReelsFill,
@@ -7,6 +8,7 @@ import {
   BsMusicNoteBeamed,
   BsRobot,
 } from 'react-icons/bs';
+import { DiDotnet } from 'react-icons/di';
 import {
   FaCalendarAlt,
   FaCode,
@@ -14,9 +16,32 @@ import {
   FaGamepad,
   FaGithub,
   FaGooglePlay,
+  FaJava,
   FaYoutube,
 } from 'react-icons/fa';
-import { SiDevpost } from 'react-icons/si';
+import {
+  SiCplusplus,
+  SiCss3,
+  SiDevpost,
+  SiDjango,
+  SiHtml5,
+  SiJavascript,
+  SiNodedotjs,
+  SiNumpy,
+  SiOpencv,
+  SiPandas,
+  SiPostgresql,
+  SiPython,
+  SiReact,
+  SiScipy,
+  SiSharp,
+  SiSpring,
+  SiStreamlit,
+  SiTailwindcss,
+  SiTypescript,
+  SiUnity,
+  SiVite
+} from 'react-icons/si';
 import { projects, type Project, type ProjectButton } from '../data/projects';
 
 /**
@@ -100,12 +125,11 @@ const NODE_CONFIG = {
       },
     },
   },
-
   // Layout spacing
   spacing: {
     normal: {
       iconMarginBottom: 'mb-1.5',
-      titleMarginBottom: 'mb-1',
+      titleMarginBottom: 'mb-1.5',
       techIconGap: 'gap-1',
     },
     expanded: {
@@ -252,40 +276,37 @@ const ProjectNode2D = ({
         <FaGamepad className={`text-gray-400 ${iconClass}`} />
       )
     );
-  };
-
-  const getTechIcons = () => {
-    const techIconMap: { [key: string]: string } = {
-      'C++': 'devicon-cplusplus-plain',
-      'C#': 'devicon-csharp-plain',
-      Python: 'devicon-python-plain',
-      OpenCV: 'devicon-opencv-plain',
-      Unity: 'devicon-unity-plain',
-      JavaScript: 'devicon-javascript-plain',
-      'HTML/CSS': 'devicon-html5-plain',
-      HTML: 'devicon-html5-plain',
-      CSS: 'devicon-css3-plain',
-      TypeScript: 'devicon-typescript-plain',
-      'Node.js': 'devicon-nodejs-plain',
-      Tailwind: 'devicon-tailwindcss-plain',
-      Vite: 'devicon-vitejs-plain',
-      Java: 'devicon-java-plain',
-      'Spring Boot': 'devicon-spring-plain',
-      React: 'devicon-react-original',
-      PostgreSQL: 'devicon-postgresql-plain',
-      Pandas: 'devicon-pandas-plain',
-      NumPy: 'devicon-numpy-plain',
-      Streamlit: 'devicon-streamlit-plain',
-      WinForms: 'devicon-dot-net-plain',
-      Django: 'devicon-django-plain',
-      SciPy: 'devicon-swiper-plain',
+  }; const getTechIcons = () => {
+    const techIconMap: { [key: string]: any } = {
+      'C++': SiCplusplus,
+      'C#': SiSharp,
+      Python: SiPython,
+      OpenCV: SiOpencv,
+      Unity: SiUnity,
+      JavaScript: SiJavascript,
+      'HTML/CSS': SiHtml5,
+      HTML: SiHtml5,
+      CSS: SiCss3,
+      TypeScript: SiTypescript,
+      'Node.js': SiNodedotjs,
+      Tailwind: SiTailwindcss,
+      Vite: SiVite,
+      Java: FaJava,
+      'Spring Boot': SiSpring,
+      React: SiReact,
+      PostgreSQL: SiPostgresql,
+      Pandas: SiPandas,
+      NumPy: SiNumpy, Streamlit: SiStreamlit,
+      WinForms: DiDotnet,
+      Django: SiDjango,
+      SciPy: SiScipy,
     };
 
     return project.techStack.map((tech: string) => {
-      const iconClass = techIconMap[tech];
-      return iconClass
-        ? { tech, iconClass }
-        : { tech, iconClass: 'devicon-code-plain' };
+      const IconComponent = techIconMap[tech];
+      return IconComponent
+        ? { tech, icon: IconComponent }
+        : { tech, icon: BiCode };
     });
   };
 
@@ -449,20 +470,18 @@ const ProjectNode2D = ({
                   >
                     {project.name}
                   </h3>
-                  {/* Quick tech icons */}
-                  <div
+                  {/* Quick tech icons */}                  <div
                     className={`flex items-center justify-center ${spacing.normal.techIconGap}`}
-                  >
-                    {getTechIcons()
-                      .slice(0, 3)
-                      .map(({ tech, iconClass }, iconIndex) => (
-                        <i
-                          key={iconIndex}
-                          className={`${iconClass} ${sizeTypography.normal.techIconSize} opacity-70`}
-                          style={{ color: project.color }}
-                          title={tech}
-                        />
-                      ))}
+                  >                    {getTechIcons()
+                    .slice(0, 3)
+                    .map(({ tech, icon: IconComponent }, iconIndex) => (
+                      <IconComponent
+                        key={iconIndex}
+                        className={`${sizeTypography.normal.techIconSize} opacity-70`}
+                        style={{ color: project.color }}
+                        title={tech}
+                      />
+                    ))}
                   </div>
                 </motion.div>
               )}
@@ -525,17 +544,16 @@ const ProjectNode2D = ({
                     >
                       {project.description}
                     </p>
-                    {/* Tech stack */}
-                    <div className="flex flex-wrap items-center justify-center gap-1 px-2">
+                    {/* Tech stack */}                    <div className="flex flex-wrap items-center justify-center gap-1 px-2">
                       {getTechIcons()
                         .slice(0, 5)
-                        .map(({ tech, iconClass }, iconIndex) => (
+                        .map(({ tech, icon: IconComponent }, iconIndex) => (
                           <div
                             key={iconIndex}
                             className={`flex items-center gap-1 bg-gray-800/50 rounded-md px-1.5 py-0.5 ${sizeTypography.expanded.techTextSize}`}
                           >
-                            <i
-                              className={`${iconClass} ${sizeTypography.expanded.techIconSize}`}
+                            <IconComponent
+                              className={`${sizeTypography.expanded.techIconSize}`}
                               style={{ color: project.color }}
                             />
                             <span

@@ -1,18 +1,62 @@
 import { motion } from 'framer-motion';
+import { FaJava } from 'react-icons/fa';
+import {
+  SiAngular,
+  SiCplusplus,
+  SiDotnet,
+  SiGit,
+  SiGnubash,
+  SiGooglecolab,
+  SiJavascript,
+  SiJunit5,
+  SiLinux,
+  SiNumpy,
+  SiPandas,
+  SiPlotly,
+  SiPostgresql,
+  SiPostman,
+  SiPython,
+  SiPytorch,
+  SiReact,
+  SiSelenium,
+  SiSharp,
+  SiSpring,
+  SiTypescript,
+  SiUnity
+} from 'react-icons/si';
+import { TbSql } from 'react-icons/tb';
 
-const ScrollSections = () => {
-  const skills = {
-    programming: ['Python', 'Java', 'C#', 'TypeScript', 'C/C++', 'SQL', 'Bash'],
-    frameworks: ['Angular', '.NET', 'Spring Boot', 'React', 'Unity'],
-    tools: [
-      'Git',
-      'PostgreSQL',
-      'Postman',
-      'Selenium',
-      'JUnit',
-      'Pandas',
-      'NumPy',
-      'Unix',
+const ScrollSections = () => {  // Easy to modify skills configuration with icons
+  const skillsConfig = {
+    'Programming Languages': [
+      { name: 'Python', icon: SiPython, color: 'text-yellow-400' },
+      { name: 'Java', icon: FaJava, color: 'text-red-500' },
+      { name: 'C#', icon: SiSharp, color: 'text-purple-500' },
+      { name: 'TypeScript', icon: SiTypescript, color: 'text-blue-500' },
+      { name: 'JavaScript', icon: SiJavascript, color: 'text-yellow-500' },
+      { name: 'C/C++', icon: SiCplusplus, color: 'text-blue-600' },
+      { name: 'SQL', icon: TbSql, color: 'text-orange-500' },
+      { name: 'Bash', icon: SiGnubash, color: 'text-green-400' },
+    ],
+    'Frameworks & Libraries': [
+      { name: 'Angular', icon: SiAngular, color: 'text-red-600' },
+      { name: '.NET', icon: SiDotnet, color: 'text-purple-600' },
+      { name: 'Spring Boot', icon: SiSpring, color: 'text-green-500' },
+      { name: 'React', icon: SiReact, color: 'text-cyan-400' },
+      { name: 'PyTorch', icon: SiPytorch, color: 'text-orange-600' },
+      { name: 'Pandas', icon: SiPandas, color: 'text-blue-500' },
+      { name: 'NumPy', icon: SiNumpy, color: 'text-blue-600' },
+      { name: 'matplotlib', icon: SiPlotly, color: 'text-blue-400' },
+    ],
+    'Tools': [
+      { name: 'Git', icon: SiGit, color: 'text-orange-600' },
+      { name: 'Unity', icon: SiUnity, color: 'text-gray-300' },
+      { name: 'Unix', icon: SiLinux, color: 'text-yellow-500' },
+      { name: 'PostgreSQL', icon: SiPostgresql, color: 'text-blue-700' },
+      { name: 'Postman', icon: SiPostman, color: 'text-orange-500' },
+      { name: 'JUnit', icon: SiJunit5, color: 'text-green-600' },
+      { name: 'Selenium', icon: SiSelenium, color: 'text-green-500' },
+      { name: 'Google Colab', icon: SiGooglecolab, color: 'text-yellow-600' },
     ],
   };
 
@@ -83,24 +127,39 @@ const ScrollSections = () => {
           </motion.h2>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {Object.entries(skills).map(([category, skillList]) => (
+            {Object.entries(skillsConfig).map(([category, skillList]) => (
               <motion.div
                 key={category}
-                className="bg-slate-800/50 p-6 rounded-lg border border-gray-700"
+                className="bg-slate-800/50 p-6 rounded-xl border border-gray-700/50 backdrop-blur-sm"
                 variants={itemVariants}
+                whileHover={{ scale: 1.02, borderColor: 'rgb(139, 92, 246, 0.5)' }}
+                transition={{ duration: 0.2 }}
               >
-                <h3 className="text-xl font-semibold mb-4 capitalize text-gray-200">
-                  {category.replace(/([A-Z])/g, ' $1').trim()}
+                <h3 className="text-xl font-semibold mb-6 text-gray-200 text-center">
+                  {category}
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {skillList.map((skill) => (
-                    <span
-                      key={skill}
-                      className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30 px-3 py-1 rounded-full text-sm text-gray-200"
-                    >
-                      {skill}
-                    </span>
-                  ))}
+                <div className="grid grid-cols-2 gap-4">
+                  {skillList.map((skill) => {
+                    const IconComponent = skill.icon;
+                    return (
+                      <motion.div
+                        key={skill.name}
+                        className="flex flex-col items-center p-4 rounded-lg bg-slate-700/30 border border-gray-600/30 hover:bg-slate-700/50 transition-all duration-300"
+                        whileHover={{
+                          scale: 1.05,
+                          boxShadow: '0 4px 20px rgba(139, 92, 246, 0.15)'
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <IconComponent
+                          className={`text-4xl mb-2 ${skill.color} transition-all duration-300`}
+                        />
+                        <span className="text-sm text-gray-200 text-center font-medium">
+                          {skill.name}
+                        </span>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </motion.div>
             ))}
