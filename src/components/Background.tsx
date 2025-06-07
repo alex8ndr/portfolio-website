@@ -27,60 +27,48 @@ interface GeometricShape {
 const CONFIG = {
     // Particle settings
     particles: {
-        count: 120,                    // Number of particles
-        minSize: 1,                    // Minimum particle size
-        maxSize: 4,                    // Maximum particle size
-        minOpacity: 0.2,               // Minimum opacity
-        maxOpacity: 1.0,               // Maximum opacity when influenced by mouse
-        speed: 0.5,                    // Base movement speed
-        friction: 0.99,                // Movement friction (0.9 = more friction, 0.99 = less)
-        lifespan: { min: 100, max: 300 }, // Particle lifespan range
+        count: 120,
+        minSize: 1,
+        maxSize: 4,
+        minOpacity: 0.2,
+        maxOpacity: 1.0,
+        speed: 0.5,
+        friction: 0.99,
+        lifespan: { min: 100, max: 300 },
     },
-
     // Mouse interaction settings
     mouse: {
-        enabled: true,                 // 🎛️ MASTER TOGGLE: Set to false to disable ALL mouse effects
-        influenceRadius: 150,          // How far mouse affects particles
-        forceStrength: 0.02,           // How strong mouse attraction is
-        rotationRadius: 200,           // How far mouse affects shape rotation
-        opacityRadius: 150,            // How far mouse affects shape opacity
+        enabled: true,
+        influenceRadius: 150,
+        forceStrength: 0.02,
+        rotationRadius: 200,
+        opacityRadius: 150,
     },
-
     // Shape settings
     shapes: {
-        count: 150,                     // Number of geometric shapes
-        minSize: 15,                   // Minimum shape size
-        maxSize: 40,                   // Maximum shape size
-        minOpacity: 0.05,              // Minimum shape opacity
-        maxOpacity: 0.3,               // Maximum shape opacity when influenced by mouse
-        baseRotationSpeed: 0.2,        // Base rotation speed
-        mouseRotationMultiplier: 2,    // How much faster they rotate near mouse
-        opacityChangeSpeed: 0.01,     // How fast opacity changes (increase)
-        opacityFadeSpeed: 0.008,       // How fast opacity fades (decrease)
-        gridCols: 15,                   // Grid columns for shape distribution
-        gridRows: 10,                   // Grid rows for shape distribution
-        gridRandomness: 0.6,           // How much randomness in grid positioning (0-1)
+        count: 150,
+        minSize: 15,
+        maxSize: 40,
+        minOpacity: 0.05,
+        maxOpacity: 0.3,
+        baseRotationSpeed: 0.2,
+        mouseRotationMultiplier: 2,
+        opacityChangeSpeed: 0.01,
+        opacityFadeSpeed: 0.008,
+        gridCols: 15,
+        gridRows: 10,
+        gridRandomness: 0.6,
     },
-
     // Visual effects
     effects: {
-        gridSize: 50,                  // Grid line spacing
-        gridOpacity: 0.15,             // Grid line opacity
-        gridParallax: 0.01,            // Grid parallax effect strength
+        gridSize: 50,
+        gridOpacity: 0.15,
+        gridParallax: 0.01,
     },
-
-    // Colors (easy to modify!)
+    // Colors
     colors: [
-        '#8B5CF6', // purple-500
-        '#3B82F6', // blue-500
-        '#06B6D4', // cyan-500
-        '#10B981', // emerald-500
-        '#F59E0B', // amber-500
-        '#EF4444', // red-500
-        // Add more colors here!
+        '#8B5CF6', '#3B82F6', '#06B6D4', '#10B981', '#F59E0B', '#EF4444',
     ],
-
-    // Grid colors
     gridColor: '#1E293B',
 };
 
@@ -94,17 +82,19 @@ const Background: React.FC = () => {
         particlesRef.current = [];
         for (let i = 0; i < CONFIG.particles.count; i++) {
             const lifespan = CONFIG.particles.lifespan.min +
-                Math.random() * (CONFIG.particles.lifespan.max - CONFIG.particles.lifespan.min); particlesRef.current.push({
-                    x: Math.random() * window.innerWidth,
-                    y: Math.random() * window.innerHeight,
-                    vx: (Math.random() - 0.5) * CONFIG.particles.speed,
-                    vy: (Math.random() - 0.5) * CONFIG.particles.speed,
-                    size: CONFIG.particles.minSize + Math.random() * (CONFIG.particles.maxSize - CONFIG.particles.minSize),
-                    opacity: CONFIG.particles.minOpacity, // Start all particles at minimum opacity
-                    color: CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)],
-                    life: lifespan,
-                    maxLife: lifespan,
-                });
+                Math.random() * (CONFIG.particles.lifespan.max - CONFIG.particles.lifespan.min);
+
+            particlesRef.current.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                vx: (Math.random() - 0.5) * CONFIG.particles.speed,
+                vy: (Math.random() - 0.5) * CONFIG.particles.speed,
+                size: CONFIG.particles.minSize + Math.random() * (CONFIG.particles.maxSize - CONFIG.particles.minSize),
+                opacity: CONFIG.particles.minOpacity, // Start all particles at minimum opacity
+                color: CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)],
+                life: lifespan,
+                maxLife: lifespan,
+            });
         }
     };    // Initialize geometric shapes
     const initShapes = () => {

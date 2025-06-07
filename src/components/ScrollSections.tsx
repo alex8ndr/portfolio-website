@@ -11,13 +11,11 @@ interface ScrollSectionsProps {
 const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) => {
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
-  // Handle skill hover with callback to parent
   const handleSkillHover = (skill: string | null) => {
     setHoveredSkill(skill);
     onSkillHover(skill);
   };
 
-  // Function to check if an experience uses a specific skill
   const experienceUsesSkill = (experience: typeof experiences[0], skillName: string) => {
     return experience.skills.some(skill =>
       skill.toLowerCase().includes(skillName.toLowerCase()) ||
@@ -25,26 +23,21 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
     );
   };
 
-  // Function to check if education covers a specific skill
   const educationUsesSkill = (skillName: string) => {
     return education.skills.some(skill =>
       skill.toLowerCase().includes(skillName.toLowerCase()) ||
       skillName.toLowerCase().includes(skill.toLowerCase())
     );
   };
-  // Calculate smooth animations based on scroll progress
-  const sectionsStartProgress = 0.2; // Start appearing earlier
-  const sectionsFullProgress = 0.6;  // Fully visible by this point
 
-  // Calculate opacity and transform based on scroll progress
+  const sectionsStartProgress = 0.2;
+  const sectionsFullProgress = 0.6;
   const sectionsProgress = Math.max(0, Math.min(1,
     (scrollProgress - sectionsStartProgress) / (sectionsFullProgress - sectionsStartProgress)
   ));
-
   const opacity = sectionsProgress;
-  const yTransform = (1 - sectionsProgress) * 50; // Smooth slide up from 50% to 0%
+  const yTransform = (1 - sectionsProgress) * 50;
 
-  // Early return if completely invisible
   if (sectionsProgress <= 0) return null;
 
   return (
@@ -57,21 +50,18 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
         transform: `translateY(${yTransform}%)`
       }}
       transition={{ duration: 0.1, ease: 'linear' }} // Smoother, more responsive transition
-    >
-      <div className="max-w-7xl mx-auto px-4 py-6 h-full flex flex-col">        {/* Skills Section - Improved Spacing */}
+    >      <div className="max-w-7xl mx-auto px-4 py-6 h-full flex flex-col">
         <section className="flex-shrink-0">
           <h2 className={`text-xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-3`}>
             Skills & Technologies
           </h2>
           <div className="grid grid-cols-3 gap-4">
             {Object.entries(skillCategories).map(([category, skillList]) => (
-              <div
-                key={category}
-                className="bg-slate-800/50 p-4 rounded-lg border border-gray-700/50"
-              >
+              <div key={category} className="bg-slate-800/50 p-4 rounded-lg border border-gray-700/50">
                 <h3 className="text-sm font-semibold mb-3 text-gray-200 text-center">
                   {category}
-                </h3>                <div className="grid grid-cols-4 gap-2">
+                </h3>
+                <div className="grid grid-cols-4 gap-2">
                   {skillList.slice(0, 8).map((skill) => {
                     const IconComponent = skill.icon;
                     const isHighlighted = hoveredSkill === skill.name;
@@ -84,12 +74,12 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                           : 'bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50'
                           }`}
                         whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }} onHoverStart={() => handleSkillHover(skill.name)}
+                        whileTap={{ scale: 0.95 }}
+                        onHoverStart={() => handleSkillHover(skill.name)}
                         onHoverEnd={() => handleSkillHover(null)}
                       >
                         <IconComponent
-                          className={`text-lg mb-1 transition-all duration-300 ${isHighlighted ? skill.color + ' drop-shadow-lg' : skill.color
-                            }`}
+                          className={`text-lg mb-1 transition-all duration-300 ${isHighlighted ? skill.color + ' drop-shadow-lg' : skill.color}`}
                         />
                         <span className="text-xs text-gray-200 text-center font-medium leading-tight">
                           {skill.name}
@@ -101,7 +91,7 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
               </div>
             ))}
           </div>
-        </section>        {/* Experience & Education - 75/25 Split */}
+        </section>{/* Experience & Education - 75/25 Split */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 mt-6 overflow-hidden">
 
           {/* Experience Section - Takes 3/4 of the width */}
