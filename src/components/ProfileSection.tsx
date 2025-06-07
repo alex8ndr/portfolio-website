@@ -4,11 +4,13 @@ interface ProfileSectionProps {
   scrollProgress: number;
 }
 
-const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {  // Calculate position based on scroll progress with faster movement
-  const fastProgress = Math.min(scrollProgress * 3, 1); // Speed up the movement significantly
-  const yOffset = fastProgress * -300; // Move up more dramatically
-  const scale = 1 - (fastProgress * 0.4); // Scale down more noticeably
-  const opacity = Math.max(0.3, 1 - (fastProgress * 0.7)); // Keep some visibility but fade more
+const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {  // Calculate position based on scroll progress - keep AT visible at top center when scrolled
+  const fastProgress = Math.min(scrollProgress * 2, 1);
+
+  // When scrolled, move to top center and make smaller but keep visible
+  const yOffset = fastProgress * -250; // Move up to top
+  const scale = 1 - (fastProgress * 0.6); // Scale down significantly but keep visible
+  const opacity = Math.max(0.8, 1 - (fastProgress * 0.2)); // Keep highly visible
 
   return (
     <motion.div
@@ -17,7 +19,7 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {  // Calcul
         y: yOffset,
         scale: scale,
         opacity: opacity,
-      }}      transition={{
+      }} transition={{
         type: "tween",
         ease: "easeOut",
         duration: 0.05, // Much faster response

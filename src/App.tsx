@@ -12,15 +12,15 @@ function App() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      // Create multiple "pages" worth of scroll, each viewport height
-      const totalScrollHeight = windowHeight * 4; // 4 sections total
+      // Simplified scroll calculation for single-page experience
+      const totalScrollHeight = windowHeight * 2; // Only need 2x viewport height
       const progress = Math.min(currentScrollY / totalScrollHeight, 1);
 
       setScrollProgress(progress);
     };
 
-    // Create a tall scrollable area
-    document.body.style.height = `${window.innerHeight * 5}px`; // 5x viewport height
+    // Create a scrollable area for transitions
+    document.body.style.height = `${window.innerHeight * 3}px`; // 3x viewport height
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -40,40 +40,16 @@ function App() {
 
       <Header />
 
-      {/* All content layers positioned absolutely over the same background */}
+      {/* Main content area */}
       <div className="absolute inset-0 pt-16">
-        {/* Hero Section - visible when scrollProgress < 0.25 */}
-        <div
-          className={`absolute inset-0 transition-opacity duration-500 ${scrollProgress < 0.5 ? 'opacity-100' : 'opacity-0'
-            }`}
-        >
+        {/* Hero Section - Projects and Profile */}
+        <div className="absolute inset-0">
           <ProfileSection scrollProgress={scrollProgress} />
           <ProjectNodes2D scrollProgress={scrollProgress} />
         </div>
 
-        {/* Skills Section - visible when scrollProgress 0.25-0.5 */}
-        <div
-          className={`absolute inset-0 transition-opacity duration-500 ${scrollProgress >= 0.25 && scrollProgress < 0.75 ? 'opacity-100' : 'opacity-0'
-            }`}
-        >
-          <ScrollSections section="skills" scrollProgress={scrollProgress} />
-        </div>
-
-        {/* Experience Section - visible when scrollProgress 0.5-0.75 */}
-        <div
-          className={`absolute inset-0 transition-opacity duration-500 ${scrollProgress >= 0.5 && scrollProgress < 1.0 ? 'opacity-100' : 'opacity-0'
-            }`}
-        >
-          <ScrollSections section="experience" scrollProgress={scrollProgress} />
-        </div>
-
-        {/* Education Section - visible when scrollProgress 0.75-1.0 */}
-        <div
-          className={`absolute inset-0 transition-opacity duration-500 ${scrollProgress >= 0.75 ? 'opacity-100' : 'opacity-0'
-            }`}
-        >
-          <ScrollSections section="education" scrollProgress={scrollProgress} />
-        </div>
+        {/* Scroll Sections - appear at bottom when scrolled */}
+        <ScrollSections scrollProgress={scrollProgress} />
       </div>
     </div>
   );

@@ -179,6 +179,7 @@ interface ProjectNode2DProps {
   onHover: (index: number | null) => void;
   containerBounds: { width: number; height: number };
   scrollProgress: number;
+  horizontalX: number;
 }
 
 const ProjectNode2D = ({
@@ -188,6 +189,7 @@ const ProjectNode2D = ({
   onHover,
   containerBounds,
   scrollProgress,
+  horizontalX,
 }: ProjectNode2DProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -238,20 +240,15 @@ const ProjectNode2D = ({
 
     const clampedCircularX = Math.max(minX, Math.min(maxX, circularX));
     const clampedCircularY = Math.max(minY, Math.min(maxY, circularY));    // Calculate horizontal line position (scrolled state)
-    // Distribute projects evenly across the full width of the screen
-    const totalProjects = projects.length;
-    const availableWidth = width - margins.sides * 2;
-    const spacing = availableWidth / (totalProjects + 1);
-    const startX = -(width / 2) + margins.sides + spacing;
-    const horizontalX = startX + (index * spacing);
+    // Use the preset horizontal position calculated by the parent component
     const horizontalY = -(height / 2) + margins.top + 40; // Higher up for better positioning
 
     // Use a faster, more responsive interpolation
     const fastProgress = Math.min(scrollProgress * 2, 1); // Speed up the transition
-    const easedProgress = fastProgress < 0.5 
-      ? 2 * fastProgress * fastProgress 
+    const easedProgress = fastProgress < 0.5
+      ? 2 * fastProgress * fastProgress
       : 1 - Math.pow(-2 * fastProgress + 2, 2) / 2; // Fast ease-in-out
-    
+
     const x = clampedCircularX + (horizontalX - clampedCircularX) * easedProgress;
     const y = clampedCircularY + (horizontalY - clampedCircularY) * easedProgress;
 
@@ -657,18 +654,85 @@ const ProjectNodes2D = ({ scrollProgress }: ProjectNodes2DProps) => {
     window.addEventListener('resize', updateBounds);
 
     return () => window.removeEventListener('resize', updateBounds);
-  }, []);
+  }, []);  // Calculate horizontal positions for all projects based on their circular X positions
+  const getProjectsWithHorizontalPositions = () => {
+    const { width } = containerBounds;
+    const { margins } = NODE_CONFIG;
+
+    // First, calculate where each project currently is in the circular layout
+    const projectsWithCircularX = projects.map((project, index) => {
+      const ring = NODE_CONFIG.rings[project.size as keyof typeof NODE_CONFIG.rings];
+      // Use the actual position from project data for better accuracy
+      const angleInDegrees = (project.position * 90) - 90;
+      const angleInRadians = (angleInDegrees * Math.PI) / 180;
+      const circularX = Math.cos(angleInRadians) * ring.radius;
+
+      // Clamp to screen bounds
+      const minX = -(width / 2) + margins.sides + 50;
+      const maxX = (width / 2) - margins.sides - 50;
+      const clampedX = Math.max(minX, Math.min(maxX, circularX));
+
+      return { project, originalIndex: index, circularX: clampedX };
+    });
+
+    // Sort by current circular X position (leftmost to rightmost)
+    const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);    // Create preset positions: distributed on left and right of center, avoiding center area
+    const totalProjects = projects.length;
+    const centerWidth = 240; // Reserved space for AT logo in center (increased)
+    const availableWidth = width - margins.sides * 2 - centerWidth;
+    const sideWidth = availableWidth / 2;
+
+    // Calculate maximum node size for spacing calculations
+    const maxNodeSize = Math.max(...Object.values(NODE_CONFIG.sizes)) * 0.7; // Account for scaling
+    const minSpacing = maxNodeSize + 20; // Minimum spacing between nodes
+
+    // Create evenly distributed positions on both sides
+    const positions: number[] = [];    // Left side positions (negative X)
+    const leftPositions = Math.floor(totalProjects / 2);
+    const leftSpacing = Math.max(minSpacing, sideWidth / (leftPositions + 1));
+    for (let i = 1; i <= leftPositions; i++) {
+      const pos = -(centerWidth / 2) - (i * leftSpacing);
+      // Ensure position doesn't go beyond screen bounds
+      if (pos >= -(width / 2) + margins.sides + maxNodeSize / 2) {
+        positions.push(pos);
+      }
+    }
+
+    // Right side positions (positive X)
+    const rightPositions = totalProjects - leftPositions;
+    const rightSpacing = Math.max(minSpacing, sideWidth / (rightPositions + 1));
+    for (let i = 1; i <= rightPositions; i++) {
+      const pos = (centerWidth / 2) + (i * rightSpacing);
+      // Ensure position doesn't go beyond screen bounds
+      if (pos <= (width / 2) - margins.sides - maxNodeSize / 2) {
+        positions.push(pos);
+      }
+    }
+
+    // Sort positions to ensure proper left-to-right ordering
+    positions.sort((a, b) => a - b);
+
+    // Assign the leftmost projects to leftmost positions, rightmost to rightmost
+    return sortedByPosition.map((item, sortedIndex) => ({
+      ...item.project,
+      originalIndex: item.originalIndex,
+      horizontalX: positions[Math.min(sortedIndex, positions.length - 1)]
+    }));
+  };
+
+  const projectsWithPositions = getProjectsWithHorizontalPositions();
 
   return (<div className="relative w-full h-full">
-    {projects.map((project, index) => (
+    {projectsWithPositions.map((project) => (
       <ProjectNode2D
         key={project.id}
         project={project}
-        index={index}
+        index={project.originalIndex}
         hoveredIndex={hoveredIndex}
         onHover={setHoveredIndex}
         containerBounds={containerBounds}
         scrollProgress={scrollProgress}
+        horizontalX={project.horizontalX}
       />
     ))}
   </div>
