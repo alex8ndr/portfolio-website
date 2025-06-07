@@ -178,6 +178,7 @@ interface ProjectNode2DProps {
   hoveredIndex: number | null;
   onHover: (index: number | null) => void;
   containerBounds: { width: number; height: number };
+  scrollProgress: number;
 }
 
 const ProjectNode2D = ({
@@ -186,6 +187,7 @@ const ProjectNode2D = ({
   hoveredIndex,
   onHover,
   containerBounds,
+  scrollProgress,
 }: ProjectNode2DProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -216,15 +218,17 @@ const ProjectNode2D = ({
 
     // Get the ring radius for this project's size
     const ringConfig = rings[project.size as keyof typeof rings];
-    const radius = ringConfig.radius;    // Convert position (0-4) to angle in radians
+    const radius = ringConfig.radius;
+
+    // Convert position (0-4) to angle in radians
     // 0 = top (270°), 1 = right (0°), 2 = bottom (90°), 3 = left (180°)
     // Each unit is 90 degrees, decimals allow fine-tuning
     const angleInDegrees = (project.position * 90) - 90; // Subtract 90 to make 0 = top
     const angleInRadians = (angleInDegrees * Math.PI) / 180;
 
-    // Calculate position
-    const x = Math.cos(angleInRadians) * radius;
-    const y = Math.sin(angleInRadians) * radius;
+    // Calculate circular position (hero state)
+    const circularX = Math.cos(angleInRadians) * radius;
+    const circularY = Math.sin(angleInRadians) * radius;
 
     // Apply bounds checking with margins to keep nodes on screen
     const maxX = (width / 2) - margins.sides;
@@ -232,15 +236,30 @@ const ProjectNode2D = ({
     const minX = -(width / 2) + margins.sides;
     const minY = -(height / 2) + margins.top;
 
-    const clampedX = Math.max(minX, Math.min(maxX, x));
-    const clampedY = Math.max(minY, Math.min(maxY, y));
+    const clampedCircularX = Math.max(minX, Math.min(maxX, circularX));
+    const clampedCircularY = Math.max(minY, Math.min(maxY, circularY));    // Calculate horizontal line position (scrolled state)
+    // Distribute projects evenly across the full width of the screen
+    const totalProjects = projects.length;
+    const availableWidth = width - margins.sides * 2;
+    const spacing = availableWidth / (totalProjects + 1);
+    const startX = -(width / 2) + margins.sides + spacing;
+    const horizontalX = startX + (index * spacing);
+    const horizontalY = -(height / 2) + margins.top + 40; // Higher up for better positioning
 
-    return { x: clampedX, y: clampedY };
+    // Use a faster, more responsive interpolation
+    const fastProgress = Math.min(scrollProgress * 2, 1); // Speed up the transition
+    const easedProgress = fastProgress < 0.5 
+      ? 2 * fastProgress * fastProgress 
+      : 1 - Math.pow(-2 * fastProgress + 2, 2) / 2; // Fast ease-in-out
+    
+    const x = clampedCircularX + (horizontalX - clampedCircularX) * easedProgress;
+    const y = clampedCircularY + (horizontalY - clampedCircularY) * easedProgress;
+
+    return { x, y };
   };
 
   const { x, y } = getPosition();
   const isExpanded = hoveredIndex === index;
-
   const getSize = () => {
     if (isExpanded) {
       // Return fixed width and let height be determined by CSS flexbox
@@ -248,7 +267,12 @@ const ProjectNode2D = ({
     }
 
     const { sizes } = NODE_CONFIG;
-    return sizes[project.size as keyof typeof sizes] || sizes.medium;
+    const baseSize = sizes[project.size as keyof typeof sizes] || sizes.medium;    // Scale down the nodes as they move to horizontal position based on scroll progress
+    const minScale = 0.7; // Less dramatic scaling
+    const fastProgress = Math.min(scrollProgress * 2, 1); // Speed up the scaling too
+    const scale = 1 - (fastProgress * (1 - minScale));
+
+    return baseSize * scale;
   };
   const getProjectIcon = () => {
     const { typography } = NODE_CONFIG;
@@ -610,7 +634,11 @@ const ProjectNode2D = ({
 };
 
 // Main container component
-const ProjectNodes2D = () => {
+interface ProjectNodes2DProps {
+  scrollProgress: number;
+}
+
+const ProjectNodes2D = ({ scrollProgress }: ProjectNodes2DProps) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [containerBounds, setContainerBounds] = useState({
     width: 1200,
@@ -631,19 +659,19 @@ const ProjectNodes2D = () => {
     return () => window.removeEventListener('resize', updateBounds);
   }, []);
 
-  return (
-    <div className="relative w-full h-full">
-      {projects.map((project, index) => (
-        <ProjectNode2D
-          key={project.id}
-          project={project}
-          index={index}
-          hoveredIndex={hoveredIndex}
-          onHover={setHoveredIndex}
-          containerBounds={containerBounds}
-        />
-      ))}
-    </div>
+  return (<div className="relative w-full h-full">
+    {projects.map((project, index) => (
+      <ProjectNode2D
+        key={project.id}
+        project={project}
+        index={index}
+        hoveredIndex={hoveredIndex}
+        onHover={setHoveredIndex}
+        containerBounds={containerBounds}
+        scrollProgress={scrollProgress}
+      />
+    ))}
+  </div>
   );
 };
 
