@@ -107,14 +107,22 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
                       ? 'bg-slate-800/70 border-purple-500/50 shadow-lg shadow-purple-500/20'
                       : 'bg-slate-800/50 border-gray-700'
                       }`}
-                    whileHover={{ scale: 1.01 }}
-                  >                    <div className="mb-2">
-                      <h3 className="text-sm font-semibold text-gray-200">
-                        {exp.role}
-                      </h3>
-                      <div className="flex justify-between items-center">
-                        <p className="text-purple-400 text-xs">{exp.company}</p>
-                        <p className="text-xs text-gray-400">{exp.period}</p>
+                    whileHover={{ scale: 1.01 }}                  >                    <div className="flex gap-3 mb-2">
+                      {exp.logo && (
+                        <img
+                          src={exp.logo}
+                          alt={`${exp.company} logo`}
+                          className="w-10 h-10 object-contain rounded flex-shrink-0"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-gray-200 mb-1">
+                          {exp.role}
+                        </h3>
+                        <div className="flex justify-between items-center">
+                          <p className="text-purple-400 text-xs">{exp.company}</p>
+                          <p className="text-xs text-gray-400">{exp.period}</p>
+                        </div>
                       </div>
                     </div>
                     <p className="text-gray-300 text-xs mb-3 flex-grow overflow-y-auto">{exp.description}</p>
@@ -163,18 +171,26 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
               whileHover={{ scale: 1.01 }}
             >              <div className="space-y-3 flex-1 flex flex-col overflow-y-auto">
                 <div className="flex-grow">
-                  <h3 className="text-sm font-semibold text-gray-200">
-                    {education.degree}
-                  </h3>
-                  <div className="flex justify-between items-center">
-                    <p className="text-purple-400 text-xs">{education.institution}</p>
-                    <p className="text-xs text-gray-400">{education.period}</p>
-                  </div>
-                  <div className="flex justify-between items-center mt-1">
-                    <p className="text-xs text-gray-400">GPA: {education.gpa}</p>
-                  </div>
-
-                  <div className="mt-3">
+                  <div className="flex gap-3 mb-2">
+                    {education.logo && (
+                      <img
+                        src={education.logo}
+                        alt={`${education.institution} logo`}
+                        className="w-10 h-10 object-contain rounded flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-gray-200 mb-1">
+                        {education.degree}
+                      </h3>                      <div className="flex justify-between items-center">
+                        <p className="text-purple-400 text-xs">{education.institution}</p>
+                        <p className="text-xs text-gray-400">{education.period}</p>
+                      </div>
+                      <div className="flex justify-end">
+                        <p className="text-xs text-gray-400">GPA: {education.gpa}</p>
+                      </div>
+                    </div>
+                  </div>                  <div className="-mt-3">
                     <h4 className="text-xs font-semibold text-gray-300 mb-2">Key Courses:</h4>
                     <div className="flex flex-wrap gap-1">
                       {education.courses.slice(0, 3).map((course, index) => (
