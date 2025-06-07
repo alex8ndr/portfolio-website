@@ -54,16 +54,26 @@ const NODE_CONFIG = {
     small: 82,
     medium: 100,
     large: 125,
-  },  // Simple circular ring configuration
+  },
+
+  // Circular ring configuration
   rings: {
     large: { radius: 250 },   // Outer ring for large projects
     medium: { radius: 400 },  // Middle ring for medium projects  
     small: { radius: 550 },   // Far ring for small projects
-  },  // Margins to keep nodes on screen
+  },
+  // Margins to keep nodes on screen - Made configurable for easy adjustment
   margins: {
-    top: 80, // Increased to account for header height
+    top: 64, // Match header height (pt-16 = 64px) for proper centering
     bottom: 80,
-    sides: 80,
+    sides: 60, // Distance from screen edges - ADJUST THIS to move nodes closer/further from center
+  },
+
+  // Horizontal positioning settings - ADJUST THESE for better node spacing
+  horizontal: {
+    centerWidth: 200, // Reserved space for AT logo in center - ADJUST THIS to change center space
+    minSpacing: 140,  // Minimum spacing between nodes - ADJUST THIS to prevent overlapping  
+    yOffset: 40,      // Align with ProfileSection: -280px total offset means this should be ~40px from top margin
   },
 
   // Expanded node configuration
@@ -226,11 +236,15 @@ const ProjectNode2D = ({
     // 0 = top (270°), 1 = right (0°), 2 = bottom (90°), 3 = left (180°)
     // Each unit is 90 degrees, decimals allow fine-tuning
     const angleInDegrees = (project.position * 90) - 90; // Subtract 90 to make 0 = top
-    const angleInRadians = (angleInDegrees * Math.PI) / 180;
-
-    // Calculate circular position (hero state)
+    const angleInRadians = (angleInDegrees * Math.PI) / 180;    // Calculate circular position (hero state) - properly centered below header
     const circularX = Math.cos(angleInRadians) * radius;
     const circularY = Math.sin(angleInRadians) * radius;
+
+    // Center the circular layout in the available space below the header
+    // Available height = total height - header height, so center point is offset down
+    const availableHeight = height - margins.top;
+    const centerYOffset = margins.top + (availableHeight / 2) - (height / 2);
+    const adjustedCircularY = circularY + centerYOffset;
 
     // Apply bounds checking with margins to keep nodes on screen
     const maxX = (width / 2) - margins.sides;
@@ -239,9 +253,9 @@ const ProjectNode2D = ({
     const minY = -(height / 2) + margins.top;
 
     const clampedCircularX = Math.max(minX, Math.min(maxX, circularX));
-    const clampedCircularY = Math.max(minY, Math.min(maxY, circularY));    // Calculate horizontal line position (scrolled state)
+    const clampedCircularY = Math.max(minY, Math.min(maxY, adjustedCircularY));// Calculate horizontal line position (scrolled state)
     // Use the preset horizontal position calculated by the parent component
-    const horizontalY = -(height / 2) + margins.top + 40; // Higher up for better positioning
+    const horizontalY = -(height / 2) + margins.top + NODE_CONFIG.horizontal.yOffset;
 
     // Use a faster, more responsive interpolation
     const fastProgress = Math.min(scrollProgress * 2, 1); // Speed up the transition
@@ -256,20 +270,17 @@ const ProjectNode2D = ({
   };
 
   const { x, y } = getPosition();
-  const isExpanded = hoveredIndex === index;
-  const getSize = () => {
+  const isExpanded = hoveredIndex === index; const getSize = () => {
     if (isExpanded) {
       // Return fixed width and let height be determined by CSS flexbox
       return NODE_CONFIG.expanded.width;
     }
 
     const { sizes } = NODE_CONFIG;
-    const baseSize = sizes[project.size as keyof typeof sizes] || sizes.medium;    // Scale down the nodes as they move to horizontal position based on scroll progress
-    const minScale = 0.7; // Less dramatic scaling
-    const fastProgress = Math.min(scrollProgress * 2, 1); // Speed up the scaling too
-    const scale = 1 - (fastProgress * (1 - minScale));
+    const baseSize = sizes[project.size as keyof typeof sizes] || sizes.medium;
 
-    return baseSize * scale;
+    // Keep nodes the same size - no scaling during scroll
+    return baseSize;
   };
   const getProjectIcon = () => {
     const { typography } = NODE_CONFIG;
@@ -678,34 +689,51 @@ const ProjectNodes2D = ({ scrollProgress }: ProjectNodes2DProps) => {
     // Sort by current circular X position (leftmost to rightmost)
     const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);    // Create preset positions: distributed on left and right of center, avoiding center area
     const totalProjects = projects.length;
-    const centerWidth = 240; // Reserved space for AT logo in center (increased)
+    const { centerWidth, minSpacing } = NODE_CONFIG.horizontal;
     const availableWidth = width - margins.sides * 2 - centerWidth;
     const sideWidth = availableWidth / 2;
 
-    // Calculate maximum node size for spacing calculations
-    const maxNodeSize = Math.max(...Object.values(NODE_CONFIG.sizes)) * 0.7; // Account for scaling
-    const minSpacing = maxNodeSize + 20; // Minimum spacing between nodes
+    // Calculate actual node size (no scaling anymore)
+    const maxNodeSize = Math.max(...Object.values(NODE_CONFIG.sizes));
 
     // Create evenly distributed positions on both sides
-    const positions: number[] = [];    // Left side positions (negative X)
+    const positions: number[] = [];
+
+    // Left side positions (negative X)
     const leftPositions = Math.floor(totalProjects / 2);
-    const leftSpacing = Math.max(minSpacing, sideWidth / (leftPositions + 1));
-    for (let i = 1; i <= leftPositions; i++) {
-      const pos = -(centerWidth / 2) - (i * leftSpacing);
-      // Ensure position doesn't go beyond screen bounds
-      if (pos >= -(width / 2) + margins.sides + maxNodeSize / 2) {
-        positions.push(pos);
+    if (leftPositions > 0) {
+      const effectiveLeftWidth = Math.min(sideWidth, leftPositions * minSpacing);
+      const leftSpacing = effectiveLeftWidth / leftPositions;
+      for (let i = 0; i < leftPositions; i++) {
+        const pos = -(centerWidth / 2) - ((i + 1) * leftSpacing);
+        // Ensure position doesn't go beyond screen bounds
+        const minBound = -(width / 2) + margins.sides + maxNodeSize / 2;
+        if (pos >= minBound) {
+          positions.push(pos);
+        } else {
+          // If we can't fit all nodes normally, compress them
+          const compressedSpacing = (sideWidth - maxNodeSize) / leftPositions;
+          positions.push(-(centerWidth / 2) - ((i + 1) * compressedSpacing));
+        }
       }
     }
 
     // Right side positions (positive X)
     const rightPositions = totalProjects - leftPositions;
-    const rightSpacing = Math.max(minSpacing, sideWidth / (rightPositions + 1));
-    for (let i = 1; i <= rightPositions; i++) {
-      const pos = (centerWidth / 2) + (i * rightSpacing);
-      // Ensure position doesn't go beyond screen bounds
-      if (pos <= (width / 2) - margins.sides - maxNodeSize / 2) {
-        positions.push(pos);
+    if (rightPositions > 0) {
+      const effectiveRightWidth = Math.min(sideWidth, rightPositions * minSpacing);
+      const rightSpacing = effectiveRightWidth / rightPositions;
+      for (let i = 0; i < rightPositions; i++) {
+        const pos = (centerWidth / 2) + ((i + 1) * rightSpacing);
+        // Ensure position doesn't go beyond screen bounds
+        const maxBound = (width / 2) - margins.sides - maxNodeSize / 2;
+        if (pos <= maxBound) {
+          positions.push(pos);
+        } else {
+          // If we can't fit all nodes normally, compress them
+          const compressedSpacing = (sideWidth - maxNodeSize) / rightPositions;
+          positions.push((centerWidth / 2) + ((i + 1) * compressedSpacing));
+        }
       }
     }
 
