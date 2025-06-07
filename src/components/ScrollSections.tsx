@@ -32,23 +32,31 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
       skillName.toLowerCase().includes(skill.toLowerCase())
     );
   };
+  // Calculate smooth animations based on scroll progress
+  const sectionsStartProgress = 0.2; // Start appearing earlier
+  const sectionsFullProgress = 0.6;  // Fully visible by this point
 
-  // Show sections based on scroll progress
-  const showSections = scrollProgress > 0.3;
+  // Calculate opacity and transform based on scroll progress
+  const sectionsProgress = Math.max(0, Math.min(1,
+    (scrollProgress - sectionsStartProgress) / (sectionsFullProgress - sectionsStartProgress)
+  ));
 
-  if (!showSections) return null; return (
+  const opacity = sectionsProgress;
+  const yTransform = (1 - sectionsProgress) * 50; // Smooth slide up from 50% to 0%
+
+  // Early return if completely invisible
+  if (sectionsProgress <= 0) return null;
+
+  return (
     <motion.div
       className="absolute inset-x-0 text-white overflow-hidden"
       style={{
         height: '65vh',
-        bottom: '5vh' // Move up to reduce gap with ProfileSection
+        bottom: '5vh',
+        opacity,
+        transform: `translateY(${yTransform}%)`
       }}
-      initial={{ y: '100%', opacity: 0 }}
-      animate={{
-        y: showSections ? '0%' : '100%',
-        opacity: showSections ? 1 : 0
-      }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      transition={{ duration: 0.1, ease: 'linear' }} // Smoother, more responsive transition
     >
       <div className="max-w-7xl mx-auto px-4 py-6 h-full flex flex-col">        {/* Skills Section - Improved Spacing */}
         <section className="flex-shrink-0">

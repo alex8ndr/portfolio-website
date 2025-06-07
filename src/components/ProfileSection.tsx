@@ -4,16 +4,23 @@ interface ProfileSectionProps {
   scrollProgress: number;
 }
 
-const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
-  // Calculate position based on scroll progress - align exactly with project nodes
+const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {  // Calculate position based on scroll progress - align exactly with project nodes
   const fastProgress = Math.min(scrollProgress * 2, 1);
 
-  // Match the exact same Y position as project nodes when scrolled
-  // This should align with: -(height / 2) + margins.top + NODE_CONFIG.horizontal.yOffset
-  // Which is approximately: -(400px) + 60px + 60px = -280px from center
-  const yOffset = fastProgress * -280; // Match project nodes positioning
-  const scale = 1 - (fastProgress * 0.2); // Consistent scaling
-  const opacity = Math.max(0.9, 1 - (fastProgress * 0.1)); // Stay very visible
+  // Adjust Y position to avoid header overlap (header is ~64px tall)
+  // Move up but not so far as to overlap with the fixed header
+  const yOffset = fastProgress * -250; // Reduced from -280 to -150 to avoid header overlap
+  const scale = 1 - (fastProgress * 0.3); // Slightly more scaling for better effect
+  const opacity = Math.max(0.8, 1 - (fastProgress * 0.0)); // Allow more fade
+
+  // Calculate smooth fade for subtitle and instruction text
+  const textFadeProgress = Math.max(0, Math.min(1, (scrollProgress - 0.1) / 0.3)); // Fade from 0.1 to 0.4
+  const textOpacity = 1 - textFadeProgress;
+  // Calculate responsive text size based on scroll progress
+  const nameScale = 1 - (fastProgress * 0.2); // Make name significantly smaller when scrolled
+
+  // Reduce margin between AT and name when scrolled
+  const avatarMargin = fastProgress > 0.5 ? 'mb-2' : 'mb-6';
 
   return (
     <motion.div
@@ -28,8 +35,7 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         ease: "easeOut",
         duration: 0.05, // Much faster response
       }}
-    >
-      <div className="mb-6">
+    >      <div className={`${avatarMargin}`}>
         <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1">
           <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
             <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
@@ -39,23 +45,29 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         </div>
       </div>
 
-      <h1 className="text-4xl md:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
+      <motion.h1
+        className="text-4xl md:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300"
+        animate={{ scale: nameScale }}
+        transition={{ type: "tween", ease: "easeOut", duration: 0.05 }}
+      >
         Alex Turianskyj
-      </h1>
+      </motion.h1>{/* Smoothly fade "Software Developer" text when scrolled */}
+      <motion.p
+        className="text-xl md:text-2xl text-gray-300 mb-3"
+        animate={{ opacity: textOpacity }}
+        transition={{ duration: 0.1, ease: "linear" }}
+      >
+        Software Developer
+      </motion.p>
 
-      {/* Hide "Software Developer" text when scrolled */}
-      {scrollProgress < 0.3 && (
-        <p className="text-xl md:text-2xl text-gray-300 mb-3">
-          Software Developer
-        </p>
-      )}
-
-      {/* Only show the hover instruction when not scrolled */}
-      {scrollProgress < 0.3 && (
-        <div className="text-sm text-gray-400 max-w-md mx-auto">
-          <p>Hover over the nodes to explore my projects</p>
-        </div>
-      )}
+      {/* Smoothly fade the hover instruction when scrolled */}
+      <motion.div
+        className="text-sm text-gray-400 max-w-md mx-auto"
+        animate={{ opacity: textOpacity }}
+        transition={{ duration: 0.1, ease: "linear" }}
+      >
+        <p>Hover over the nodes to explore my projects</p>
+      </motion.div>
     </motion.div>
   );
 };

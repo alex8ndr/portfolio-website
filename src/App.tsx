@@ -7,21 +7,19 @@ import ScrollSections from './components/ScrollSections';
 
 function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
-
-  useEffect(() => {
+  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null); useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      // Simplified scroll calculation for single-page experience
-      const totalScrollHeight = windowHeight * 2; // Only need 2x viewport height
-      const progress = Math.min(currentScrollY / totalScrollHeight, 1);
+      // Create a more reasonable scroll range that feels natural
+      const maxScrollDistance = windowHeight * 1.5; // Allow 1.5x viewport height of scrolling
+      const progress = Math.min(currentScrollY / maxScrollDistance, 1);
 
       setScrollProgress(progress);
     };
 
-    // Create a scrollable area for transitions
-    document.body.style.height = `${window.innerHeight * 3}px`; // 3x viewport height
+    // Set body height to allow the scroll range plus a little extra for comfortable scrolling
+    document.body.style.height = `${window.innerHeight * 2}px`; // 2x gives us the 1.5x range plus buffer
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
