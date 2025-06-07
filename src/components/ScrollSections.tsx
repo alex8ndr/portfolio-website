@@ -5,10 +5,17 @@ import { skillCategories, skills } from '../data/skills';
 
 interface ScrollSectionsProps {
   scrollProgress: number;
+  onSkillHover: (skill: string | null) => void;
 }
 
-const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
+const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) => {
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+
+  // Handle skill hover with callback to parent
+  const handleSkillHover = (skill: string | null) => {
+    setHoveredSkill(skill);
+    onSkillHover(skill);
+  };
 
   // Function to check if an experience uses a specific skill
   const experienceUsesSkill = (experience: typeof experiences[0], skillName: string) => {
@@ -69,9 +76,8 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
                           : 'bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50'
                           }`}
                         whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onHoverStart={() => setHoveredSkill(skill.name)}
-                        onHoverEnd={() => setHoveredSkill(null)}
+                        whileTap={{ scale: 0.95 }} onHoverStart={() => handleSkillHover(skill.name)}
+                        onHoverEnd={() => handleSkillHover(null)}
                       >
                         <IconComponent
                           className={`text-lg mb-1 transition-all duration-300 ${isHighlighted ? skill.color + ' drop-shadow-lg' : skill.color

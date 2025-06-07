@@ -7,6 +7,7 @@ import ScrollSections from './components/ScrollSections';
 
 function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,15 +42,14 @@ function App() {
       <Header />
 
       {/* Main content area */}
-      <div className="absolute inset-0 pt-16">
-        {/* Hero Section - Projects and Profile */}
+      <div className="absolute inset-0 pt-16">        {/* Hero Section - Projects and Profile */}
         <div className="absolute inset-0">
           <ProfileSection scrollProgress={scrollProgress} />
-          <ProjectNodes2D scrollProgress={scrollProgress} />
+          <ProjectNodes2D scrollProgress={scrollProgress} hoveredSkill={hoveredSkill} />
         </div>
 
         {/* Scroll Sections - appear at bottom when scrolled */}
-        <ScrollSections scrollProgress={scrollProgress} />
+        <ScrollSections scrollProgress={scrollProgress} onSkillHover={setHoveredSkill} />
       </div>
     </div>
   );

@@ -17,12 +17,12 @@ export interface ProjectContent {
 
 export interface ProjectLayout {
   id: string;
-  size: 'large' | 'medium' | 'small';
+  size: 'large' | 'medium' | 'small' | 'tiny';
   position: number; // Position 0-4 (0=top, 1=right, 2=bottom, 3=left, decimals for fine-tuning)
 }
 
 export interface Project extends ProjectContent {
-  size: 'large' | 'medium' | 'small';
+  size: 'large' | 'medium' | 'small' | 'tiny';
   position: number;
 }
 

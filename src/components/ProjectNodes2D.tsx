@@ -51,6 +51,7 @@ import { projects, type Project, type ProjectButton } from '../data/projects';
 const NODE_CONFIG = {
   // Node sizes for different project sizes
   sizes: {
+    tiny: 70,
     small: 82,
     medium: 100,
     large: 125,
@@ -67,13 +68,43 @@ const NODE_CONFIG = {
     top: 64, // Match header height (pt-16 = 64px) for proper centering
     bottom: 80,
     sides: 60, // Distance from screen edges - ADJUST THIS to move nodes closer/further from center
-  },
-
-  // Horizontal positioning settings - ADJUST THESE for better node spacing
+  },  // Horizontal positioning settings - ADJUST THESE for better node spacing
   horizontal: {
-    centerWidth: 200, // Reserved space for AT logo in center - ADJUST THIS to change center space
-    minSpacing: 140,  // Minimum spacing between nodes - ADJUST THIS to prevent overlapping  
+    centerWidth: 250, // Increased space for AT logo in center
+    minSpacing: 100,  // Reduced spacing between nodes for tighter grouping
     yOffset: 40,      // Align with ProfileSection: -280px total offset means this should be ~40px from top margin
+  },
+  // Post-scroll specific sizing - simplified fixed sizes
+  postScroll: {
+    sizes: {
+      tiny: 70,    // Outermost projects
+      small: 82,   // Next inner projects  
+      medium: 95,  // Closest to center (2 projects on each side)
+    },
+    // Typography for post-scroll state - smaller sizes to fit the compact nodes
+    typography: {
+      tiny: {
+        iconSize: 'text-xs',
+        titleSize: 'text-[0.65rem]/3',
+        techIconSize: 'text-xs',
+      },
+      small: {
+        iconSize: 'text-sm',
+        titleSize: 'text-xs/3',
+        techIconSize: 'text-xs',
+      },
+      medium: {
+        iconSize: 'text-base',
+        titleSize: 'text-xs/4',
+        techIconSize: 'text-sm',
+      },
+    },
+    // Content visibility by size
+    content: {
+      tiny: { showTechIcons: false },    // Logo and title only
+      small: { showTechIcons: true },    // Logo, title, tech icons
+      medium: { showTechIcons: true },   // Logo, title, tech icons
+    },
   },
 
   // Expanded node configuration
@@ -90,6 +121,21 @@ const NODE_CONFIG = {
 
   // Typography sizes for each node size
   typography: {
+    tiny: {
+      normal: {
+        iconSize: 'text-sm',
+        titleSize: 'text-xs/3',
+        techIconSize: 'text-xs',
+      },
+      expanded: {
+        iconSize: 'text-2xl',
+        titleSize: 'text-base/5',
+        descriptionSize: 'text-xs',
+        techIconSize: 'text-xs',
+        techTextSize: 'text-xs',
+        linkHintSize: 'text-xs',
+      },
+    },
     small: {
       normal: {
         iconSize: 'text-sm',
@@ -151,7 +197,6 @@ const NODE_CONFIG = {
       techItemPadding: 'px-1.5 py-0.5',
     },
   },
-
   // Animation settings
   animation: {
     initialDelay: 0.2,
@@ -161,6 +206,11 @@ const NODE_CONFIG = {
     expandedContentDelay: 0.1,
     floatDuration: 5,
     floatOffset: 10,
+  },  // Skill highlighting
+  skillHighlight: {
+    glowIntensity: '0 0 25px', // More focused glow for highlighted projects
+    glowOpacity: '100',        // Maximum glow opacity for strong effect  
+    animationDuration: 0.3,    // Transition duration for glow effect
   },
 };
 
@@ -190,6 +240,8 @@ interface ProjectNode2DProps {
   containerBounds: { width: number; height: number };
   scrollProgress: number;
   horizontalX: number;
+  hoveredSkill: string | null;
+  sortedIndex: number; // Add sorted index for better size calculation
 }
 
 const ProjectNode2D = ({
@@ -200,8 +252,34 @@ const ProjectNode2D = ({
   containerBounds,
   scrollProgress,
   horizontalX,
+  hoveredSkill,
+  sortedIndex,
 }: ProjectNode2DProps) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  // Helper function to check if project uses a specific skill (with exact matching for Java/JavaScript)
+  const projectUsesSkill = (skillName: string): boolean => {
+    if (!skillName) return false;
+
+    return project.techStack.some(tech => {
+      const techLower = tech.toLowerCase();
+      const skillLower = skillName.toLowerCase();
+
+      // Handle exact matches for Java/JavaScript to prevent confusion
+      if (skillLower === 'java' && techLower === 'java') return true;
+      if (skillLower === 'javascript' && techLower === 'javascript') return true;
+
+      // For other skills, use includes for broader matching
+      if (skillLower !== 'java' && skillLower !== 'javascript') {
+        return techLower.includes(skillLower) || skillLower.includes(techLower);
+      }
+
+      return false;
+    });
+  };
+
+  // Check if this project should be highlighted based on hovered skill
+  const isSkillHighlighted = hoveredSkill && projectUsesSkill(hoveredSkill);
 
   // Helper function to calculate optimal height for expanded projects
   const getExpandedHeight = (proj: Project) => {
@@ -276,33 +354,123 @@ const ProjectNode2D = ({
       return NODE_CONFIG.expanded.width;
     }
 
-    const { sizes } = NODE_CONFIG;
+    // For smooth transition between circular and horizontal layouts
+    const { sizes, postScroll } = NODE_CONFIG;
     const baseSize = sizes[project.size as keyof typeof sizes] || sizes.medium;
 
-    // Keep nodes the same size - no scaling during scroll
-    return baseSize;
+    // Determine target post-scroll size based on distance from center using sortedIndex
+    const totalProjects = 9; // Current number of projects
+    const centerPosition = Math.floor(totalProjects / 2);
+    const distanceFromCenter = Math.abs(sortedIndex - centerPosition);
+
+    let targetSize: number;
+    if (distanceFromCenter <= 1) {
+      targetSize = postScroll.sizes.medium; // 2 projects closest to center
+    } else if (distanceFromCenter <= 2) {
+      targetSize = postScroll.sizes.small;  // Next 2-4 projects  
+    } else {
+      targetSize = postScroll.sizes.tiny;   // Outermost projects
+    }
+
+    // Smooth interpolation based on scroll progress
+    // Start transition at 0.3, complete by 0.7 for smoother feel
+    const transitionStart = 0.3;
+    const transitionEnd = 0.7;
+
+    if (scrollProgress <= transitionStart) {
+      return baseSize; // Use original circular size
+    } else if (scrollProgress >= transitionEnd) {
+      return targetSize; // Use final post-scroll size
+    } else {
+      // Smooth interpolation between sizes
+      const progress = (scrollProgress - transitionStart) / (transitionEnd - transitionStart);
+      const smoothProgress = progress * progress * (3 - 2 * progress); // Smooth step function
+      return baseSize + (targetSize - baseSize) * smoothProgress;
+    }
+  };  // Helper function to determine if tech icons should be shown in post-scroll state
+  const shouldShowTechIcons = () => {
+    if (isExpanded || scrollProgress <= 0.7) { // Changed to match typography transition
+      return true; // Always show in expanded or circular layout
+    }
+
+    // For post-scroll state, check the size and content rules
+    const currentSize = getSize();
+    const { postScroll } = NODE_CONFIG;
+
+    if (currentSize === postScroll.sizes.tiny) {
+      return postScroll.content.tiny.showTechIcons;
+    } else if (currentSize === postScroll.sizes.small) {
+      return postScroll.content.small.showTechIcons;
+    } else {
+      return postScroll.content.medium.showTechIcons;
+    }
+  };// Helper function to get the appropriate typography for current state
+  const getTypography = () => {
+    if (isExpanded) {
+      // Use expanded typography
+      const nodeSize = project.size as keyof typeof NODE_CONFIG.typography;
+      return NODE_CONFIG.typography[nodeSize].expanded;
+    } else if (scrollProgress > 0.7) { // Changed to match size transition end
+      // Use post-scroll typography based on current size
+      const currentSize = getSize();
+      const { postScroll } = NODE_CONFIG;
+
+      if (currentSize === postScroll.sizes.tiny) {
+        return postScroll.typography.tiny;
+      } else if (currentSize === postScroll.sizes.small) {
+        return postScroll.typography.small;
+      } else {
+        return postScroll.typography.medium;
+      }
+    } else {
+      // Use normal typography
+      const nodeSize = project.size as keyof typeof NODE_CONFIG.typography;
+      return NODE_CONFIG.typography[nodeSize].normal;
+    }
   };
-  const getProjectIcon = () => {
-    const { typography } = NODE_CONFIG;
-    const nodeSize = project.size as keyof typeof typography;
-    const sizeTypography = typography[nodeSize];
-    const iconClass = isExpanded
-      ? sizeTypography.expanded.iconSize
-      : sizeTypography.normal.iconSize; const iconMap: { [key: string]: JSX.Element } = {
-        holoportation: <BsHeadsetVr className={`text-purple-400 ${iconClass}`} />,
-        'daily-ball': <FaGamepad className={`text-blue-400 ${iconClass}`} />,
-        vibe: <BsMusicNoteBeamed className={`text-cyan-400 ${iconClass}`} />,
-        unitrade: <BsBagFill className={`text-emerald-400 ${iconClass}`} />,
-        'choose-movie': (
-          <BsCameraReelsFill className={`text-amber-400 ${iconClass}`} />
-        ),
-        'personal-website': <FaCode className={`text-red-400 ${iconClass}`} />,
-        'event-horizons': <FaCalendarAlt className={`text-green-400 ${iconClass}`} />,
-        'impostorbot': <BsRobot className={`text-violet-400 ${iconClass}`} />,
-        'slightly-edited-songs': (
-          <FaYoutube className={`text-red-400 ${iconClass}`} />
-        ),
-      };
+
+  // Get expanded typography when needed
+  const getExpandedTypography = () => {
+    const nodeSize = project.size as keyof typeof NODE_CONFIG.typography;
+    return NODE_CONFIG.typography[nodeSize].expanded;
+  }; const getProjectIcon = () => {
+    let iconClass: string;
+
+    if (isExpanded) {
+      // Use expanded typography
+      const nodeSize = project.size as keyof typeof NODE_CONFIG.typography;
+      iconClass = NODE_CONFIG.typography[nodeSize].expanded.iconSize;
+    } else if (scrollProgress > 0.5) {
+      // Use post-scroll typography based on current size
+      const currentSize = getSize();
+      const { postScroll } = NODE_CONFIG;
+
+      if (currentSize === postScroll.sizes.tiny) {
+        iconClass = postScroll.typography.tiny.iconSize;
+      } else if (currentSize === postScroll.sizes.small) {
+        iconClass = postScroll.typography.small.iconSize;
+      } else {
+        iconClass = postScroll.typography.medium.iconSize;
+      }
+    } else {
+      // Use normal typography
+      const nodeSize = project.size as keyof typeof NODE_CONFIG.typography;
+      iconClass = NODE_CONFIG.typography[nodeSize].normal.iconSize;
+    } const iconMap: { [key: string]: JSX.Element } = {
+      holoportation: <BsHeadsetVr className={`text-purple-400 ${iconClass}`} />,
+      'daily-ball': <FaGamepad className={`text-blue-400 ${iconClass}`} />,
+      vibe: <BsMusicNoteBeamed className={`text-cyan-400 ${iconClass}`} />,
+      unitrade: <BsBagFill className={`text-emerald-400 ${iconClass}`} />,
+      'choose-movie': (
+        <BsCameraReelsFill className={`text-amber-400 ${iconClass}`} />
+      ),
+      'personal-website': <FaCode className={`text-red-400 ${iconClass}`} />,
+      'event-horizons': <FaCalendarAlt className={`text-green-400 ${iconClass}`} />,
+      'impostorbot': <BsRobot className={`text-violet-400 ${iconClass}`} />,
+      'slightly-edited-songs': (
+        <FaYoutube className={`text-red-400 ${iconClass}`} />
+      ),
+    };
     return (
       iconMap[project.id] || (
         <FaGamepad className={`text-gray-400 ${iconClass}`} />
@@ -357,9 +525,9 @@ const ProjectNode2D = ({
     setIsHovered(false);
     onHover(null);
   };
-  const { animation, typography, spacing } = NODE_CONFIG;
-  const nodeSize = project.size as keyof typeof typography;
-  const sizeTypography = typography[nodeSize];
+  const { animation, spacing } = NODE_CONFIG;
+  const currentTypography = getTypography();
+  const expandedTypography = getExpandedTypography();
   return (
     <motion.div
       className="absolute z-20"
@@ -427,8 +595,7 @@ const ProjectNode2D = ({
               duration: animation.sizeDuration,
               ease: 'easeOut',
             }}
-          />{' '}
-          {/* Glow that transitions with the node */}
+          />{' '}          {/* Glow that transitions with the node */}
           <motion.div
             className="absolute"
             style={{
@@ -440,12 +607,16 @@ const ProjectNode2D = ({
               width: isExpanded ? NODE_CONFIG.expanded.width : getSize(),
               height: isExpanded ? getExpandedHeight(project) : getSize(),
               borderRadius: isExpanded ? '22px' : '50%',
-              boxShadow: isExpanded
-                ? `0 0 40px ${project.color}80`
-                : `0 0 20px ${project.color}60`,
+              boxShadow: isSkillHighlighted
+                ? `${NODE_CONFIG.skillHighlight.glowIntensity} ${project.color}${NODE_CONFIG.skillHighlight.glowOpacity}`
+                : isExpanded
+                  ? `0 0 40px ${project.color}80`
+                  : `0 0 20px ${project.color}60`,
             }}
             transition={{
-              duration: animation.sizeDuration,
+              duration: isSkillHighlighted
+                ? NODE_CONFIG.skillHighlight.animationDuration
+                : NODE_CONFIG.animation.sizeDuration,
               ease: 'easeOut',
             }}
           />
@@ -496,25 +667,27 @@ const ProjectNode2D = ({
                   >
                     {getProjectIcon()}
                   </motion.div>{' '}
-                  {/* Project title */}
-                  <h3
-                    className={`text-white ${sizeTypography.normal.titleSize} font-medium ${spacing.normal.titleMarginBottom}`}
+                  {/* Project title */}                  <h3
+                    className={`text-white ${currentTypography.titleSize} font-medium ${spacing.normal.titleMarginBottom}`}
                   >
                     {project.name}
-                  </h3>
-                  {/* Quick tech icons */}                  <div
-                    className={`flex items-center justify-center ${spacing.normal.techIconGap}`}
-                  >                    {getTechIcons()
-                    .slice(0, 3)
-                    .map(({ tech, icon: IconComponent }, iconIndex) => (
-                      <IconComponent
-                        key={iconIndex}
-                        className={`${sizeTypography.normal.techIconSize} opacity-70`}
-                        style={{ color: project.color }}
-                        title={tech}
-                      />
-                    ))}
-                  </div>
+                  </h3>{/* Quick tech icons */}
+                  {shouldShowTechIcons() && (
+                    <div
+                      className={`flex items-center justify-center ${spacing.normal.techIconGap}`}
+                    >
+                      {getTechIcons()
+                        .slice(0, 3)
+                        .map(({ tech, icon: IconComponent }, iconIndex) => (
+                          <IconComponent
+                            key={iconIndex}
+                            className={`${currentTypography.techIconSize} opacity-70`}
+                            style={{ color: project.color }}
+                            title={tech}
+                          />
+                        ))}
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>{' '}
@@ -555,7 +728,7 @@ const ProjectNode2D = ({
 
                     {/* Project title - larger */}
                     <h3
-                      className={`text-white ${sizeTypography.expanded.titleSize} leading-none font-bold text-center ${spacing.expanded.titleMarginBottom}`}
+                      className={`text-white ${expandedTypography.titleSize} leading-none font-bold text-center ${spacing.expanded.titleMarginBottom}`}
                       style={{ lineHeight: '0.8' }}
                     >
                       {project.name}
@@ -566,7 +739,7 @@ const ProjectNode2D = ({
                     {' '}
                     {/* Description */}
                     <p
-                      className={`text-gray-300 ${sizeTypography.expanded.descriptionSize} text-center leading-relaxed px-2 overflow-hidden`}
+                      className={`text-gray-300 ${expandedTypography.descriptionSize} text-center leading-relaxed px-2 overflow-hidden`}
                       style={{
                         display: '-webkit-box',
                         WebkitLineClamp: 3,
@@ -582,14 +755,14 @@ const ProjectNode2D = ({
                         .map(({ tech, icon: IconComponent }, iconIndex) => (
                           <div
                             key={iconIndex}
-                            className={`flex items-center gap-1 bg-gray-800/50 rounded-md px-1.5 py-0.5 ${sizeTypography.expanded.techTextSize}`}
+                            className={`flex items-center gap-1 bg-gray-800/50 rounded-md px-1.5 py-0.5 ${expandedTypography.techTextSize}`}
                           >
                             <IconComponent
-                              className={`${sizeTypography.expanded.techIconSize}`}
+                              className={`${expandedTypography.techIconSize}`}
                               style={{ color: project.color }}
                             />
                             <span
-                              className={`text-gray-300 ${sizeTypography.expanded.techTextSize} whitespace-nowrap`}
+                              className={`text-gray-300 ${expandedTypography.techTextSize} whitespace-nowrap`}
                             >
                               {tech}
                             </span>
@@ -626,7 +799,7 @@ const ProjectNode2D = ({
                     </div>
                   ) : project.link ? (
                     <motion.div
-                      className={`${sizeTypography.expanded.linkHintSize} text-gray-400 opacity-80`}
+                      className={`${expandedTypography.linkHintSize} text-gray-400 opacity-80`}
                     >
                       Click to visit →
                     </motion.div>
@@ -644,9 +817,10 @@ const ProjectNode2D = ({
 // Main container component
 interface ProjectNodes2DProps {
   scrollProgress: number;
+  hoveredSkill: string | null;
 }
 
-const ProjectNodes2D = ({ scrollProgress }: ProjectNodes2DProps) => {
+const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [containerBounds, setContainerBounds] = useState({
     width: 1200,
@@ -684,67 +858,66 @@ const ProjectNodes2D = ({ scrollProgress }: ProjectNodes2DProps) => {
       const clampedX = Math.max(minX, Math.min(maxX, circularX));
 
       return { project, originalIndex: index, circularX: clampedX };
-    });
+    });    // Sort by current circular X position (leftmost to rightmost)
+    const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);    // Calculate positions accounting for actual node sizes
+    const desiredGap = 20; // Fixed gap between node edges
 
-    // Sort by current circular X position (leftmost to rightmost)
-    const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);    // Create preset positions: distributed on left and right of center, avoiding center area
+    // First, we need to determine the final sizes of all projects
+    const projectSizes = sortedByPosition.map((item, sortedIndex) => {
+      const totalProjects = projects.length;
+      const centerPosition = Math.floor(totalProjects / 2);
+      const distanceFromCenter = Math.abs(sortedIndex - centerPosition);
+
+      let targetSize: number;
+      if (distanceFromCenter <= 1) {
+        targetSize = NODE_CONFIG.postScroll.sizes.medium;
+      } else if (distanceFromCenter <= 2) {
+        targetSize = NODE_CONFIG.postScroll.sizes.small;
+      } else {
+        targetSize = NODE_CONFIG.postScroll.sizes.tiny;
+      }
+      return { ...item, targetSize, sortedIndex };
+    }); let positions: number[] = [];
+
+    // Split projects into left and right sides of center
     const totalProjects = projects.length;
-    const { centerWidth, minSpacing } = NODE_CONFIG.horizontal;
-    const availableWidth = width - margins.sides * 2 - centerWidth;
-    const sideWidth = availableWidth / 2;
+    const { centerWidth } = NODE_CONFIG.horizontal;
+    const leftProjects = Math.floor(totalProjects / 2);
+    const rightProjects = totalProjects - leftProjects;
 
-    // Calculate actual node size (no scaling anymore)
-    const maxNodeSize = Math.max(...Object.values(NODE_CONFIG.sizes));
+    // Calculate left side positions (working outward from center)
+    if (leftProjects > 0) {
+      const leftProjectSizes = projectSizes.slice(0, leftProjects);
+      let currentX = -(centerWidth / 2); // Start at left edge of center area
 
-    // Create evenly distributed positions on both sides
-    const positions: number[] = [];
-
-    // Left side positions (negative X)
-    const leftPositions = Math.floor(totalProjects / 2);
-    if (leftPositions > 0) {
-      const effectiveLeftWidth = Math.min(sideWidth, leftPositions * minSpacing);
-      const leftSpacing = effectiveLeftWidth / leftPositions;
-      for (let i = 0; i < leftPositions; i++) {
-        const pos = -(centerWidth / 2) - ((i + 1) * leftSpacing);
-        // Ensure position doesn't go beyond screen bounds
-        const minBound = -(width / 2) + margins.sides + maxNodeSize / 2;
-        if (pos >= minBound) {
-          positions.push(pos);
-        } else {
-          // If we can't fit all nodes normally, compress them
-          const compressedSpacing = (sideWidth - maxNodeSize) / leftPositions;
-          positions.push(-(centerWidth / 2) - ((i + 1) * compressedSpacing));
-        }
+      // Work backwards through left projects to place them correctly
+      for (let i = leftProjectSizes.length - 1; i >= 0; i--) {
+        const nodeSize = leftProjectSizes[i].targetSize;
+        currentX -= (nodeSize / 2); // Move by half the node size
+        if (i < leftProjectSizes.length - 1) currentX -= desiredGap; // Add gap
+        positions.unshift(currentX); // Add to beginning of array
+        currentX -= (nodeSize / 2); // Move by other half of node size
       }
     }
 
-    // Right side positions (positive X)
-    const rightPositions = totalProjects - leftPositions;
-    if (rightPositions > 0) {
-      const effectiveRightWidth = Math.min(sideWidth, rightPositions * minSpacing);
-      const rightSpacing = effectiveRightWidth / rightPositions;
-      for (let i = 0; i < rightPositions; i++) {
-        const pos = (centerWidth / 2) + ((i + 1) * rightSpacing);
-        // Ensure position doesn't go beyond screen bounds
-        const maxBound = (width / 2) - margins.sides - maxNodeSize / 2;
-        if (pos <= maxBound) {
-          positions.push(pos);
-        } else {
-          // If we can't fit all nodes normally, compress them
-          const compressedSpacing = (sideWidth - maxNodeSize) / rightPositions;
-          positions.push((centerWidth / 2) + ((i + 1) * compressedSpacing));
-        }
+    // Calculate right side positions (working outward from center)  
+    if (rightProjects > 0) {
+      const rightProjectSizes = projectSizes.slice(leftProjects);
+      let currentX = (centerWidth / 2); // Start at right edge of center area
+
+      for (let i = 0; i < rightProjectSizes.length; i++) {
+        const nodeSize = rightProjectSizes[i].targetSize;
+        currentX += (nodeSize / 2); // Move by half the node size
+        if (i > 0) currentX += desiredGap; // Add gap
+        positions.push(currentX);
+        currentX += (nodeSize / 2); // Move by other half of node size
       }
-    }
-
-    // Sort positions to ensure proper left-to-right ordering
-    positions.sort((a, b) => a - b);
-
-    // Assign the leftmost projects to leftmost positions, rightmost to rightmost
+    }// Assign positions to projects in their sorted order
     return sortedByPosition.map((item, sortedIndex) => ({
       ...item.project,
       originalIndex: item.originalIndex,
-      horizontalX: positions[Math.min(sortedIndex, positions.length - 1)]
+      horizontalX: positions[sortedIndex] || 0,
+      sortedIndex: sortedIndex // Add sorted index for size calculation
     }));
   };
 
@@ -757,10 +930,11 @@ const ProjectNodes2D = ({ scrollProgress }: ProjectNodes2DProps) => {
         project={project}
         index={project.originalIndex}
         hoveredIndex={hoveredIndex}
-        onHover={setHoveredIndex}
-        containerBounds={containerBounds}
+        onHover={setHoveredIndex} containerBounds={containerBounds}
         scrollProgress={scrollProgress}
         horizontalX={project.horizontalX}
+        hoveredSkill={hoveredSkill}
+        sortedIndex={project.sortedIndex}
       />
     ))}
   </div>
