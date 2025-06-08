@@ -28,20 +28,28 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         opacity: opacity,
       }}
       transition={{ type: "tween", ease: "easeOut", duration: 0.05 }}
-    ><div className={`${avatarMargin}`}>
-        <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1">
-          <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
-            <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-              AT
-            </span>
-          </div>
-        </div>
+    >      <div className={`${avatarMargin}`}>        <motion.div
+      className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1"
+      animate={{
+        opacity: scrollProgress > 0.4 ? 0 : 1,
+        scale: scrollProgress > 0.4 ? 0.3 : 1
+      }}
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
+    >
+      <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
+        <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+          AT
+        </span>
       </div>
-
-      <motion.h1
+    </motion.div>
+      </div>      <motion.h1
         className="text-4xl md:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300"
-        animate={{ scale: nameScale }}
-        transition={{ type: "tween", ease: "easeOut", duration: 0.05 }}
+        animate={{
+          scale: nameScale,
+          opacity: scrollProgress > 0.4 ? 0 : 1,
+          y: scrollProgress > 0.4 ? -20 : 0
+        }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
       >
         Alex Turianskyj
       </motion.h1>

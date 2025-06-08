@@ -14,7 +14,7 @@ function App() {
   // Check if device is mobile
   useEffect(() => {
     const checkMobile = () => {
-      const isMobileDevice = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isMobileDevice = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
       setIsMobile(isMobileDevice);
     };
 
@@ -57,7 +57,7 @@ function App() {
         <Background />
       </div>
 
-      <Header />
+      <Header scrollProgress={scrollProgress} />
 
       {/* Main content area */}
       <div className="absolute inset-0 pt-16">

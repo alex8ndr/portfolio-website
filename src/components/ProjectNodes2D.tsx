@@ -21,11 +21,13 @@ const NODE_CONFIG = {
     sides: 60,
   },
   horizontal: {
-    centerWidth: 250,
-    minSpacing: 100,
-    nodeGap: 0,
+    centerWidth: 200,
+    minSpacing: 0,
+    maxSpacing: 25,
+    nodeGap: 60,
     yOffset: 40,
-  }, scroll: {
+  },
+  scroll: {
     minScale: 0.8,
     transitionStart: 0.1,
     transitionEnd: 0.6,
@@ -161,16 +163,16 @@ const ProjectNode2D = ({
     const minY = -(height / 2) + scaledMargins.top;
 
     const clampedCircularX = Math.max(minX, Math.min(maxX, circularX));
-    const clampedCircularY = Math.max(minY, Math.min(maxY, adjustedCircularY));
+    const clampedCircularY = Math.max(minY, Math.min(maxY, adjustedCircularY)); const horizontalY = -(height / 2) + scaledMargins.top + NODE_CONFIG.horizontal.yOffset;    // Animate between circular and horizontal positions
+    const animationProgress = Math.min(Math.max(scrollProgress * 1.5, 0), 1);
+    const easedProgress = animationProgress < 0.5
+      ? 2 * animationProgress * animationProgress
+      : 1 - Math.pow(-2 * animationProgress + 2, 2) / 2;    // Interpolate between circular and horizontal positions with bounds checking
+    const deltaX = horizontalX - clampedCircularX;
+    const deltaY = horizontalY - clampedCircularY;
 
-    const horizontalY = -(height / 2) + scaledMargins.top + NODE_CONFIG.horizontal.yOffset;
-    const fastProgress = Math.min(scrollProgress * 2, 1);
-    const easedProgress = fastProgress < 0.5
-      ? 2 * fastProgress * fastProgress
-      : 1 - Math.pow(-2 * fastProgress + 2, 2) / 2;
-
-    const x = clampedCircularX + (horizontalX - clampedCircularX) * easedProgress;
-    const y = clampedCircularY + (horizontalY - clampedCircularY) * easedProgress;
+    const x = clampedCircularX + (deltaX * easedProgress);
+    const y = clampedCircularY + (deltaY * easedProgress);
 
     return { x, y };
   };
@@ -504,7 +506,8 @@ interface ProjectNodes2DProps {
 }
 
 const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null); const [containerBounds, setContainerBounds] = useState({ width: 1200, height: 800 });
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [containerBounds, setContainerBounds] = useState({ width: 1200, height: 800 });
 
   useEffect(() => {
     const updateBounds = () => {
@@ -515,16 +518,15 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
         width: baseWidth,
         height: baseHeight
       });
-    };
-
-    updateBounds();
+    }; updateBounds();
     window.addEventListener('resize', updateBounds);
     return () => window.removeEventListener('resize', updateBounds);
   }, []);
+
   // Calculate horizontal positions for all projects based on their circular X positions
   const getProjectsWithHorizontalPositions = () => {
     const { width } = containerBounds;
-    const { margins } = NODE_CONFIG;
+    const { margins, scroll } = NODE_CONFIG;
     const scaledMargins = {
       top: margins.top,
       bottom: margins.bottom,
@@ -543,52 +545,73 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
       const clampedX = Math.max(minX, Math.min(maxX, circularX));
 
       return { project, originalIndex: index, circularX: clampedX };
-    });    // Sort by current circular X position (leftmost to rightmost)
-    const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);
-    const { nodeGap } = NODE_CONFIG.horizontal;
-    const desiredGap = nodeGap;
-
-    // Calculate positions accounting for actual node sizes
-    const projectSizes = sortedByPosition.map((item, sortedIndex) => {
-      const { sizes } = NODE_CONFIG;
-      const targetSize = sizes[item.project.size as keyof typeof sizes] || sizes.medium;
-      return { ...item, targetSize, sortedIndex };
     });
 
-    let positions: number[] = [];
-    const totalProjects = projects.length;
-    const { centerWidth } = NODE_CONFIG.horizontal;
-    const scaledCenterWidth = centerWidth;
+    // Sort by current circular X position (leftmost to rightmost)
+    const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);
 
-    // Split projects into left and right sides of center
-    const leftProjects = Math.floor(totalProjects / 2);
-    const rightProjects = totalProjects - leftProjects;
+    // Calculate post-scroll node sizes
+    const projectSizes = sortedByPosition.map((item, sortedIndex) => {
+      const { sizes } = NODE_CONFIG;
+      const baseSize = sizes[item.project.size as keyof typeof sizes] || sizes.medium;
 
-    // Calculate left side positions (working outward from center)
-    if (leftProjects > 0) {
-      const leftProjectSizes = projectSizes.slice(0, leftProjects);
-      let currentX = -(scaledCenterWidth / 2);
+      // Apply scroll scaling
+      const { transitionStart, transitionEnd, minScale } = scroll;
+      let scaleFactor = 1;
 
-      for (let i = leftProjectSizes.length - 1; i >= 0; i--) {
-        const nodeSize = leftProjectSizes[i].targetSize;
-        currentX -= (nodeSize / 2);
-        positions.unshift(currentX);
-        currentX -= (nodeSize / 2);
-        if (i > 0) currentX -= desiredGap;
+      if (scrollProgress > transitionStart) {
+        if (scrollProgress >= transitionEnd) {
+          scaleFactor = minScale;
+        } else {
+          const progress = (scrollProgress - transitionStart) / (transitionEnd - transitionStart);
+          const smoothProgress = progress * progress * (3 - 2 * progress);
+          scaleFactor = 1 - (1 - minScale) * smoothProgress;
+        }
       }
+
+      const targetSize = baseSize * scaleFactor;
+      return { ...item, targetSize, sortedIndex };
+    });    // Calculate available width for nodes
+    const padding = 100; // Minimum padding on each side
+    let availableWidth = width - (scaledMargins.sides * 2) - (padding * 2);
+
+    // Calculate total node width
+    const totalNodeWidth = projectSizes.reduce((sum, item) => sum + item.targetSize, 0);
+
+    // Calculate spacing between nodes
+    const totalProjects = projects.length;
+    const gaps = totalProjects - 1;
+    const { nodeGap } = NODE_CONFIG.horizontal;
+    const preferredGap = nodeGap || 60; // Use a reasonable default gap
+
+    // Check if we can use the preferred gap
+    const totalWidthWithPreferredGap = totalNodeWidth + (gaps * preferredGap);
+
+    let dynamicGap: number;
+    if (totalWidthWithPreferredGap <= availableWidth) {
+      // We have enough space, use preferred gap and distribute remaining space evenly
+      const remainingWidth = availableWidth - totalWidthWithPreferredGap;
+      dynamicGap = preferredGap + (gaps > 0 ? remainingWidth / gaps : 0);
+    } else {
+      // Not enough space, calculate minimum gap that fits
+      const remainingWidth = availableWidth - totalNodeWidth;
+      dynamicGap = gaps > 0 ? Math.max(10, remainingWidth / gaps) : 0;
     }
+    dynamicGap = Math.max(dynamicGap, NODE_CONFIG.horizontal.minSpacing);
+    dynamicGap = Math.min(dynamicGap, NODE_CONFIG.horizontal.maxSpacing);    // Calculate positions - always use centered layout for consistency
+    let positions: number[] = [];
 
-    // Calculate right side positions (working outward from center)
-    if (rightProjects > 0) {
-      const rightProjectSizes = projectSizes.slice(leftProjects);
-      let currentX = (scaledCenterWidth / 2);
+    // Always center the nodes, no central gap logic
+    const totalWidth = totalNodeWidth + (gaps * dynamicGap);
+    let currentX = -(totalWidth / 2) + (projectSizes[0]?.targetSize / 2 || 0);
 
-      for (let i = 0; i < rightProjectSizes.length; i++) {
-        const nodeSize = rightProjectSizes[i].targetSize;
-        currentX += (nodeSize / 2);
-        positions.push(currentX);
-        currentX += (nodeSize / 2);
-        if (i < rightProjectSizes.length - 1) currentX += desiredGap;
+    for (let i = 0; i < projectSizes.length; i++) {
+      positions.push(currentX);
+
+      if (i < projectSizes.length - 1) {
+        const currentNodeSize = projectSizes[i].targetSize;
+        const nextNodeSize = projectSizes[i + 1].targetSize;
+        currentX += (currentNodeSize / 2) + dynamicGap + (nextNodeSize / 2);
       }
     }
 
