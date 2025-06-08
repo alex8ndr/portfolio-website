@@ -118,12 +118,10 @@ const Header = ({ scrollProgress }: HeaderProps) => {
                   </motion.a>
                 );
               })}
-            </div>
-
-            {/* Download Resume Button */}
+            </div>            {/* Download Resume Button */}
             <motion.button
               onClick={handleResumeDownload}
-              className="relative px-6 py-2 bg-transparent rounded-full font-medium text-white transition-all duration-300"
+              className="relative px-6 py-1.5 bg-transparent rounded-lg font-medium text-white transition-all duration-300"
               style={{
                 border: '3px solid transparent',
                 backgroundImage: 'linear-gradient(#0f172a, #0f172a), linear-gradient(to right, #a855f7, #3b82f6)',
@@ -135,8 +133,9 @@ const Header = ({ scrollProgress }: HeaderProps) => {
                 scale: 1.05,
                 boxShadow: '0 0 20px #a855f780'
               }}
-              whileTap={{ scale: 0.95 }}
-            >            Download Resume
+              whileTap={{ scale: 0.95 }}            >
+              <span className="hidden lg:inline">Download Resume</span>
+              <span className="lg:hidden">Resume</span>
             </motion.button>
           </div>
         </div>
