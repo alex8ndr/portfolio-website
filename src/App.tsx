@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Background from './components/Background';
 import Header from './components/Header';
+import MobileLayout from './components/MobileLayout';
 import ProfileSection from './components/ProfileSection';
 import ProjectNodes2D from './components/ProjectNodes2D';
 import ScrollSections from './components/ScrollSections';
@@ -8,8 +9,25 @@ import ScrollSections from './components/ScrollSections';
 function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Check if device is mobile
   useEffect(() => {
+    const checkMobile = () => {
+      const isMobileDevice = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      setIsMobile(isMobileDevice);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Desktop scroll handling
+  useEffect(() => {
+    // Only setup scroll handling for desktop
+    if (isMobile) return;
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -26,7 +44,13 @@ function App() {
       window.removeEventListener('scroll', handleScroll);
       document.body.style.height = 'auto';
     };
-  }, []);
+  }, [isMobile]);
+
+  // If mobile, render mobile layout
+  if (isMobile) {
+    return <MobileLayout />;
+  }
+
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
       <div className="absolute inset-0 z-0">

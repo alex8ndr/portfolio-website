@@ -1,48 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { BiCode } from 'react-icons/bi';
-import {
-  BsBagFill,
-  BsCameraReelsFill,
-  BsHeadsetVr,
-  BsMusicNoteBeamed,
-  BsRobot,
-} from 'react-icons/bs';
-import { DiDotnet } from 'react-icons/di';
-import {
-  FaCalendarAlt,
-  FaCode,
-  FaExternalLinkAlt,
-  FaGamepad,
-  FaGithub,
-  FaGooglePlay,
-  FaJava,
-  FaYoutube,
-} from 'react-icons/fa';
-import {
-  SiCplusplus,
-  SiCss3,
-  SiDevpost,
-  SiDjango,
-  SiHtml5,
-  SiJavascript,
-  SiNodedotjs,
-  SiNumpy,
-  SiOpencv,
-  SiPandas,
-  SiPostgresql,
-  SiPython,
-  SiReact,
-  SiScipy,
-  SiSharp,
-  SiSpring,
-  SiStreamlit,
-  SiTailwindcss,
-  SiTypescript,
-  SiUnity,
-  SiVite
-} from 'react-icons/si';
-import { projects, type Project, type ProjectButton } from '../data/projects';
+import { projects, type Project } from '../data/projects';
+import { getButtonIcon, getProjectIcon, getTechIcons } from '../utils/iconMaps';
 
 const NODE_CONFIG = {
   sizes: {
@@ -66,8 +25,7 @@ const NODE_CONFIG = {
     minSpacing: 100,
     nodeGap: 0,
     yOffset: 40,
-  },
-  scroll: {
+  }, scroll: {
     minScale: 0.8,
     transitionStart: 0.1,
     transitionEnd: 0.6,
@@ -81,7 +39,8 @@ const NODE_CONFIG = {
     heightPerButton: 35,
     maxHeight: 350,
     padding: 20,
-  }, typography: {
+  },
+  typography: {
     expanded: {
       iconSize: 'text-2xl',
       titleSize: 'text-base/5',
@@ -124,16 +83,6 @@ const NODE_CONFIG = {
     glowOpacity: '100',
     animationDuration: 0.3,
   },
-};
-
-const getButtonIcon = (type: ProjectButton['type']) => {
-  const icons: Record<string, JSX.Element> = {
-    github: <FaGithub />,
-    devpost: <SiDevpost />,
-    demo: <FaExternalLinkAlt />,
-    googleplay: <FaGooglePlay />,
-  };
-  return icons[type] || <FaExternalLinkAlt />;
 };
 
 interface ProjectNode2DProps {
@@ -181,8 +130,7 @@ const ProjectNode2D = ({
     const { expanded } = NODE_CONFIG;
     let height = expanded.baseHeight;
     const descriptionLines = Math.ceil(proj.description.length / expanded.charsPerLine);
-    height += descriptionLines * expanded.heightPerLine;
-    const techItemsShown = Math.min(proj.techStack.length, 5);
+    height += descriptionLines * expanded.heightPerLine; const techItemsShown = Math.min(proj.techStack.length, 5);
     height += expanded.heightPerTechItem * Math.min(Math.ceil(techItemsShown / 2), 2);
     if (proj.buttons && proj.buttons.length > 0) {
       height += expanded.heightPerButton;
@@ -197,22 +145,25 @@ const ProjectNode2D = ({
     const angleInDegrees = (project.position * 90) - 90;
     const angleInRadians = (angleInDegrees * Math.PI) / 180;
 
-    const circularX = Math.cos(angleInRadians) * radius;
-    const circularY = Math.sin(angleInRadians) * radius;
+    const circularX = Math.cos(angleInRadians) * radius; const circularY = Math.sin(angleInRadians) * radius;
 
-    const availableHeight = height - margins.top;
-    const centerYOffset = margins.top + (availableHeight / 2) - (height / 2);
+    const scaledMargins = {
+      top: margins.top,
+      bottom: margins.bottom,
+      sides: margins.sides,
+    }; const availableHeight = height - scaledMargins.top;
+    const centerYOffset = scaledMargins.top + (availableHeight / 2) - (height / 2);
     const adjustedCircularY = circularY + centerYOffset;
 
-    const maxX = (width / 2) - margins.sides;
-    const maxY = (height / 2) - margins.bottom;
-    const minX = -(width / 2) + margins.sides;
-    const minY = -(height / 2) + margins.top;
+    const maxX = (width / 2) - scaledMargins.sides;
+    const maxY = (height / 2) - scaledMargins.bottom;
+    const minX = -(width / 2) + scaledMargins.sides;
+    const minY = -(height / 2) + scaledMargins.top;
 
     const clampedCircularX = Math.max(minX, Math.min(maxX, circularX));
     const clampedCircularY = Math.max(minY, Math.min(maxY, adjustedCircularY));
 
-    const horizontalY = -(height / 2) + margins.top + NODE_CONFIG.horizontal.yOffset;
+    const horizontalY = -(height / 2) + scaledMargins.top + NODE_CONFIG.horizontal.yOffset;
     const fastProgress = Math.min(scrollProgress * 2, 1);
     const easedProgress = fastProgress < 0.5
       ? 2 * fastProgress * fastProgress
@@ -224,9 +175,7 @@ const ProjectNode2D = ({
     return { x, y };
   };
   const { x, y } = getPosition();
-  const isExpanded = hoveredIndex === index;
-
-  const getSize = () => {
+  const isExpanded = hoveredIndex === index; const getSize = () => {
     if (isExpanded) return NODE_CONFIG.expanded.width;
     const { sizes, scroll } = NODE_CONFIG;
     const baseSize = sizes[project.size as keyof typeof sizes] || sizes.medium;
@@ -240,7 +189,6 @@ const ProjectNode2D = ({
     const scaleFactor = 1 - (1 - minScale) * smoothProgress;
     return baseSize * scaleFactor;
   };
-
   const getOriginalSize = () => {
     const { sizes } = NODE_CONFIG;
     return sizes[project.size as keyof typeof sizes] || sizes.medium;
@@ -272,58 +220,7 @@ const ProjectNode2D = ({
     if (isExpanded) return NODE_CONFIG.typography.expanded;
     const nodeSize = project.size as 'tiny' | 'small' | 'medium' | 'large';
     return (NODE_CONFIG.typography[nodeSize] as { normal: any }).normal;
-  };
-
-  const getExpandedTypography = () => NODE_CONFIG.typography.expanded; const getProjectIcon = (typography: any) => {
-    const iconClass = isExpanded
-      ? NODE_CONFIG.typography.expanded.iconSize
-      : typography.iconSize;
-
-    const iconMap: { [key: string]: JSX.Element } = {
-      holoportation: <BsHeadsetVr className={`text-purple-400 ${iconClass}`} />,
-      'daily-ball': <FaGamepad className={`text-blue-400 ${iconClass}`} />,
-      vibe: <BsMusicNoteBeamed className={`text-cyan-400 ${iconClass}`} />,
-      unitrade: <BsBagFill className={`text-emerald-400 ${iconClass}`} />,
-      'choose-movie': <BsCameraReelsFill className={`text-amber-400 ${iconClass}`} />,
-      'personal-website': <FaCode className={`text-red-400 ${iconClass}`} />,
-      'event-horizons': <FaCalendarAlt className={`text-green-400 ${iconClass}`} />,
-      impostorbot: <BsRobot className={`text-violet-400 ${iconClass}`} />,
-      'slightly-edited-songs': <FaYoutube className={`text-red-400 ${iconClass}`} />,
-    };
-
-    return iconMap[project.id] || <FaGamepad className={`text-gray-400 ${iconClass}`} />;
-  }; const getTechIcons = () => {
-    const techIconMap: { [key: string]: any } = {
-      'C++': SiCplusplus,
-      'C#': SiSharp,
-      Python: SiPython,
-      OpenCV: SiOpencv,
-      Unity: SiUnity,
-      JavaScript: SiJavascript,
-      'HTML/CSS': SiHtml5,
-      HTML: SiHtml5,
-      CSS: SiCss3,
-      TypeScript: SiTypescript,
-      'Node.js': SiNodedotjs,
-      Tailwind: SiTailwindcss,
-      Vite: SiVite,
-      Java: FaJava,
-      'Spring Boot': SiSpring,
-      React: SiReact,
-      PostgreSQL: SiPostgresql,
-      Pandas: SiPandas,
-      NumPy: SiNumpy,
-      Streamlit: SiStreamlit,
-      WinForms: DiDotnet,
-      Django: SiDjango,
-      SciPy: SiScipy,
-    };
-
-    return project.techStack.map((tech: string) => {
-      const IconComponent = techIconMap[tech] || BiCode;
-      return { tech, icon: IconComponent };
-    });
-  };
+  }; const getExpandedTypography = () => NODE_CONFIG.typography.expanded;
 
   const handleClick = () => {
     if (project.link) {
@@ -457,7 +354,7 @@ const ProjectNode2D = ({
                     animate={{ scale: isHovered ? 1.1 : 1 }}
                     transition={{ duration: isHovered ? 0.2 : 0.3, ease: 'easeInOut' }}
                   >
-                    {getProjectIcon(currentTypography)}
+                    {getProjectIcon(project, currentTypography.iconSize)}
                   </motion.div>
 
                   <h3 className={`text-white ${currentTypography.titleSize} font-medium ${spacing.normal.titleMarginBottom}`}>
@@ -474,7 +371,7 @@ const ProjectNode2D = ({
                         exit={{ opacity: 0, scale: 0.8 }}
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                       >
-                        {getTechIcons()
+                        {getTechIcons(project.techStack)
                           .slice(0, 3)
                           .map(({ tech, icon: IconComponent }, iconIndex) => (
                             <IconComponent
@@ -519,7 +416,7 @@ const ProjectNode2D = ({
                       animate={{ scale: 1.2 }}
                       transition={{ duration: animation.hoverDuration }}
                     >
-                      {getProjectIcon(expandedTypography)}
+                      {getProjectIcon(project, expandedTypography.iconSize)}
                     </motion.div>
 
                     <h3
@@ -544,7 +441,7 @@ const ProjectNode2D = ({
                     </p>
 
                     <div className="flex flex-wrap items-center justify-center gap-1 px-2">
-                      {getTechIcons()
+                      {getTechIcons(project.techStack)
                         .slice(0, 5)
                         .map(({ tech, icon: IconComponent }, iconIndex) => (
                           <div
@@ -607,23 +504,32 @@ interface ProjectNodes2DProps {
 }
 
 const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [containerBounds, setContainerBounds] = useState({ width: 1200, height: 800 });
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null); const [containerBounds, setContainerBounds] = useState({ width: 1200, height: 800 });
 
   useEffect(() => {
     const updateBounds = () => {
-      const width = Math.min(window.innerWidth * 0.9, 1600);
-      const height = Math.min(window.innerHeight * 0.8, 1000);
-      setContainerBounds({ width, height });
+      const baseWidth = Math.min(window.innerWidth * 0.9, 1600);
+      const baseHeight = Math.min(window.innerHeight * 0.8, 1000);
+
+      setContainerBounds({
+        width: baseWidth,
+        height: baseHeight
+      });
     };
 
     updateBounds();
     window.addEventListener('resize', updateBounds);
     return () => window.removeEventListener('resize', updateBounds);
-  }, []);  // Calculate horizontal positions for all projects based on their circular X positions
+  }, []);
+  // Calculate horizontal positions for all projects based on their circular X positions
   const getProjectsWithHorizontalPositions = () => {
     const { width } = containerBounds;
     const { margins } = NODE_CONFIG;
+    const scaledMargins = {
+      top: margins.top,
+      bottom: margins.bottom,
+      sides: margins.sides,
+    };
 
     // Calculate where each project currently is in the circular layout
     const projectsWithCircularX = projects.map((project, index) => {
@@ -632,14 +538,12 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
       const angleInRadians = (angleInDegrees * Math.PI) / 180;
       const circularX = Math.cos(angleInRadians) * ring.radius;
 
-      const minX = -(width / 2) + margins.sides + 50;
-      const maxX = (width / 2) - margins.sides - 50;
+      const minX = -(width / 2) + scaledMargins.sides + 50;
+      const maxX = (width / 2) - scaledMargins.sides - 50;
       const clampedX = Math.max(minX, Math.min(maxX, circularX));
 
       return { project, originalIndex: index, circularX: clampedX };
-    });
-
-    // Sort by current circular X position (leftmost to rightmost)
+    });    // Sort by current circular X position (leftmost to rightmost)
     const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);
     const { nodeGap } = NODE_CONFIG.horizontal;
     const desiredGap = nodeGap;
@@ -654,6 +558,8 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
     let positions: number[] = [];
     const totalProjects = projects.length;
     const { centerWidth } = NODE_CONFIG.horizontal;
+    const scaledCenterWidth = centerWidth;
+
     // Split projects into left and right sides of center
     const leftProjects = Math.floor(totalProjects / 2);
     const rightProjects = totalProjects - leftProjects;
@@ -661,7 +567,7 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
     // Calculate left side positions (working outward from center)
     if (leftProjects > 0) {
       const leftProjectSizes = projectSizes.slice(0, leftProjects);
-      let currentX = -(centerWidth / 2);
+      let currentX = -(scaledCenterWidth / 2);
 
       for (let i = leftProjectSizes.length - 1; i >= 0; i--) {
         const nodeSize = leftProjectSizes[i].targetSize;
@@ -675,7 +581,7 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
     // Calculate right side positions (working outward from center)
     if (rightProjects > 0) {
       const rightProjectSizes = projectSizes.slice(leftProjects);
-      let currentX = (centerWidth / 2);
+      let currentX = (scaledCenterWidth / 2);
 
       for (let i = 0; i < rightProjectSizes.length; i++) {
         const nodeSize = rightProjectSizes[i].targetSize;
