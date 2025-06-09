@@ -45,7 +45,7 @@ export const experiences: Experience[] = [
 export const education = {
     id: 'mcgill',
     institution: 'McGill University',
-    degree: 'Software Engineering Co-op',
+    degree: 'B.Eng. Software Engineering Co-op',
     period: 'Aug 2021 – Dec 2025',
     location: 'Montreal, QC',
     gpa: '3.68/4.00',
