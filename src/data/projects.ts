@@ -17,40 +17,33 @@ export interface ProjectContent {
 
 export interface ProjectLayout {
   id: string;
-  size: 'large' | 'medium' | 'small';
+  size: 'large' | 'medium' | 'small' | 'tiny';
   position: number; // Position 0-4 (0=top, 1=right, 2=bottom, 3=left, decimals for fine-tuning)
 }
 
 export interface Project extends ProjectContent {
-  size: 'large' | 'medium' | 'small';
+  size: 'large' | 'medium' | 'small' | 'tiny';
   position: number;
 }
 
-// ============================================================================
-// LAYOUT CONFIGURATION 
-// ============================================================================
 // Position guide: 0=top, 1=right, 2=bottom, 3=left (decimals for fine-tuning)
 export const projectLayouts: ProjectLayout[] = [
   // LARGE PROJECTS (inner ring)
-  { id: 'daily-ball', size: 'large', position: 3.25 },    // Top-left
-  { id: 'vibe', size: 'large', position: 1.75 },          // Right-bottom
-  { id: 'choose-movie', size: 'large', position: 0.5 },   // Top-right
+  { id: 'daily-ball', size: 'large', position: 3.25 },
+  { id: 'vibe', size: 'large', position: 1.75 },
+  { id: 'choose-movie', size: 'large', position: 0.5 },
 
   // MEDIUM PROJECTS (middle ring)
-  { id: 'personal-website', size: 'medium', position: 1.05 },  // Right
-  { id: 'holoportation', size: 'medium', position: 2.7 },    // Bottom-left
+  { id: 'personal-website', size: 'medium', position: 1.05 },
+  { id: 'holoportation', size: 'medium', position: 2.7 },
 
   // SMALL PROJECTS (outer ring)
-  { id: 'event-horizons', size: 'small', position: 3.45 },  // Left-top
-  { id: 'unitrade', size: 'small', position: 0.7 },       // Top-right
-  { id: 'impostorbot', size: 'small', position: 1.3 },     // Right-bottom
-  { id: 'slightly-edited-songs', size: 'small', position: 3 },     // Right-bottom
-
+  { id: 'event-horizons', size: 'small', position: 3.45 },
+  { id: 'unitrade', size: 'small', position: 0.7 },
+  { id: 'impostorbot', size: 'small', position: 1.3 },
+  { id: 'slightly-edited-songs', size: 'small', position: 3 },
 ];
 
-// ============================================================================
-// PROJECT CONTENT - Descriptive information
-// ============================================================================
 export const projectContent: ProjectContent[] = [
   {
     id: 'daily-ball',
@@ -204,9 +197,6 @@ export const projectContent: ProjectContent[] = [
   },
 ];
 
-// ============================================================================
-// COMBINED PROJECTS - Merges content with layout
-// ============================================================================
 export const projects: Project[] = projectContent.map(content => {
   const layout = projectLayouts.find(l => l.id === content.id);
   if (!layout) {

@@ -1,9 +1,40 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
-  theme: {
+  content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"], safelist: [
+    {
+      // Text sizes - xs to 6xl covers most use cases
+      pattern: /text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl)/,
+      variants: ['xl', '2xl', '3xl'],
+    },
+    {
+      // Width/height - up to 32 for larger elements like logos/images
+      pattern: /(w|h)-(1|2|3|4|5|6|7|8|9|10|11|12|14|16|18|20|24|28|32)/,
+      variants: ['xl', '2xl', '3xl'],
+    },
+    {
+      // All padding combinations - p, px, py  
+      pattern: /p(x|y)?-(0|1|2|3|4|5|6|7|8|9|10|11|12)/,
+      variants: ['xl', '2xl', '3xl'],
+    },
+    {
+      // All margin combinations - m, mb, etc
+      pattern: /m(x|y|t|b|l|r)?-(0|1|2|3|4|5|6|7|8|9|10|11|12)/,
+      variants: ['xl', '2xl', '3xl'],
+    },
+    {
+      // All gap sizes 
+      pattern: /gap-(0|1|2|3|4|5|6|7|8|9|10|11|12)/,
+      variants: ['xl', '2xl', '3xl'],
+    },
+    // Specific height classes with brackets (Tailwind can't detect these easily)
+    'h-[60vh]', 'xl:h-[65vh]', '2xl:h-[70vh]', '3xl:h-[75vh]',
+    'max-h-[60vh]', 'xl:max-h-[65vh]', '2xl:max-h-[70vh]', '3xl:max-h-[75vh]'
+  ], theme: {
     extend: {
+      screens: {
+        '3xl': '1920px', // Custom breakpoint for very large screens
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
