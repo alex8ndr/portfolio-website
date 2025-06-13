@@ -225,6 +225,8 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                 <div className="flex flex-wrap gap-1 flex-shrink-0">
                   {exp.skills.slice(0, 3).map((skillName) => {
                     const skill = skills.find(s =>
+                      s.name.toLowerCase() === skillName.toLowerCase()
+                    ) || skills.find(s =>
                       s.name.toLowerCase().includes(skillName.toLowerCase()) ||
                       skillName.toLowerCase().includes(s.name.toLowerCase())
                     );
@@ -303,31 +305,32 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
               </div>
 
               {/* Skills */}
-              <div className="flex flex-wrap gap-1 flex-shrink-0">
-                {education.skills.slice(0, 4).map((skillName) => {
-                  const skill = skills.find(s =>
-                    s.name.toLowerCase().includes(skillName.toLowerCase()) ||
-                    skillName.toLowerCase().includes(s.name.toLowerCase())
-                  );
+              <div className="flex flex-wrap gap-1 flex-shrink-0">                {education.skills.slice(0, 4).map((skillName) => {
+                const skill = skills.find(s =>
+                  s.name.toLowerCase() === skillName.toLowerCase()
+                ) || skills.find(s =>
+                  s.name.toLowerCase().includes(skillName.toLowerCase()) ||
+                  skillName.toLowerCase().includes(s.name.toLowerCase())
+                );
 
-                  if (!skill) return null;
+                if (!skill) return null;
 
-                  const IconComponent = skill.icon;
-                  const isSkillHighlighted = hoveredSkill === skill.name;
+                const IconComponent = skill.icon;
+                const isSkillHighlighted = hoveredSkill === skill.name;
 
-                  return (
-                    <div
-                      key={skillName}
-                      className={`flex items-center gap-1 px-2 py-1 rounded-md ${sizes.body} transition-all duration-300 ${isSkillHighlighted
-                        ? 'bg-purple-500/30 border border-purple-400/50'
-                        : 'bg-gray-700/50 border border-gray-600/30'
-                        }`}
-                    >
-                      <IconComponent className={`${skill.color} ${sizes.body}`} />
-                      <span className={`text-gray-300 ${sizes.body} truncate`}>{skillName}</span>
-                    </div>
-                  );
-                })}
+                return (
+                  <div
+                    key={skillName}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md ${sizes.body} transition-all duration-300 ${isSkillHighlighted
+                      ? 'bg-purple-500/30 border border-purple-400/50'
+                      : 'bg-gray-700/50 border border-gray-600/30'
+                      }`}
+                  >
+                    <IconComponent className={`${skill.color} ${sizes.body}`} />
+                    <span className={`text-gray-300 ${sizes.body} truncate`}>{skillName}</span>
+                  </div>
+                );
+              })}
               </div>
             </div>
           </motion.div>

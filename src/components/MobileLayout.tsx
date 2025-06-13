@@ -497,6 +497,8 @@ const MobileLayout = () => {
                                     <p className="text-gray-300 text-xs leading-relaxed mb-2">{exp.description}</p>                                    <div className="flex flex-wrap gap-1">
                                         {exp.skills.slice(0, 3).map((skillName, skillIndex) => {
                                             const skill = skills.find(s =>
+                                                s.name.toLowerCase() === skillName.toLowerCase()
+                                            ) || skills.find(s =>
                                                 s.name.toLowerCase().includes(skillName.toLowerCase()) ||
                                                 skillName.toLowerCase().includes(s.name.toLowerCase())
                                             );
@@ -576,10 +578,11 @@ const MobileLayout = () => {
                                     </div>
                                 )}
 
-                                {/* Skills with icons */}
-                                <div className="flex flex-wrap gap-1">
+                                {/* Skills with icons */}                                <div className="flex flex-wrap gap-1">
                                     {education.skills.slice(0, 4).map((skillName, skillIndex) => {
                                         const skill = skills.find(s =>
+                                            s.name.toLowerCase() === skillName.toLowerCase()
+                                        ) || skills.find(s =>
                                             s.name.toLowerCase().includes(skillName.toLowerCase()) ||
                                             skillName.toLowerCase().includes(s.name.toLowerCase())
                                         );
