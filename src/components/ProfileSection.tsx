@@ -17,9 +17,10 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
 
   // Calculate responsive text size based on scroll progress
   const nameScale = 1 - (fastProgress * 0.2);
-
-  // Reduce margin between avatar and name when scrolled
-  const avatarMargin = fastProgress > 0.5 ? 'mb-2' : 'mb-6';
+  // Responsive avatar margin using CSS classes
+  const avatarMarginClass = fastProgress > 0.5
+    ? 'mb-1 2xl:mb-1 3xl:mb-2'
+    : 'mb-4 2xl:mb-5 3xl:mb-6';
   return (
     <motion.div
       className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-10"
@@ -28,8 +29,8 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         opacity: opacity,
       }}
       transition={{ type: "tween", ease: "easeOut", duration: 0.05 }}
-    >      <div className={`${avatarMargin}`}>        <motion.div
-      className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1"
+    >      <div className={avatarMarginClass}>        <motion.div
+      className="w-24 h-24 2xl:w-28 2xl:h-28 3xl:w-32 3xl:h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1"
       animate={{
         opacity: scrollProgress > 0.4 ? 0 : 1,
         scale: scrollProgress > 0.4 ? 0.3 : 1
@@ -37,13 +38,13 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
       transition={{ duration: 0.25, ease: 'easeInOut' }}
     >
       <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
-        <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+        <span className="text-3xl 2xl:text-3xl 3xl:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
           AT
         </span>
       </div>
     </motion.div>
       </div>      <motion.h1
-        className="text-4xl md:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300"
+        className="text-2xl 2xl:text-3xl 3xl:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300"
         animate={{
           scale: nameScale,
           opacity: scrollProgress > 0.4 ? 0 : 1,
@@ -52,18 +53,14 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         transition={{ duration: 0.25, ease: "easeInOut" }}
       >
         Alex Turianskyj
-      </motion.h1>
-
-      <motion.p
-        className="text-xl md:text-2xl text-gray-300 mb-3"
+      </motion.h1>      <motion.p
+        className="text-base 2xl:text-lg 3xl:text-xl text-gray-300 mb-3"
         animate={{ opacity: textOpacity }}
         transition={{ duration: 0.1, ease: "linear" }}
       >
         Software Developer
-      </motion.p>
-
-      <motion.div
-        className="text-sm text-gray-400 max-w-md mx-auto"
+      </motion.p><motion.div
+        className="text-xs 2xl:text-xs 3xl:text-sm text-gray-400 max-w-md mx-auto"
         animate={{ opacity: textOpacity }}
         transition={{ duration: 0.1, ease: "linear" }}
       >

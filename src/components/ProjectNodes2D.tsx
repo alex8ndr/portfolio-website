@@ -16,9 +16,9 @@ const NODE_CONFIG = {
     small: { radius: 550 },
   },
   margins: {
-    top: 64,
-    bottom: 80,
-    sides: 60,
+    top: 50,
+    bottom: 60,
+    sides: 70,
   },
   horizontal: {
     centerWidth: 200,
