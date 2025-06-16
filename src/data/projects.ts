@@ -9,6 +9,7 @@ export interface ProjectContent {
   name: string;
   description: string;
   techStack: string[];
+  invisibleSkills?: string[]; // Hidden skills for highlighting (e.g., Git)
   timeline: string;
   link?: string; // Keep for backward compatibility with the current click behavior
   buttons?: ProjectButton[]; // New flexible buttons, max 2
@@ -44,157 +45,163 @@ export const projectLayouts: ProjectLayout[] = [
   { id: 'slightly-edited-songs', size: 'small', position: 3 },
 ];
 
-export const projectContent: ProjectContent[] = [
-  {
-    id: 'daily-ball',
-    name: 'Daily Ball',
-    description: 'Hypercasual 2D mobile game with over 1000 downloads on Google Play',
-    techStack: ['Unity', 'C#'],
-    timeline: 'May 2023 – Jul 2024',
-    link: 'https://dailyball.alext.dev',
-    buttons: [
-      {
-        label: 'Play Store',
-        url: 'https://play.google.com/store/apps/details?id=com.AlexTurianskyj.DailyBall',
-        type: 'googleplay',
-      },
-      { label: 'Demo', url: 'https://dailyball.alext.dev', type: 'demo' },
-    ],
-    color: '#3b82f6', // Blue
-  },
-  {
-    id: 'vibe',
-    name: 'Vibe',
-    description: 'Content-based music recommender with over 1 million songs',
-    techStack: ['Python', 'Streamlit', 'Pandas', 'NumPy', 'SciPy'],
-    timeline: 'Sep 2023 – Nov 2023',
-    link: 'https://vibe.alext.dev',
-    buttons: [
-      {
-        label: 'Code',
-        url: 'https://github.com/alex8ndr/vibe',
-        type: 'github',
-      },
-      { label: 'Launch', url: 'https://vibe.alext.dev', type: 'demo' },
-    ],
-    color: '#06b6d4', // Cyan
-  },
-  {
-    id: 'choose-movie',
-    name: 'Choose Me a Movie',
-    description: 'Movie recommendation site powered by the TMDB API',
-    techStack: ['JavaScript', 'HTML/CSS'],
-    timeline: 'Jan 2022',
-    link: 'https://choosemeamovie.alext.dev',
-    buttons: [
-      {
-        label: 'Code',
-        url: 'https://github.com/alex8ndr/choose-me-a-movie',
-        type: 'github',
-      },
-      { label: 'Launch', url: 'https://choosemeamovie.alext.dev', type: 'demo' },
-    ],
-    color: '#f59e0b', // Amber
-  },
-  {
-    id: 'personal-website',
-    name: 'Portfolio Website',
-    description: 'Interactive portfolio with 2D project visualization and responsive design',
-    techStack: ['TypeScript', 'React', 'Vite'],
-    timeline: '2024 – Present',
-    buttons: [
-      {
-        label: 'Code',
-        url: 'https://github.com/alex8ndr/personal-website',
-        type: 'github',
-      },
-    ],
-    color: '#ef4444', // Red
-  },
-  {
-    id: 'holoportation',
-    name: 'Holoportation',
-    description: 'Augmented reality app for real-time 3D reconstruction on HoloLens 2 using RGBD cameras',
-    techStack: ['C++', 'C#', 'WinForms', 'Python', 'OpenCV'],
-    timeline: 'Sep 2024 – Apr 2025',
-    buttons: [
-      {
-        label: 'Code',
-        url: 'https://github.com/alex8ndr/Holoportation',
-        type: 'github',
-      },
-    ],
-    color: '#8b5cf6', // Purple
-  },
-  {
-    id: 'event-horizons',
-    name: 'Event Horizons',
-    description: 'McGill calendar for campus events with Google Calendar API integration',
-    techStack: ['JavaScript', 'Python', 'Django'],
-    timeline: '2023',
-    buttons: [
-      {
-        label: 'Code',
-        url: 'https://github.com/alex8ndr/event-horizons',
-        type: 'github',
-      },
-      {
-        label: 'Devpost',
-        url: 'https://devpost.com/software/event-horizons',
-        type: 'devpost',
-      },
-    ],
-    color: '#059669', // Green
-  },
-  {
-    id: 'unitrade',
-    name: 'UniTrade',
-    description: 'Student marketplace built in an 8-person Agile team',
-    techStack: ['Java', 'Spring Boot', 'React', 'PostgreSQL'],
-    timeline: 'Jan 2023 – Apr 2023',
-    buttons: [
-      {
-        label: 'Code',
-        url: 'https://github.com/IBGA/UniTrade',
-        type: 'github',
-      },
-    ],
-    color: '#10b981', // Emerald
-  },
-  {
-    id: 'impostorbot',
-    name: 'ImpostorBot',
-    description: 'Interactive Discord bot built using the Discord.py API',
-    techStack: ['Python'],
-    timeline: '2022',
-    buttons: [
-      {
-        label: 'Code',
-        url: 'https://github.com/alex8ndr/ImpostorBot',
-        type: 'github',
-      },
-      {
-        label: 'Devpost',
-        url: 'https://devpost.com/software/impostorbot',
-        type: 'devpost',
-      },
-    ],
-    color: '#7c3aed', // Violet
-  }, {
-    id: 'slightly-edited-songs',
-    name: 'Slightly Edited Songs',
-    description: 'YouTube channel featuring edits of existing songs with 500+ subscribers',
-    techStack: [],
-    timeline: '2023',
-    buttons: [
-      {
-        label: 'View Channel',
-        url: 'https://www.youtube.com/@SlightlyEditedSongs',
-        type: 'demo',
-      },
-    ],
-    color: '#ef4444', // Red
-  },
+export const projectContent: ProjectContent[] = [{
+  id: 'daily-ball',
+  name: 'Daily Ball',
+  description: 'Hypercasual 2D mobile game with over 1000 downloads on Google Play',
+  techStack: ['Unity', 'C#'],
+  invisibleSkills: ['Git'],
+  timeline: 'May 2023 – Jul 2024',
+  link: 'https://dailyball.alext.dev',
+  buttons: [
+    {
+      label: 'Play Store',
+      url: 'https://play.google.com/store/apps/details?id=com.AlexTurianskyj.DailyBall',
+      type: 'googleplay',
+    },
+    { label: 'Demo', url: 'https://dailyball.alext.dev', type: 'demo' },
+  ],
+  color: '#3b82f6', // Blue
+},
+{
+  id: 'vibe',
+  name: 'Vibe',
+  description: 'Content-based music recommender with over 1 million songs',
+  techStack: ['Python', 'Streamlit', 'Pandas', 'NumPy', 'SciPy'],
+  invisibleSkills: ['Git'],
+  timeline: 'Sep 2023 – Nov 2023',
+  link: 'https://vibe.alext.dev',
+  buttons: [
+    {
+      label: 'Code',
+      url: 'https://github.com/alex8ndr/vibe',
+      type: 'github',
+    },
+    { label: 'Launch', url: 'https://vibe.alext.dev', type: 'demo' },
+  ],
+  color: '#06b6d4', // Cyan
+},
+{
+  id: 'choose-movie',
+  name: 'Choose Me a Movie',
+  description: 'Movie recommendation site powered by the TMDB API',
+  techStack: ['JavaScript', 'HTML/CSS'],
+  invisibleSkills: ['Git'],
+  timeline: 'Jan 2022',
+  link: 'https://choosemeamovie.alext.dev',
+  buttons: [
+    {
+      label: 'Code',
+      url: 'https://github.com/alex8ndr/choose-me-a-movie',
+      type: 'github',
+    },
+    { label: 'Launch', url: 'https://choosemeamovie.alext.dev', type: 'demo' },
+  ],
+  color: '#f59e0b', // Amber
+},
+{
+  id: 'personal-website',
+  name: 'Portfolio Website',
+  description: 'Interactive portfolio with 2D project visualization and responsive design',
+  techStack: ['TypeScript', 'React', 'Vite'],
+  invisibleSkills: ['Git'],
+  timeline: '2024 – Present',
+  buttons: [
+    {
+      label: 'Code',
+      url: 'https://github.com/alex8ndr/personal-website',
+      type: 'github',
+    },
+  ],
+  color: '#ef4444', // Red
+},
+{
+  id: 'holoportation',
+  name: 'Holoportation',
+  description: 'Augmented reality app for real-time 3D reconstruction on HoloLens 2 using RGBD cameras',
+  techStack: ['C++', 'C#', 'WinForms', 'Python', 'OpenCV'],
+  invisibleSkills: ['Git'],
+  timeline: 'Sep 2024 – Apr 2025',
+  buttons: [
+    {
+      label: 'Code',
+      url: 'https://github.com/alex8ndr/Holoportation',
+      type: 'github',
+    },
+  ],
+  color: '#8b5cf6', // Purple
+},
+{
+  id: 'event-horizons',
+  name: 'Event Horizons',
+  description: 'McGill calendar for campus events with Google Calendar API integration',
+  techStack: ['JavaScript', 'Python', 'Django'],
+  invisibleSkills: ['Git'],
+  timeline: '2023',
+  buttons: [
+    {
+      label: 'Code',
+      url: 'https://github.com/alex8ndr/event-horizons',
+      type: 'github',
+    },
+    {
+      label: 'Devpost',
+      url: 'https://devpost.com/software/event-horizons',
+      type: 'devpost',
+    },
+  ],
+  color: '#059669', // Green
+},
+{
+  id: 'unitrade',
+  name: 'UniTrade',
+  description: 'Student marketplace built in an 8-person Agile team',
+  techStack: ['Java', 'Spring Boot', 'React', 'PostgreSQL'],
+  invisibleSkills: ['Git'],
+  timeline: 'Jan 2023 – Apr 2023',
+  buttons: [
+    {
+      label: 'Code',
+      url: 'https://github.com/IBGA/UniTrade',
+      type: 'github',
+    },
+  ],
+  color: '#10b981', // Emerald
+},
+{
+  id: 'impostorbot',
+  name: 'ImpostorBot',
+  description: 'Interactive Discord bot built using the Discord.py API',
+  techStack: ['Python'],
+  timeline: '2022',
+  buttons: [
+    {
+      label: 'Code',
+      url: 'https://github.com/alex8ndr/ImpostorBot',
+      type: 'github',
+    },
+    {
+      label: 'Devpost',
+      url: 'https://devpost.com/software/impostorbot',
+      type: 'devpost',
+    },
+  ],
+  color: '#7c3aed', // Violet
+}, {
+  id: 'slightly-edited-songs',
+  name: 'Slightly Edited Songs',
+  description: 'YouTube channel featuring edits of existing songs with 500+ subscribers',
+  techStack: [],
+  timeline: '2023',
+  buttons: [
+    {
+      label: 'View Channel',
+      url: 'https://www.youtube.com/@SlightlyEditedSongs',
+      type: 'demo',
+    },
+  ],
+  color: '#ef4444', // Red
+},
 ];
 
 export const projects: Project[] = projectContent.map(content => {

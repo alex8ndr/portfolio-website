@@ -561,25 +561,22 @@ const MobileLayout = () => {
                                         </div>
                                     </div>
                                 </div>
-
                                 {education.courses && (
                                     <div className="mb-2">
                                         <h6 className="text-xs font-semibold text-gray-300 mb-1">Key Courses:</h6>
                                         <div className="flex flex-wrap gap-1">
-                                            {education.courses.slice(0, 3).map((course, index) => (
+                                            {education.courses.filter(course => course.visible !== false).map((course, index) => (
                                                 <span
                                                     key={index}
                                                     className="px-2 py-1 bg-gray-700/50 border border-gray-600/30 rounded-md text-xs text-gray-300 leading-tight"
                                                 >
-                                                    {course}
+                                                    {course.name}
                                                 </span>
                                             ))}
                                         </div>
                                     </div>
-                                )}
-
-                                {/* Skills with icons */}                                <div className="flex flex-wrap gap-1">
-                                    {education.skills.slice(0, 4).map((skillName, skillIndex) => {
+                                )}                                {/* Skills with icons */}                                <div className="flex flex-wrap gap-1">
+                                    {Array.from(new Set(education.courses.filter(course => course.visible !== false).flatMap(course => course.skills))).slice(0, 4).map((skillName, skillIndex) => {
                                         const skill = skills.find(s =>
                                             s.name.toLowerCase() === skillName.toLowerCase()
                                         ) || skills.find(s =>

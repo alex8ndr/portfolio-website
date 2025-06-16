@@ -80,11 +80,11 @@ const NODE_CONFIG = {
     expandedContentDelay: 0.1,
     floatDuration: 5,
     floatOffset: 10,
-  },
-  skillHighlight: {
-    glowIntensity: '0 0 25px',
+  }, skillHighlight: {
+    glowIntensity: '0 0 40px',
     glowOpacity: '100',
     animationDuration: 0.3,
+    dimOpacity: 0.3,
   },
 };
 
@@ -110,11 +110,14 @@ const ProjectNode2D = ({
   horizontalX,
   hoveredSkill,
 }: ProjectNode2DProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-  // Helper function to check if project uses a specific skill
+  const [isHovered, setIsHovered] = useState(false);  // Helper function to check if project uses a specific skill
   const projectUsesSkill = (skillName: string): boolean => {
     if (!skillName) return false;
-    return project.techStack.some(tech => {
+
+    // Check both techStack and invisibleSkills
+    const allSkills = [...project.techStack, ...(project.invisibleSkills || [])];
+
+    return allSkills.some(tech => {
       const techLower = tech.toLowerCase();
       const skillLower = skillName.toLowerCase();
       // Exact matching for Java/JavaScript to prevent confusion
@@ -126,9 +129,10 @@ const ProjectNode2D = ({
       return false;
     });
   };
-
   // Check if this project should be highlighted based on hovered skill
-  const isSkillHighlighted = hoveredSkill && projectUsesSkill(hoveredSkill);  // Calculate optimal height for expanded projects
+  const isSkillHighlighted = hoveredSkill && projectUsesSkill(hoveredSkill);
+  // Check if other nodes should be dimmed when a skill is hovered
+  const shouldDim = hoveredSkill && !isSkillHighlighted;// Calculate optimal height for expanded projects
   const getExpandedHeight = (proj: Project) => {
     const { expanded } = NODE_CONFIG;
     let height = expanded.baseHeight;
@@ -279,8 +283,7 @@ const ProjectNode2D = ({
         repeat: isExpanded ? 0 : Number.POSITIVE_INFINITY,
         ease: 'easeInOut',
       }}
-    >
-      {/* Main project node */}
+    >      {/* Main project node */}
       <motion.div
         className="relative flex items-center justify-center"
         style={{
@@ -290,9 +293,14 @@ const ProjectNode2D = ({
         animate={{
           width: isExpanded ? NODE_CONFIG.expanded.width : getSize(),
           height: isExpanded ? getExpandedHeight(project) : getSize(),
+          opacity: shouldDim ? NODE_CONFIG.skillHighlight.dimOpacity : 1,
         }}
-        transition={{ duration: animation.sizeDuration, ease: 'easeOut' }}
-      >          {/* Background layer */}
+        transition={{
+          duration: animation.sizeDuration,
+          ease: 'easeOut',
+          opacity: { duration: NODE_CONFIG.skillHighlight.animationDuration }
+        }}
+      >{/* Background layer */}
         <motion.div
           className="absolute inset-0"
           style={{
@@ -309,9 +317,8 @@ const ProjectNode2D = ({
           animate={{
             width: isExpanded ? NODE_CONFIG.expanded.width : getSize(),
             height: isExpanded ? getExpandedHeight(project) : getSize(),
-            borderRadius: isExpanded ? '22px' : '50%',
-            boxShadow: isSkillHighlighted
-              ? `${NODE_CONFIG.skillHighlight.glowIntensity} ${project.color}${NODE_CONFIG.skillHighlight.glowOpacity}`
+            borderRadius: isExpanded ? '22px' : '50%', boxShadow: isSkillHighlighted
+              ? `${NODE_CONFIG.skillHighlight.glowIntensity} ${project.color}${NODE_CONFIG.skillHighlight.glowOpacity}, 0 0 80px ${project.color}60`
               : isExpanded
                 ? `0 0 40px ${project.color}80`
                 : `0 0 20px ${project.color}60`,
