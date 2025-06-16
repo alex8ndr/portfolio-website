@@ -65,9 +65,10 @@ function App() {
         <div className="absolute inset-0">
           <ProfileSection scrollProgress={scrollProgress} />
           <ProjectNodes2D scrollProgress={scrollProgress} hoveredSkill={hoveredSkill} />
-        </div>
-        {/* Scroll Sections - appear at bottom when scrolled */}
-        <ScrollSections scrollProgress={scrollProgress} onSkillHover={setHoveredSkill} />
+        </div>        {/* Scroll Sections - appear at bottom when scrolled */}        <ScrollSections
+          scrollProgress={scrollProgress}
+          onSkillHover={setHoveredSkill}
+        />
       </div>
     </div>
   );

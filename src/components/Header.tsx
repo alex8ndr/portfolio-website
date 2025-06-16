@@ -47,7 +47,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
       <div className="website-link">
         <a href="https://alext.dev" className="header-link">alext.dev</a>
       </div>      <motion.header
-        className="fixed top-0 left-0 right-0 z-50 h-16 px-4 flex items-center bg-slate-900/80 backdrop-blur-sm"
+        className="fixed top-0 left-0 right-0 z-50 h-12 2xl:h-16 3xl:h-20 px-4 flex items-center bg-slate-900/80 backdrop-blur-sm"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -65,9 +65,9 @@ const Header = ({ scrollProgress }: HeaderProps) => {
           }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          {/* AT initials - matching the original avatar design */}
+          {/* AT initials */}
           <motion.div
-            className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-0.5"
+            className="w-8 h-8 2xl:w-10 2xl:h-10 3xl:w-12 3xl:h-12 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-0.5"
             initial={{ scale: 0 }}
             animate={{
               scale: scrollProgress > 0.6 ? 1 : 0,
@@ -76,13 +76,14 @@ const Header = ({ scrollProgress }: HeaderProps) => {
             transition={{ duration: 0.6, delay: 0.1, ease: 'backOut' }}
           >
             <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
-              <span className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+              <span className="text-xs 2xl:text-sm 3xl:text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
                 AT
               </span>
             </div>
-          </motion.div>          {/* Full name - matching the original style */}
+          </motion.div>
+
           <motion.div
-            className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 truncate"
+            className="text-base 2xl:text-lg 3xl:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 truncate"
             initial={{ opacity: 0, y: 10 }}
             animate={{
               opacity: scrollProgress > 0.6 ? 1 : 0,
@@ -114,14 +115,15 @@ const Header = ({ scrollProgress }: HeaderProps) => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <IconComponent size={20} />
+                    <div className="text-base 2xl:text-xl 3xl:text-2xl">
+                      <IconComponent />
+                    </div>
                   </motion.a>
                 );
               })}
-            </div>            {/* Download Resume Button */}
-            <motion.button
+            </div>            {/* Download Resume Button */}            <motion.button
               onClick={handleResumeDownload}
-              className="relative px-6 py-1.5 bg-transparent rounded-lg font-medium text-white transition-all duration-300"
+              className="relative px-4 py-1 2xl:px-6 2xl:py-1.5 3xl:px-8 3xl:py-2 bg-transparent rounded-lg font-medium text-white transition-all duration-300 text-xs 2xl:text-sm 3xl:text-base"
               style={{
                 border: '3px solid transparent',
                 backgroundImage: 'linear-gradient(#0f172a, #0f172a), linear-gradient(to right, #a855f7, #3b82f6)',
