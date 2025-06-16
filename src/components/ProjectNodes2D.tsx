@@ -9,11 +9,23 @@ const NODE_CONFIG = {
     small: 82,
     medium: 100,
     large: 125,
-  },
-  rings: {
-    large: { radius: 250 },
-    medium: { radius: 400 },
-    small: { radius: 550 },
+  }, rings: {
+    // Responsive ring sizes: smaller rings for smaller screens
+    small: {
+      large: { radius: 180 },     // Smaller rings for small screens
+      medium: { radius: 280 },
+      small: { radius: 380 },
+    },
+    medium: {
+      large: { radius: 220 },     // Medium rings for 1536px+
+      medium: { radius: 340 },
+      small: { radius: 460 },
+    },
+    large: {
+      large: { radius: 250 },     // Full size rings for 1920px+
+      medium: { radius: 400 },
+      small: { radius: 550 },
+    },
   },
   margins: {
     top: 50,
@@ -26,10 +38,11 @@ const NODE_CONFIG = {
     maxSpacing: 25,
     nodeGap: 60,
     yOffset: 40,
-  },
-  scroll: {
-    maxScale: 1.0,
-    minScale: 0.95,
+  }, scroll: {
+    // Responsive scaling: smaller scales for smaller screens
+    small: { maxScale: 0.8, minScale: 0.75 },      // Default for small screens
+    medium: { maxScale: 0.9, minScale: 0.85 },     // 2xl: 1536px+
+    large: { maxScale: 1.0, minScale: 0.95 },      // 3xl: 1920px+
     transitionStart: 0.1,
     transitionEnd: 0.6,
   },
@@ -147,7 +160,16 @@ const ProjectNode2D = ({
     const { width, height } = containerBounds;
     const { rings, margins } = NODE_CONFIG;
 
-    const ringConfig = rings[project.size as keyof typeof rings];
+    // Get responsive ring values based on screen size
+    const getRingValues = () => {
+      if (typeof window !== 'undefined') {
+        const width = window.innerWidth;
+        if (width >= 1920) return rings.large;      // 3xl: 1920px+
+        if (width >= 1536) return rings.medium;     // 2xl: 1536px+
+      }
+      return rings.small; // Default for smaller screens
+    }; const ringValues = getRingValues();
+    const ringConfig = ringValues[project.size as keyof typeof ringValues];
     const radius = ringConfig.radius;
     const angleInDegrees = (project.position * 90) - 90;
     const angleInRadians = (angleInDegrees * Math.PI) / 180;
@@ -192,10 +214,21 @@ const ProjectNode2D = ({
   const getOriginalSize = () => {
     const { sizes } = NODE_CONFIG;
     return sizes[project.size as keyof typeof sizes] || sizes.medium;
-  };
-  const getScrollScale = () => {
+  }; const getScrollScale = () => {
     const { scroll } = NODE_CONFIG;
-    const { transitionStart, transitionEnd, minScale, maxScale } = scroll;
+    const { transitionStart, transitionEnd } = scroll;
+
+    // Get responsive scale values based on screen size
+    const getScaleValues = () => {
+      if (typeof window !== 'undefined') {
+        const width = window.innerWidth;
+        if (width >= 1920) return scroll.large;      // 3xl: 1920px+
+        if (width >= 1536) return scroll.medium;     // 2xl: 1536px+
+      }
+      return scroll.small; // Default for smaller screens
+    };
+
+    const { minScale, maxScale } = getScaleValues();
 
     if (scrollProgress <= transitionStart) return maxScale;
     if (scrollProgress >= transitionEnd) return minScale;
@@ -530,16 +563,25 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
   // Calculate horizontal positions for all projects based on their circular X positions
   const getProjectsWithHorizontalPositions = () => {
     const { width } = containerBounds;
-    const { margins, scroll } = NODE_CONFIG;
+    const { margins } = NODE_CONFIG;
     const scaledMargins = {
       top: margins.top,
       bottom: margins.bottom,
       sides: margins.sides,
-    };
-
-    // Calculate where each project currently is in the circular layout
+    };    // Calculate where each project currently is in the circular layout
     const projectsWithCircularX = projects.map((project, index) => {
-      const ring = NODE_CONFIG.rings[project.size as keyof typeof NODE_CONFIG.rings];
+      // Get responsive ring values based on screen size
+      const getRingValues = () => {
+        if (typeof window !== 'undefined') {
+          const width = window.innerWidth;
+          if (width >= 1920) return NODE_CONFIG.rings.large;      // 3xl: 1920px+
+          if (width >= 1536) return NODE_CONFIG.rings.medium;     // 2xl: 1536px+
+        }
+        return NODE_CONFIG.rings.small; // Default for smaller screens
+      };
+
+      const ringValues = getRingValues();
+      const ring = ringValues[project.size as keyof typeof ringValues];
       const angleInDegrees = (project.position * 90) - 90;
       const angleInRadians = (angleInDegrees * Math.PI) / 180;
       const circularX = Math.cos(angleInRadians) * ring.radius;
@@ -552,15 +594,24 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
     });
 
     // Sort by current circular X position (leftmost to rightmost)
-    const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);
-
-    // Calculate post-scroll node sizes
+    const sortedByPosition = [...projectsWithCircularX].sort((a, b) => a.circularX - b.circularX);    // Calculate post-scroll node sizes
     const projectSizes = sortedByPosition.map((item, sortedIndex) => {
-      const { sizes } = NODE_CONFIG;
+      const { sizes, scroll } = NODE_CONFIG;
       const baseSize = sizes[item.project.size as keyof typeof sizes] || sizes.medium;
 
+      // Get responsive scale values based on screen size
+      const getScaleValues = () => {
+        if (typeof window !== 'undefined') {
+          const width = window.innerWidth;
+          if (width >= 1920) return scroll.large;      // 3xl: 1920px+
+          if (width >= 1536) return scroll.medium;     // 2xl: 1536px+
+        }
+        return scroll.small; // Default for smaller screens
+      };
+
       // Apply scroll scaling
-      const { transitionStart, transitionEnd, minScale } = scroll;
+      const { transitionStart, transitionEnd } = scroll;
+      const { minScale } = getScaleValues();
       let scaleFactor = 1;
 
       if (scrollProgress > transitionStart) {
@@ -575,7 +626,7 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
 
       const targetSize = baseSize * scaleFactor;
       return { ...item, targetSize, sortedIndex };
-    });    // Calculate available width for nodes
+    });// Calculate available width for nodes
     const padding = 100; // Minimum padding on each side
     let availableWidth = width - (scaledMargins.sides * 2) - (padding * 2);
 
