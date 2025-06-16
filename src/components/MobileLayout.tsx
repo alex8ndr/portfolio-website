@@ -406,14 +406,14 @@ const MobileLayout = () => {
                 </motion.div>
             </div>            {/* Scrollable Sections */}
             <div className="relative z-20 bg-slate-900">
-                {/* Skills Section - Desktop-like with 2x4 grid and colored logos */}
-                <div className="px-4 py-8">
+                <div className="px-2 py-8">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
-                    >                        <h3 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                    >
+                        <h3 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                             Skills & Technologies
                         </h3>
                         <div className="space-y-4">
@@ -424,7 +424,7 @@ const MobileLayout = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: categoryIndex * 0.05, duration: 0.4 }}
-                                    className="bg-slate-800/50 rounded-lg p-4 border border-gray-700/50"
+                                    className="bg-slate-800/50 rounded-lg p-3 border border-gray-700/50"
                                 >
                                     <h4 className="text-base font-semibold mb-4 text-gray-200 text-center">
                                         {categoryName}
@@ -434,7 +434,7 @@ const MobileLayout = () => {
                                             return (
                                                 <motion.div
                                                     key={skillIndex}
-                                                    className="flex flex-col items-center p-3 rounded-md border bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50 transition-all duration-300"
+                                                    className="flex flex-col items-center px-1 py-3 rounded-md border bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50 transition-all duration-300"
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
                                                 >
@@ -454,7 +454,6 @@ const MobileLayout = () => {
                     </motion.div>
                 </div>
 
-                {/* Experience Section - Desktop-like with logos */}
                 <div className="px-4 py-8 bg-slate-800/20">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
