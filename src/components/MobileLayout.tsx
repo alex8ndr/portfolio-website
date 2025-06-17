@@ -108,7 +108,8 @@ const MobileProjectNode = ({ project, index, position, isExpanded, onTap }: Mobi
     const formatPosition = (pos: string | number) => {
         return typeof pos === 'string' ? pos : `${pos}px`;
     }; return (<motion.div
-        className="absolute cursor-pointer" style={{
+        className="absolute cursor-pointer"
+        style={{
             left: `calc(50% + ${formatPosition(position.x)} - ${isExpanded ? expandedWidth / 2 : nodeSize / 2}px)`,
             top: `calc(50% + ${formatPosition(position.y)} - ${isExpanded ? expandedHeight / 2 : nodeSize / 2}px)`,
             zIndex: isExpanded ? 50 : 20 + index,
@@ -315,16 +316,11 @@ const MobileProjectNode = ({ project, index, position, isExpanded, onTap }: Mobi
 
 const MobileLayout = () => {
     const [expandedProject, setExpandedProject] = useState<string | null>(null);
-
-    const handleResumeDownload = () => {
-        const link = document.createElement('a');
-        link.href = '/Alex_Turianskyj_Resume.pdf';
-        link.download = 'Alex_Turianskyj_Resume.pdf';
-        link.click();
+    const handleResumeView = () => {
+        window.open('/Alex_Turianskyj_Resume.pdf', '_blank');
     };
-
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+        <div className="min-h-svh bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
             <div className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700">
                 <div className="flex items-center justify-between px-4 py-2">
                     <div className="flex-1">
@@ -332,20 +328,29 @@ const MobileLayout = () => {
                             Alex Turianskyj
                         </h1>
                         <p className="text-xs text-white/80 leading-tight">Software Developer</p>
+                    </div>                    <div className="flex items-center gap-2">
+                        <motion.a
+                            href="https://linkedin.com/in/alex-turianskyj"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50 transition-all duration-200 hover:bg-slate-700/50 hover:border-slate-600/50 active:bg-slate-600/50"
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaLinkedin className="text-xl text-gray-300 hover:text-white" />
+                        </motion.a>
+                        <motion.a
+                            href="https://github.com/alex8ndr"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50 transition-all duration-200 hover:bg-slate-700/50 hover:border-slate-600/50 active:bg-slate-600/50"
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaGithub className="text-xl text-gray-300 hover:text-white" />
+                        </motion.a>
                     </div>
-
-                    <div className="flex items-center gap-3">
-                        <a href="https://linkedin.com/in/alexturianskyj" target="_blank" rel="noopener noreferrer">
-                            <FaLinkedin className="text-lg text-blue-400 hover:text-blue-300" />
-                        </a>
-                        <a href="https://github.com/AlexTurianskyj" target="_blank" rel="noopener noreferrer">
-                            <FaGithub className="text-lg text-gray-300 hover:text-white" />
-                        </a>
-                    </div>
-
                     <motion.button
-                        onClick={handleResumeDownload}
-                        className="ml-3 px-4 py-2 bg-transparent rounded-md font-medium text-white text-sm transition-all duration-300"
+                        onClick={handleResumeView}
+                        className="ml-2 px-3 py-2 bg-transparent rounded-md font-medium text-white text-sm transition-all duration-300"
                         style={{
                             border: '3px solid transparent',
                             backgroundImage: 'linear-gradient(#0f172a, #0f172a), linear-gradient(to right, #a855f7, #3b82f6)',
@@ -359,12 +364,11 @@ const MobileLayout = () => {
                         }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        Resume
+                        View Resume
                     </motion.button>
                 </div>
-            </div>{/* Hero Section with Project Nodes */}
-            <div className="relative h-screen pt-16">
-                {/* Background overlay for closing expanded nodes */}
+            </div>            {/* Hero Section with Project Nodes */}
+            <div className="relative h-svh pt-16">{/* Background overlay for closing expanded nodes */}
                 {expandedProject !== null && (
                     <motion.div
                         className="absolute inset-0 z-10"
@@ -373,7 +377,7 @@ const MobileLayout = () => {
                         exit={{ opacity: 0 }}
                         onTap={() => setExpandedProject(null)}
                     />
-                )}                {/* Project Nodes */}
+                )}{/* Project Nodes */}
                 <div className="absolute inset-0 flex items-center justify-center">
                     {projects
                         .filter(project => MOBILE_NODE_POSITIONS[project.id])
@@ -416,7 +420,7 @@ const MobileLayout = () => {
                         <h3 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                             Skills & Technologies
                         </h3>
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {Object.entries(skillCategories).map(([categoryName, categorySkills], categoryIndex) => (
                                 <motion.div
                                     key={categoryName}
@@ -424,17 +428,18 @@ const MobileLayout = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: categoryIndex * 0.05, duration: 0.4 }}
-                                    className="bg-slate-800/50 rounded-lg p-3 border border-gray-700/50"
+                                    className="bg-slate-800/50 rounded-lg p-2 border border-gray-700/50"
                                 >
                                     <h4 className="text-base font-semibold mb-4 text-gray-200 text-center">
                                         {categoryName}
-                                    </h4>                                    <div className="grid grid-cols-4 gap-3">
+                                    </h4>
+                                    <div className="grid grid-cols-4 gap-2">
                                         {categorySkills.slice(0, 8).map((skill, skillIndex) => {
                                             const IconComponent = skill.icon;
                                             return (
                                                 <motion.div
                                                     key={skillIndex}
-                                                    className="flex flex-col items-center px-1 py-3 rounded-md border bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50 transition-all duration-300"
+                                                    className="flex flex-col items-center px-0 py-3 rounded-md border bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50 transition-all duration-300"
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
                                                 >
@@ -602,7 +607,8 @@ const MobileLayout = () => {
                                                 className="flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-gray-700/50 border border-gray-600/30"
                                             >
                                                 <IconComponent className={`${skill.color} text-xs`} />
-                                                <span className="text-gray-300 truncate">{skillName}</span>                                        </div>
+                                                <span className="text-gray-300 truncate">{skillName}</span>
+                                            </div>
                                         );
                                     })}
                                 </div>
