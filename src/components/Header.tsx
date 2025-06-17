@@ -8,11 +8,8 @@ interface HeaderProps {
 }
 
 const Header = ({ scrollProgress }: HeaderProps) => {
-  const handleResumeDownload = () => {
-    const link = document.createElement('a');
-    link.href = '/Alex_Turianskyj_Resume.pdf';
-    link.download = 'Alex_Turianskyj_Resume.pdf';
-    link.click();
+  const handleResumeView = () => {
+    window.open('/Alex_Turianskyj_Resume.pdf', '_blank');
   };
 
   const socialLinks = [
@@ -121,8 +118,9 @@ const Header = ({ scrollProgress }: HeaderProps) => {
                   </motion.a>
                 );
               })}
-            </div>            {/* Download Resume Button */}            <motion.button
-              onClick={handleResumeDownload}
+            </div>            {/* Download Resume Button */}
+            <motion.button
+              onClick={handleResumeView}
               className="relative px-4 py-1 2xl:px-6 2xl:py-1.5 3xl:px-8 3xl:py-2 bg-transparent rounded-lg font-medium text-white transition-all duration-300 text-xs 2xl:text-sm 3xl:text-base"
               style={{
                 border: '3px solid transparent',
@@ -136,7 +134,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
                 boxShadow: '0 0 20px #a855f780'
               }}
               whileTap={{ scale: 0.95 }}            >
-              <span className="hidden lg:inline">Download Resume</span>
+              <span className="hidden lg:inline">View Resume</span>
               <span className="lg:hidden">Resume</span>
             </motion.button>
           </div>
