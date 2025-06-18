@@ -1,5 +1,7 @@
 import { IconType } from 'react-icons';
+import { DiDotnet } from 'react-icons/di';
 import { FaJava } from 'react-icons/fa';
+import { RiFileExcel2Fill } from 'react-icons/ri';
 import {
     SiAngular,
     SiCplusplus,
@@ -8,8 +10,10 @@ import {
     SiGnubash,
     SiGooglecolab,
     SiJavascript,
+    SiJest,
     SiJunit5,
     SiLinux,
+    SiNgrx,
     SiNumpy,
     SiPandas,
     SiPlotly,
@@ -33,16 +37,17 @@ export interface Skill {
     category: 'programming' | 'frameworks' | 'tools';
 }
 
-export const skills: Skill[] = [
-    // Programming Languages
+export const skills: Skill[] = [    // Programming Languages
     { name: 'Python', icon: SiPython, color: 'text-yellow-400', category: 'programming' },
     { name: 'Java', icon: FaJava, color: 'text-red-500', category: 'programming' },
     { name: 'C#', icon: SiSharp, color: 'text-purple-500', category: 'programming' },
     { name: 'TypeScript', icon: SiTypescript, color: 'text-blue-500', category: 'programming' },
     { name: 'JavaScript', icon: SiJavascript, color: 'text-yellow-500', category: 'programming' },
-    { name: 'C/C++', icon: SiCplusplus, color: 'text-blue-600', category: 'programming' },
+    { name: 'C++', icon: SiCplusplus, color: 'text-blue-600', category: 'programming' },
     { name: 'SQL', icon: TbSql, color: 'text-orange-500', category: 'programming' },
     { name: 'Bash', icon: SiGnubash, color: 'text-green-400', category: 'programming' },
+
+    { name: 'VBA', icon: RiFileExcel2Fill, color: 'text-green-600', category: 'programming' },
 
     // Frameworks & Libraries
     { name: 'Angular', icon: SiAngular, color: 'text-red-600', category: 'frameworks' },
@@ -53,6 +58,10 @@ export const skills: Skill[] = [
     { name: 'Pandas', icon: SiPandas, color: 'text-blue-500', category: 'frameworks' },
     { name: 'NumPy', icon: SiNumpy, color: 'text-blue-600', category: 'frameworks' },
     { name: 'matplotlib', icon: SiPlotly, color: 'text-blue-400', category: 'frameworks' },
+
+    { name: 'NgRx', icon: SiNgrx, color: 'text-purple-600', category: 'frameworks' },
+    { name: 'Jest', icon: SiJest, color: 'text-red-500', category: 'frameworks' },
+    { name: 'Windows Forms', icon: DiDotnet, color: 'text-purple-600', category: 'frameworks' },
 
     // Tools
     { name: 'Git', icon: SiGit, color: 'text-orange-600', category: 'tools' },

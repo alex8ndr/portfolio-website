@@ -10,13 +10,13 @@ interface ScrollSectionsProps {
 
 const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) => {
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
-  // Common breakpoint prefixes to avoid repetition
+  // Common breakpoint prefixes 
   const bp = {
     medium: '2xl:',     // 1536px+ 
     large: '3xl:'       // 1920px+
   };
 
-  // All responsive sizing in one place - just the values, no prefixes
+  // Responsive sizing 
   const breakpoints = {
     small: {  // Default for very small screens, high scaling, embeds
       heading: 'text-sm',
@@ -62,7 +62,7 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
       heading: 'text-2xl',
       subheading: 'text-sm',
       body: 'text-sm',
-      icon: 'text-3xl',
+      icon: 'text-2xl',
       logoW: 'w-12',
       logoH: 'h-12',
       containerX: 'px-2',
@@ -231,7 +231,7 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
 
               {/* Skills */}
               <div className="flex flex-wrap gap-1 flex-shrink-0">
-                {exp.skills.slice(0, 3).map((skillName) => {
+                {exp.skills.map((skillName) => {
                   const skill = skills.find(s =>
                     s.name.toLowerCase() === skillName.toLowerCase()
                   ) || skills.find(s =>

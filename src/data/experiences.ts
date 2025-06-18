@@ -17,32 +17,30 @@ export const experiences: Experience[] = [
         role: 'Software Developer Intern',
         period: 'May 2025 – Aug 2025',
         location: 'Montreal, QC',
-        description: "Enhancing real-time collaboration in Fusion, Autodesk's cloud-based design platform.",
+        description: "Enhancing real-time collaboration in Fusion, Autodesk's flagship cloud-based 3D design and manufacturing platform.",
         logo: '/logos/autodesk.jpeg',
-        skills: ['TypeScript', 'React', 'C++'],
+        skills: ['TypeScript', 'React', 'C++', 'Jest'],
         invisibleSkills: ['Git'],
-    },
-    {
+    }, {
         id: 'matrox',
         company: 'Matrox',
         role: 'Software Engineering Intern',
         period: 'Jan 2024 – Aug 2024',
         location: 'Montreal, QC',
-        description: 'Engineered TypeScript applications and C# WebSocket loggers, optimized log storage by 75%, built Angular components with NgRx.',
+        description: 'Developed an internal Angular app for remote KVM extender analysis and debugging with custom logging via WebSocket. Built bespoke UI components and REST API endpoints to control the device\'s volume and keyboard layout, translating Figma designs into code with NgRx state management.',
         logo: '/logos/matrox.jpeg',
-        skills: ['TypeScript', 'C#', 'Angular', '.NET', 'JUnit', 'Selenium'],
+        skills: ['TypeScript', 'Angular', 'NgRx', 'C#', '.NET', 'JUnit', 'Selenium'],
         invisibleSkills: ['Git', 'Postman'],
-    },
-    {
+    }, {
         id: 'hydro-quebec',
         company: 'Hydro-Québec',
         role: 'Software Development Intern',
         period: 'May 2023 – Aug 2023',
         location: 'Montreal, QC',
-        description: 'Automated Excel validation tasks with VBA macros, reducing processing time by 95%. Built testing tools with Windows Forms.',
+        description: 'Developed VBA macros for Excel automation, reducing validation processing time by over 95%. Engineered an interactive testing tool for substation devices using Windows Forms and DTM with modular JavaScript tests. Optimized data handling through structured JSON storage for config data and test results.',
         logo: '/logos/hydro-quebec.jpeg',
-        skills: ['C#', 'JavaScript'],
-        invisibleSkills: ['Git'],
+        skills: ['VBA', 'JavaScript', 'Windows Forms'],
+        invisibleSkills: [],
     },
 ];
 
@@ -72,12 +70,16 @@ export const education: Education = {
     gpa: '3.68/4.00',
     logo: '/logos/mcgill.jpeg', courses: [
         { name: 'Algorithms and Data Structures', skills: ['Java', 'JUnit'], visible: true },
-        { name: 'Operating Systems', skills: ['C', 'Unix', 'Bash'], visible: true },
+        { name: 'Operating Systems', skills: ['Unix', 'Bash'], visible: true },
         { name: 'Database Systems', skills: ['SQL', 'PostgreSQL'], visible: true },
-        { name: 'Applied Machine Learning', skills: ['Python', 'PyTorch', 'NumPy', 'Pandas', 'matplotlib'], visible: true },
-        { name: 'Software Engineering', skills: ['Java', 'JUnit', 'Git'], visible: true },
+        { name: 'Applied Machine Learning', skills: ['Python', 'PyTorch', 'Colab', 'NumPy', 'Pandas', 'matplotlib'], visible: true },
+        { name: 'Design Principles', skills: ['Python'], visible: true },
+        { name: 'Software Engineering', skills: ['Java', 'JUnit', 'JavaScript', 'Git'], visible: true },
         { name: 'Signals and Networks', skills: [], visible: true },
-        { name: 'Web Development', skills: ['JavaScript', 'React', 'TypeScript'], visible: true },
-        { name: 'Game Development', skills: ['Unity', 'C#'], visible: false }
+        { name: 'Computer Organization', skills: ['Assembly'], visible: true },
+        { name: 'Discrete Structures', skills: [], visible: true },
+
+        { name: 'Digital Logic', skills: [], visible: false },
+        { name: 'Software Systems', skills: ['Unix', 'Bash'], visible: false },
     ],
 };
