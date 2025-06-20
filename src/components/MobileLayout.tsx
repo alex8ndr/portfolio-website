@@ -322,18 +322,19 @@ const MobileLayout = () => {
     return (
         <div className="min-h-svh bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
             <div className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700">
-                <div className="flex items-center justify-between px-4 py-2">
+                <div className="flex items-center justify-between px-3 py-2">
                     <div className="flex-1">
                         <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent leading-tight">
                             Alex Turianskyj
                         </h1>
                         <p className="text-xs text-white/80 leading-tight">Software Developer</p>
-                    </div>                    <div className="flex items-center gap-2">
+                    </div>
+                    <div className="flex items-center gap-2">
                         <motion.a
                             href="https://linkedin.com/in/alex-turianskyj"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50 transition-all duration-200 hover:bg-slate-700/50 hover:border-slate-600/50 active:bg-slate-600/50"
+                            className="p-2 rounded-lg bg-slate-800/50 border border-slate-700/50 transition-all duration-200 hover:bg-slate-700/50 hover:border-slate-600/50 active:bg-slate-600/50"
                             whileTap={{ scale: 0.95 }}
                         >
                             <FaLinkedin className="text-xl text-gray-300 hover:text-white" />
@@ -342,7 +343,7 @@ const MobileLayout = () => {
                             href="https://github.com/alex8ndr"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50 transition-all duration-200 hover:bg-slate-700/50 hover:border-slate-600/50 active:bg-slate-600/50"
+                            className="p-2 rounded-lg bg-slate-800/50 border border-slate-700/50 transition-all duration-200 hover:bg-slate-700/50 hover:border-slate-600/50 active:bg-slate-600/50"
                             whileTap={{ scale: 0.95 }}
                         >
                             <FaGithub className="text-xl text-gray-300 hover:text-white" />
