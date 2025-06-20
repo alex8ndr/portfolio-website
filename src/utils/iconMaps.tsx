@@ -17,21 +17,35 @@ import {
     FaJava,
     FaYoutube,
 } from 'react-icons/fa';
+import { RiFileExcel2Fill } from 'react-icons/ri';
 import {
+    SiAngular,
     SiCplusplus,
     SiCss3,
     SiDevpost,
     SiDjango,
+    SiDotnet,
+    SiGit,
+    SiGnubash,
+    SiGooglecolab,
     SiHtml5,
     SiJavascript,
+    SiJest,
+    SiJunit5,
+    SiLinux,
+    SiNgrx,
     SiNodedotjs,
     SiNumpy,
     SiOpencv,
     SiPandas,
+    SiPlotly,
     SiPostgresql,
+    SiPostman,
     SiPython,
+    SiPytorch,
     SiReact,
     SiScipy,
+    SiSelenium,
     SiSharp,
     SiSpring,
     SiStreamlit,
@@ -40,34 +54,8 @@ import {
     SiUnity,
     SiVite
 } from 'react-icons/si';
+import { TbSql } from 'react-icons/tb';
 import { Project, ProjectButton } from '../data/projects';
-
-// Tech stack icon mapping
-export const techIconMap: { [key: string]: any } = {
-    'C++': SiCplusplus,
-    'C#': SiSharp,
-    Python: SiPython,
-    OpenCV: SiOpencv,
-    Unity: SiUnity,
-    JavaScript: SiJavascript,
-    'HTML/CSS': SiHtml5,
-    HTML: SiHtml5,
-    CSS: SiCss3,
-    TypeScript: SiTypescript,
-    'Node.js': SiNodedotjs,
-    Tailwind: SiTailwindcss,
-    Vite: SiVite,
-    Java: FaJava,
-    'Spring Boot': SiSpring,
-    React: SiReact,
-    PostgreSQL: SiPostgresql,
-    Pandas: SiPandas,
-    NumPy: SiNumpy,
-    Streamlit: SiStreamlit,
-    WinForms: DiDotnet,
-    Django: SiDjango,
-    SciPy: SiScipy,
-};
 
 // Project icon mapping
 export const getProjectIcon = (project: Project, iconClass: string = '') => {
@@ -114,6 +102,9 @@ export const skillIconMap: { [key: string]: any } = {
     Java: FaJava,
     'C++': SiCplusplus,
     'C#': SiSharp,
+    SQL: TbSql,
+    Bash: SiGnubash,
+    VBA: RiFileExcel2Fill,
 
     // Web Technologies
     React: SiReact,
@@ -124,10 +115,16 @@ export const skillIconMap: { [key: string]: any } = {
     Vite: SiVite,
 
     // Frameworks & Libraries
-    Django: SiDjango,
+    Angular: SiAngular,
+    '.NET': SiDotnet,
     'Spring Boot': SiSpring,
     Unity: SiUnity,
-    WinForms: DiDotnet,
+    'Windows Forms': DiDotnet,
+    Django: SiDjango,
+    PyTorch: SiPytorch,
+    NgRx: SiNgrx,
+    Jest: SiJest,
+    matplotlib: SiPlotly,
 
     // Databases
     PostgreSQL: SiPostgresql,
@@ -138,8 +135,38 @@ export const skillIconMap: { [key: string]: any } = {
     SciPy: SiScipy,
     OpenCV: SiOpencv,
     Streamlit: SiStreamlit,
+
+    // Tools
+    Git: SiGit,
+    Unix: SiLinux,
+    Postman: SiPostman,
+    JUnit: SiJunit5,
+    Selenium: SiSelenium,
+    'Google Colab': SiGooglecolab,
+
+    // Legacy mappings for backward compatibility
+    WinForms: DiDotnet,
+    Linux: SiLinux,
+    GoogleColab: SiGooglecolab,
+    Jupyter: SiJest,
+    Excel: RiFileExcel2Fill,
+    Plotly: SiPlotly,
+    Ngrx: SiNgrx,
+    Pytorch: SiPytorch,
+    Dotnet: SiDotnet,
+    Sql: TbSql,
 };
 
 export const getSkillIcon = (skillName: string) => {
     return skillIconMap[skillName] || FaCode;
+};
+
+// Tech stack icon mapping - uses skillIconMap for most icons
+export const techIconMap: { [key: string]: any } = {
+    // Most tech icons now use the centralized skillIconMap
+    ...skillIconMap,
+
+    // Project-specific tech mappings that differ from skills
+    'HTML/CSS': SiHtml5,
+    WinForms: DiDotnet, // Alias for Windows Forms
 };

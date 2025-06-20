@@ -443,9 +443,11 @@ const MobileLayout = () => {
                                                     whileHover={{ scale: 1.05 }}
                                                     whileTap={{ scale: 0.95 }}
                                                 >
-                                                    <IconComponent
-                                                        className={`text-xl mb-2 transition-all duration-300 ${skill.color}`}
-                                                    />
+                                                    {IconComponent ? (
+                                                        <IconComponent
+                                                            className={`text-xl mb-2 transition-all duration-300 ${skill.color}`}
+                                                        />
+                                                    ) : null}
                                                     <span className="text-xs text-gray-200 text-center font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
                                                         {skill.name}
                                                     </span>
@@ -498,8 +500,9 @@ const MobileLayout = () => {
                                         </div>
                                     </div>
 
-                                    <p className="text-gray-300 text-xs leading-relaxed mb-2">{exp.description}</p>                                    <div className="flex flex-wrap gap-1">
-                                        {exp.skills.slice(0, 3).map((skillName, skillIndex) => {
+                                    <p className="text-gray-300 text-xs leading-relaxed mb-2">{exp.description}</p>
+                                    <div className="flex flex-wrap gap-1">
+                                        {exp.skills.slice(0, 4).map((skillName, skillIndex) => {
                                             const skill = skills.find(s =>
                                                 s.name.toLowerCase() === skillName.toLowerCase()
                                             ) || skills.find(s =>
@@ -525,7 +528,9 @@ const MobileLayout = () => {
                                                     key={skillIndex}
                                                     className="flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-gray-700/50 border border-gray-600/30"
                                                 >
-                                                    <IconComponent className={`${skill.color} text-xs`} />
+                                                    {IconComponent ? (
+                                                        <IconComponent className={`${skill.color} text-xs`} />
+                                                    ) : null}
                                                     <span className="text-gray-300 truncate">{skillName}</span>
                                                 </div>
                                             );
@@ -606,7 +611,9 @@ const MobileLayout = () => {
                                                 key={skillIndex}
                                                 className="flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-gray-700/50 border border-gray-600/30"
                                             >
-                                                <IconComponent className={`${skill.color} text-xs`} />
+                                                {IconComponent ? (
+                                                    <IconComponent className={`${skill.color} text-xs`} />
+                                                ) : null}
                                                 <span className="text-gray-300 truncate">{skillName}</span>
                                             </div>
                                         );
