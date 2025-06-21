@@ -41,17 +41,20 @@ const Header = ({ scrollProgress }: HeaderProps) => {
 
   return (
     <>
-      <div className="website-link">
-        <a href="https://alext.dev" className="header-link">alext.dev</a>
-      </div>      <motion.header
-        className="fixed top-0 left-0 right-0 z-50 h-12 2xl:h-16 3xl:h-20 px-4 flex items-center bg-slate-900/80 backdrop-blur-sm"
+      <motion.header
+        className="fixed top-0 left-0 right-0 z-40 h-12 2xl:h-16 3xl:h-20 px-4 flex items-center bg-slate-900/80 backdrop-blur-sm"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-      >
-        {/* Left spacer to balance the right side */}
-        <div className="flex-1"></div>
-
+      >        <div className="flex-1 flex items-center">
+          <a
+            href="https://alext.dev"
+            className="font-montserrat font-extrabold text-lg 2xl:text-xl 3xl:text-2xl tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text transition-all duration-300 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded cursor-pointer select-none mx-6"
+            style={{ letterSpacing: '-0.01em' }}
+          >
+            alext.dev
+          </a>
+        </div>
         {/* Name and initials - centered with flex, will shrink if needed */}
         <motion.div
           className="flex items-center gap-3 px-4 min-w-0"
@@ -89,9 +92,8 @@ const Header = ({ scrollProgress }: HeaderProps) => {
             transition={{ duration: 0.4, delay: 0.2 }}
           >
             Alex Turianskyj
-          </motion.div>        </motion.div>
-
-        {/* Right side content - flex item to prevent overlap */}
+          </motion.div>
+        </motion.div>
         <div className="flex-1 flex justify-end">
           <div className="flex items-center gap-4">
             {/* Social Icons */}
@@ -118,7 +120,8 @@ const Header = ({ scrollProgress }: HeaderProps) => {
                   </motion.a>
                 );
               })}
-            </div>            {/* Download Resume Button */}
+            </div>
+            {/* Download Resume Button */}
             <motion.button
               onClick={handleResumeView}
               className="relative px-4 py-1 2xl:px-6 2xl:py-1.5 3xl:px-8 3xl:py-2 bg-transparent rounded-lg font-medium text-white transition-all duration-300 text-xs 2xl:text-sm 3xl:text-base"
@@ -133,7 +136,8 @@ const Header = ({ scrollProgress }: HeaderProps) => {
                 scale: 1.05,
                 boxShadow: '0 0 20px #a855f780'
               }}
-              whileTap={{ scale: 0.95 }}            >
+              whileTap={{ scale: 0.95 }}
+            >
               <span className="hidden lg:inline">View Resume</span>
               <span className="lg:hidden">Resume</span>
             </motion.button>

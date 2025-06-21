@@ -27,7 +27,7 @@ html::-webkit-scrollbar {
 :root {
   /* Site link colors */
   --site-link-gradient: linear-gradient(to right, #a855f7, #3b82f6);
-  --site-link-size: 1.4rem;
+  --site-link-size: 1rem;
   --site-link-weight: 700;
   --site-link-hover-scale: 1.05;
   
@@ -163,5 +163,9 @@ html::-webkit-scrollbar {
 @media (min-width: 768px) {
   .website-link {
     display: block;
+  }
+  
+  :root {
+    --site-link-size: 1.4rem;
   }
 }
