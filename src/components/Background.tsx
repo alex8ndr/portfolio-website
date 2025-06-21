@@ -23,7 +23,7 @@ interface GeometricShape {
     type: 'triangle' | 'square' | 'hexagon' | 'diamond' | 'circle' | 'star';
 }
 
-// Easy customization configuration
+// Customization configuration
 const CONFIG = {
     // Particle settings
     particles: {

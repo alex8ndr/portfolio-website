@@ -57,13 +57,13 @@ import {
 import { TbSql } from 'react-icons/tb';
 import { Project, ProjectButton } from '../data/projects';
 
-// Project icon mapping
+// Maps project IDs to icons
 export const getProjectIcon = (project: Project, iconClass: string = '') => {
     const iconMap: { [key: string]: JSX.Element } = {
         'daily-ball': <FaGamepad className={iconClass} style={{ color: project.color }} />,
         'vibe': <BsMusicNoteBeamed className={iconClass} style={{ color: project.color }} />,
         'choose-movie': <BsCameraReelsFill className={iconClass} style={{ color: project.color }} />,
-        'personal-website': <FaCode className={iconClass} style={{ color: project.color }} />,
+        'portfolio-website': <FaCode className={iconClass} style={{ color: project.color }} />,
         'holoportation': <BsHeadsetVr className={iconClass} style={{ color: project.color }} />,
         'event-horizons': <FaCalendarAlt className={iconClass} style={{ color: project.color }} />,
         'unitrade': <BsBagFill className={iconClass} style={{ color: project.color }} />,
@@ -74,7 +74,7 @@ export const getProjectIcon = (project: Project, iconClass: string = '') => {
     return iconMap[project.id] || <FaGamepad className={`text-gray-400 ${iconClass}`} />;
 };
 
-// Button icon mapping
+// Maps button types to icons
 export const getButtonIcon = (type: ProjectButton['type']) => {
     const icons: Record<string, JSX.Element> = {
         github: <FaGithub />,
@@ -85,7 +85,7 @@ export const getButtonIcon = (type: ProjectButton['type']) => {
     return icons[type] || <FaExternalLinkAlt />;
 };
 
-// Get tech icons for a project
+// Returns icon components for each tech in a stack
 export const getTechIcons = (techStack: string[]) => {
     return techStack.map((tech: string) => {
         const IconComponent = techIconMap[tech] || BiCode;
@@ -93,7 +93,7 @@ export const getTechIcons = (techStack: string[]) => {
     });
 };
 
-// Skills icon mapping
+// Maps skill names to icon components
 export const skillIconMap: { [key: string]: any } = {
     // Programming Languages
     Python: SiPython,
@@ -144,7 +144,7 @@ export const skillIconMap: { [key: string]: any } = {
     Selenium: SiSelenium,
     'Google Colab': SiGooglecolab,
 
-    // Legacy mappings for backward compatibility
+    // Legacy mappings for compatibility
     WinForms: DiDotnet,
     Linux: SiLinux,
     GoogleColab: SiGooglecolab,
@@ -161,12 +161,12 @@ export const getSkillIcon = (skillName: string) => {
     return skillIconMap[skillName] || FaCode;
 };
 
-// Tech stack icon mapping - uses skillIconMap for most icons
+// Maps tech stack names to icon components
 export const techIconMap: { [key: string]: any } = {
-    // Most tech icons now use the centralized skillIconMap
+    // Most tech icons use skillIconMap
     ...skillIconMap,
 
-    // Project-specific tech mappings that differ from skills
+    // Project-specific tech mappings
     'HTML/CSS': SiHtml5,
     WinForms: DiDotnet, // Alias for Windows Forms
 };

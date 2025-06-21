@@ -10,15 +10,15 @@ interface ScrollSectionsProps {
 
 const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) => {
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
-  // Common breakpoint prefixes 
+  // Breakpoint prefixes for responsive design
   const bp = {
-    medium: '2xl:',     // 1536px+ 
-    large: '3xl:'       // 1920px+
+    medium: '2xl:',
+    large: '3xl:'
   };
 
-  // Responsive sizing 
+  // Responsive sizing for different screen sizes
   const breakpoints = {
-    small: {  // Default for very small screens, high scaling, embeds
+    small: {
       heading: 'text-sm',
       subheading: 'text-xs',
       body: 'text-xs',
@@ -34,11 +34,10 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
       headingMargin: 'mb-2',
       itemSpacing: 'gap-2',
       innerPadding: 'px-1 py-1',
-      // Height responsiveness
-      containerHeight: 'h-[65vh]',  // Shorter on small screens
+      containerHeight: 'h-[65vh]',
       maxHeight: 'max-h-[65vh]'
     },
-    medium: {  // Values for xl: = 1280px and up (normal large desktop)
+    medium: {
       heading: 'text-lg',
       subheading: 'text-sm',
       body: 'text-sm',
@@ -54,11 +53,10 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
       headingMargin: 'mb-3',
       itemSpacing: 'gap-3',
       innerPadding: 'px-2 py-2',
-      // Height responsiveness  
-      containerHeight: 'h-[68vh]',  // Standard height for medium screens
+      containerHeight: 'h-[68vh]',
       maxHeight: 'max-h-[68vh]'
     },
-    large: {  // Values for 2xl: = 1536px+ ultra-wide displays
+    large: {
       heading: 'text-2xl',
       subheading: 'text-sm',
       body: 'text-sm',
@@ -74,32 +72,29 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
       headingMargin: 'mb-3',
       itemSpacing: 'gap-3',
       innerPadding: 'px-2 py-2',
-      // Height responsiveness
-      containerHeight: 'h-[68vh]',  // Same as medium for consistent height
+      containerHeight: 'h-[68vh]',
       maxHeight: 'max-h-[68vh]'
     }
   };
 
-  // Combined everything for easy use
+  // Combine all responsive values for easy use
   const sizes = {
-    // Text sizes
     heading: `${breakpoints.small.heading} ${bp.medium}${breakpoints.medium.heading} ${bp.large}${breakpoints.large.heading}`,
     subheading: `${breakpoints.small.subheading} ${bp.medium}${breakpoints.medium.subheading} ${bp.large}${breakpoints.large.subheading}`,
     body: `${breakpoints.small.body} ${bp.medium}${breakpoints.medium.body} ${bp.large}${breakpoints.large.body}`,
     icon: `${breakpoints.small.icon} ${bp.medium}${breakpoints.medium.icon} ${bp.large}${breakpoints.large.icon}`,
     logo: `${breakpoints.small.logoW} ${breakpoints.small.logoH} ${bp.medium}${breakpoints.medium.logoW} ${bp.medium}${breakpoints.medium.logoH} ${bp.large}${breakpoints.large.logoW} ${bp.large}${breakpoints.large.logoH}`,
-    // Spacing (replaces old spacing object)
     containerX: `${breakpoints.small.containerX} ${bp.medium}${breakpoints.medium.containerX} ${bp.large}${breakpoints.large.containerX}`,
     containerY: `${breakpoints.small.containerY} ${bp.medium}${breakpoints.medium.containerY} ${bp.large}${breakpoints.large.containerY}`,
-    sectionMargin: `${breakpoints.small.sectionMargin} ${bp.medium}${breakpoints.medium.sectionMargin} ${bp.large}${breakpoints.large.sectionMargin}`, cardPadding: `${breakpoints.small.cardPadding} ${bp.medium}${breakpoints.medium.cardPadding} ${bp.large}${breakpoints.large.cardPadding}`,
+    sectionMargin: `${breakpoints.small.sectionMargin} ${bp.medium}${breakpoints.medium.sectionMargin} ${bp.large}${breakpoints.large.sectionMargin}`,
+    cardPadding: `${breakpoints.small.cardPadding} ${bp.medium}${breakpoints.medium.cardPadding} ${bp.large}${breakpoints.large.cardPadding}`,
     gaps: `${breakpoints.small.gaps} ${bp.medium}${breakpoints.medium.gaps} ${bp.large}${breakpoints.large.gaps}`,
-    // Additional responsive spacing
     smallGap: `${breakpoints.small.smallGap} ${bp.medium}${breakpoints.medium.smallGap} ${bp.large}${breakpoints.large.smallGap}`,
     headingMargin: `${breakpoints.small.headingMargin} ${bp.medium}${breakpoints.medium.headingMargin} ${bp.large}${breakpoints.large.headingMargin}`,
     itemSpacing: `${breakpoints.small.itemSpacing} ${bp.medium}${breakpoints.medium.itemSpacing} ${bp.large}${breakpoints.large.itemSpacing}`,
     innerPadding: `${breakpoints.small.innerPadding} ${bp.medium}${breakpoints.medium.innerPadding} ${bp.large}${breakpoints.large.innerPadding}`,
-    // Height responsiveness
-    containerHeight: `${breakpoints.small.containerHeight} ${bp.medium}${breakpoints.medium.containerHeight} ${bp.large}${breakpoints.large.containerHeight}`, maxHeight: `${breakpoints.small.maxHeight} ${bp.medium}${breakpoints.medium.maxHeight} ${bp.large}${breakpoints.large.maxHeight}`
+    containerHeight: `${breakpoints.small.containerHeight} ${bp.medium}${breakpoints.medium.containerHeight} ${bp.large}${breakpoints.large.containerHeight}`,
+    maxHeight: `${breakpoints.small.maxHeight} ${bp.medium}${breakpoints.medium.maxHeight} ${bp.large}${breakpoints.large.maxHeight}`
   };
 
   const handleSkillHover = (skill: string | null) => {

@@ -5,7 +5,7 @@ export interface Skill {
     name: string;
     color: string;
     category: 'programming' | 'frameworks' | 'tools';
-    icon?: IconType; // Optional, will be computed from iconMap
+    icon?: IconType; // Computed from iconMap
 }
 
 export const skillsData: Omit<Skill, 'icon'>[] = [
@@ -44,7 +44,7 @@ export const skillsData: Omit<Skill, 'icon'>[] = [
     { name: 'Google Colab', color: 'text-yellow-600', category: 'tools' },
 ];
 
-// Computed skills array with icons from iconMap
+// Skills array with icons from iconMap
 export const skills: Skill[] = skillsData.map(skill => ({
     ...skill,
     icon: getSkillIcon(skill.name)
