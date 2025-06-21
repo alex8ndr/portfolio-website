@@ -153,29 +153,34 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
           <div className={`grid grid-cols-4 ${sizes.smallGap}`}>
             {skillList.slice(0, 8).map((skill) => {
               const IconComponent = skill.icon;
-              const isHighlighted = hoveredSkill === skill.name; return (<motion.div
-                key={skill.name}
-                className={`flex flex-col items-center ${sizes.innerPadding} rounded-md border transition-all duration-300 cursor-pointer ${isHighlighted
-                  ? 'bg-slate-700/70 border-purple-500/50'
-                  : 'bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50'
-                  }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onHoverStart={() => handleSkillHover(skill.name)}
-                onHoverEnd={() => handleSkillHover(null)}
-                animate={{
-                  opacity: hoveredSkill && !isHighlighted ? 0.3 : 1,
-                }}
-                transition={{
-                  opacity: { duration: 0.3 }
-                }}
-              ><IconComponent
-                  className={`${sizes.icon} mb-1 transition-all duration-300 ${isHighlighted ? skill.color + ' drop-shadow-lg' : skill.color}`}
-                />
-                <span className={`${sizes.body} text-gray-200 text-center font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>
-                  {skill.name}
-                </span>
-              </motion.div>
+              const isHighlighted = hoveredSkill === skill.name;
+              return (
+                <motion.div
+                  key={skill.name}
+                  className={`flex flex-col items-center ${sizes.innerPadding} rounded-md border transition-all duration-300 cursor-pointer ${isHighlighted
+                    ? 'bg-slate-700/70 border-purple-500/50'
+                    : 'bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50'
+                    }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onHoverStart={() => handleSkillHover(skill.name)}
+                  onHoverEnd={() => handleSkillHover(null)}
+                  animate={{
+                    opacity: hoveredSkill && !isHighlighted ? 0.3 : 1,
+                  }}
+                  transition={{
+                    opacity: { duration: 0.3 }
+                  }}
+                >
+                  {IconComponent && (
+                    <IconComponent
+                      className={`${sizes.icon} mb-1 transition-all duration-300 ${isHighlighted ? skill.color + ' drop-shadow-lg' : skill.color}`}
+                    />
+                  )}
+                  <span className={`${sizes.body} text-gray-200 text-center font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>
+                    {skill.name}
+                  </span>
+                </motion.div>
               );
             })}
           </div>
@@ -252,7 +257,9 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                         : 'bg-gray-700/50 border border-gray-600/30'
                         }`}
                     >
-                      <IconComponent className={`${skill.color} ${sizes.body}`} />
+                      {IconComponent && (
+                        <IconComponent className={`${skill.color} ${sizes.body}`} />
+                      )}
                       <span className={`text-gray-300 ${sizes.body} truncate`}>{skillName}</span>
                     </div>
                   );
