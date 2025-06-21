@@ -72,7 +72,7 @@ export const education: Education = {
         { name: 'Algorithms and Data Structures', skills: ['Java', 'JUnit'], visible: true },
         { name: 'Operating Systems', skills: ['Unix', 'Bash'], visible: true },
         { name: 'Database Systems', skills: ['SQL', 'PostgreSQL'], visible: true },
-        { name: 'Applied Machine Learning', skills: ['Python', 'PyTorch', 'Colab', 'NumPy', 'Pandas', 'matplotlib'], visible: true },
+        { name: 'Applied Machine Learning', skills: ['Python', 'PyTorch', 'Google Colab', 'NumPy', 'Pandas', 'matplotlib'], visible: true },
         { name: 'Design Principles', skills: ['Python'], visible: true },
         { name: 'Software Engineering', skills: ['Java', 'JUnit', 'JavaScript', 'Git'], visible: true },
         { name: 'Signals and Networks', skills: [], visible: true },
