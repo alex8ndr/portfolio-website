@@ -9,17 +9,17 @@ export interface ProjectContent {
   name: string;
   description: string;
   techStack: string[];
-  invisibleSkills?: string[]; // Hidden skills for highlighting (e.g., Git)
+  invisibleSkills?: string[]; // Used for highlighting skills not shown in techStack
   timeline: string;
-  link?: string; // Keep for backward compatibility with the current click behavior
-  buttons?: ProjectButton[]; // New flexible buttons, max 2
+  link?: string; // Used for main project link
+  buttons?: ProjectButton[];
   color: string;
 }
 
 export interface ProjectLayout {
   id: string;
   size: 'large' | 'medium' | 'small' | 'tiny';
-  position: number; // Position 0-4 (0=top, 1=right, 2=bottom, 3=left, decimals for fine-tuning)
+  position: number; // 0=top, 1=right, 2=bottom, 3=left (decimals fine-tune)
 }
 
 export interface Project extends ProjectContent {
@@ -27,18 +27,18 @@ export interface Project extends ProjectContent {
   position: number;
 }
 
-// Position guide: 0=top, 1=right, 2=bottom, 3=left (decimals for fine-tuning)
+// Position: 0=top, 1=right, 2=bottom, 3=left
 export const projectLayouts: ProjectLayout[] = [
-  // LARGE PROJECTS (inner ring)
+  // Large projects (inner ring)
   { id: 'daily-ball', size: 'large', position: 3.25 },
   { id: 'vibe', size: 'large', position: 1.75 },
   { id: 'choose-movie', size: 'large', position: 0.5 },
 
-  // MEDIUM PROJECTS (middle ring)
-  { id: 'personal-website', size: 'medium', position: 1.05 },
+  // Medium projects (middle ring)
+  { id: 'portfolio-website', size: 'medium', position: 1.05 },
   { id: 'holoportation', size: 'medium', position: 2.7 },
 
-  // SMALL PROJECTS (outer ring)
+  // Small projects (outer ring)
   { id: 'event-horizons', size: 'small', position: 3.45 },
   { id: 'unitrade', size: 'small', position: 0.7 },
   { id: 'impostorbot', size: 'small', position: 1.3 },
@@ -100,7 +100,7 @@ export const projectContent: ProjectContent[] = [{
   color: '#f59e0b', // Amber
 },
 {
-  id: 'personal-website',
+  id: 'portfolio-website',
   name: 'Portfolio Website',
   description: 'Interactive portfolio with 2D project visualization and responsive design',
   techStack: ['TypeScript', 'React', 'Vite'],
@@ -109,7 +109,7 @@ export const projectContent: ProjectContent[] = [{
   buttons: [
     {
       label: 'Code',
-      url: 'https://github.com/alex8ndr/personal-website',
+      url: 'https://github.com/alex8ndr/portfolio-website',
       type: 'github',
     },
   ],

@@ -9,16 +9,16 @@ import ScrollSections from './components/ScrollSections';
 function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth <= 768;
+  });
 
-  // Check if device is mobile
   useEffect(() => {
     const checkMobile = () => {
-      const isMobileDevice = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent);
-      setIsMobile(isMobileDevice);
+      setIsMobile(window.innerWidth <= 768);
     };
 
-    checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
@@ -46,7 +46,6 @@ function App() {
     };
   }, [isMobile]);
 
-  // If mobile, render mobile layout
   if (isMobile) {
     return <MobileLayout />;
   }

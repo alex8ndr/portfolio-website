@@ -9,20 +9,20 @@ const NODE_CONFIG = {
     small: 82,
     medium: 100,
     large: 125,
-  }, rings: {
-    // Responsive ring sizes: smaller rings for smaller screens
+  },
+  rings: {
     small: {
-      large: { radius: 180 },     // Smaller rings for small screens
+      large: { radius: 180 },
       medium: { radius: 280 },
       small: { radius: 380 },
     },
     medium: {
-      large: { radius: 220 },     // Medium rings for 1536px+
+      large: { radius: 220 },
       medium: { radius: 340 },
       small: { radius: 460 },
     },
     large: {
-      large: { radius: 250 },     // Full size rings for 1920px+
+      large: { radius: 250 },
       medium: { radius: 400 },
       small: { radius: 550 },
     },
@@ -39,10 +39,9 @@ const NODE_CONFIG = {
     nodeGap: 60,
     yOffset: 40,
   }, scroll: {
-    // Responsive scaling: smaller scales for smaller screens
-    small: { maxScale: 0.8, minScale: 0.75 },      // Default for small screens
-    medium: { maxScale: 0.9, minScale: 0.85 },     // 2xl: 1536px+
-    large: { maxScale: 1.0, minScale: 0.95 },      // 3xl: 1920px+
+    small: { maxScale: 0.8, minScale: 0.75 },
+    medium: { maxScale: 0.9, minScale: 0.85 },
+    large: { maxScale: 1.0, minScale: 0.95 },
     transitionStart: 0.1,
     transitionEnd: 0.6,
   },
@@ -110,7 +109,7 @@ interface ProjectNode2DProps {
   scrollProgress: number;
   horizontalX: number;
   hoveredSkill: string | null;
-  sortedIndex: number; // Add sorted index for better size calculation
+  sortedIndex: number;
 }
 
 const ProjectNode2D = ({
@@ -123,17 +122,14 @@ const ProjectNode2D = ({
   horizontalX,
   hoveredSkill,
 }: ProjectNode2DProps) => {
-  const [isHovered, setIsHovered] = useState(false);  // Helper function to check if project uses a specific skill
+  const [isHovered, setIsHovered] = useState(false);
   const projectUsesSkill = (skillName: string): boolean => {
     if (!skillName) return false;
-
-    // Check both techStack and invisibleSkills
     const allSkills = [...project.techStack, ...(project.invisibleSkills || [])];
-
     return allSkills.some(tech => {
       const techLower = tech.toLowerCase();
       const skillLower = skillName.toLowerCase();
-      // Exact matching for Java/JavaScript to prevent confusion
+      // Prevent Java/JavaScript confusion
       if (skillLower === 'java' && techLower === 'java') return true;
       if (skillLower === 'javascript' && techLower === 'javascript') return true;
       if (skillLower !== 'java' && skillLower !== 'javascript') {
@@ -142,10 +138,8 @@ const ProjectNode2D = ({
       return false;
     });
   };
-  // Check if this project should be highlighted based on hovered skill
   const isSkillHighlighted = hoveredSkill && projectUsesSkill(hoveredSkill);
-  // Check if other nodes should be dimmed when a skill is hovered
-  const shouldDim = hoveredSkill && !isSkillHighlighted;// Calculate optimal height for expanded projects
+  const shouldDim = hoveredSkill && !isSkillHighlighted;
   const getExpandedHeight = (proj: Project) => {
     const { expanded } = NODE_CONFIG;
     let height = expanded.baseHeight;
