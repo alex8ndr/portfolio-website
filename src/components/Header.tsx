@@ -65,7 +65,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
           }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          {/* AT initials */}
+          {/* Profile image with colored border */}
           <motion.div
             className="w-8 h-8 2xl:w-10 2xl:h-10 3xl:w-12 3xl:h-12 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-0.5"
             initial={{ scale: 0 }}
@@ -75,10 +75,13 @@ const Header = ({ scrollProgress }: HeaderProps) => {
             }}
             transition={{ duration: 0.6, delay: 0.1, ease: 'backOut' }}
           >
-            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
-              <span className="text-xs 2xl:text-sm 3xl:text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                AT
-              </span>
+            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
+              <img
+                src="/headshot.png"
+                alt="Alex Turianskyj headshot"
+                className="w-full h-full object-cover rounded-full"
+                draggable="false"
+              />
             </div>
           </motion.div>
 

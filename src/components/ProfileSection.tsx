@@ -29,21 +29,27 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         opacity: opacity,
       }}
       transition={{ type: "tween", ease: "easeOut", duration: 0.05 }}
-    >      <div className={avatarMarginClass}>        <motion.div
-      className="w-24 h-24 2xl:w-28 2xl:h-28 3xl:w-32 3xl:h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1"
-      animate={{
-        opacity: scrollProgress > 0.4 ? 0 : 1,
-        scale: scrollProgress > 0.4 ? 0.3 : 1
-      }}
-      transition={{ duration: 0.25, ease: 'easeInOut' }}
     >
-      <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
-        <span className="text-3xl 2xl:text-3xl 3xl:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-          AT
-        </span>
+      <div className={avatarMarginClass}>
+        <motion.div
+          className="w-24 h-24 2xl:w-28 2xl:h-28 3xl:w-32 3xl:h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1"
+          animate={{
+            opacity: scrollProgress > 0.4 ? 0 : 1,
+            scale: scrollProgress > 0.4 ? 0.3 : 1
+          }}
+          transition={{ duration: 0.25, ease: 'easeInOut' }}
+        >
+          <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
+            <img
+              src="/headshot.png"
+              alt="Alex Turianskyj headshot"
+              className="w-full h-full object-cover rounded-full"
+              draggable="false"
+            />
+          </div>
+        </motion.div>
       </div>
-    </motion.div>
-      </div>      <motion.h1
+      <motion.h1
         className="text-2xl 2xl:text-3xl 3xl:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300"
         animate={{
           scale: nameScale,
