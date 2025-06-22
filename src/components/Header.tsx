@@ -67,22 +67,23 @@ const Header = ({ scrollProgress }: HeaderProps) => {
         >
           {/* Profile image with colored border */}
           <motion.div
-            className="w-8 h-8 2xl:w-10 2xl:h-10 3xl:w-12 3xl:h-12 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-0.5"
+            className="w-10 h-10 2xl:w-12 2xl:h-12 3xl:w-14 3xl:h-14 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-0.5"
             initial={{ scale: 0 }}
             animate={{
               scale: scrollProgress > 0.6 ? 1 : 0,
               rotate: scrollProgress > 0.6 ? 0 : 180
             }}
             transition={{ duration: 0.6, delay: 0.1, ease: 'backOut' }}
-          >            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden"
-            style={{
-              boxShadow: `
+          >
+            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden"
+              style={{
+                boxShadow: `
                   inset -10px -10px 20px rgba(59,130,246,0.25),
                   inset 10px 10px 20px rgba(168,85,247,0.25),
                   inset 0 0 30px rgba(139,92,246,0.08)
                 `
-            }}
-          >
+              }}
+            >
               <img
                 src="/headshot.png"
                 alt="Alex Turianskyj headshot"
@@ -92,17 +93,30 @@ const Header = ({ scrollProgress }: HeaderProps) => {
             </div>
           </motion.div>
 
-          <motion.div
-            className="text-base 2xl:text-lg 3xl:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 truncate"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{
-              opacity: scrollProgress > 0.6 ? 1 : 0,
-              y: scrollProgress > 0.6 ? 0 : 10
-            }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            Alex Turianskyj
-          </motion.div>
+          <div className="flex flex-col min-w-0">
+            <motion.div
+              className="text-base 2xl:text-xl 3xl:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 leading-tight truncate"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{
+                opacity: scrollProgress > 0.6 ? 1 : 0,
+                y: scrollProgress > 0.6 ? 0 : 10
+              }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              Alex Turianskyj
+            </motion.div>
+            <motion.div
+              className="text-[10px] 2xl:text-xs 3xl:text-sm text-gray-400 font-medium leading-tight truncate mt-0.5"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{
+                opacity: scrollProgress > 0.6 ? 1 : 0,
+                y: scrollProgress > 0.6 ? 0 : 10
+              }}
+              transition={{ duration: 0.4, delay: 0.25 }}
+            >
+              Software Developer
+            </motion.div>
+          </div>
         </motion.div>
         <div className="flex-1 flex justify-end">
           <div className="flex items-center gap-4">
