@@ -74,8 +74,15 @@ const Header = ({ scrollProgress }: HeaderProps) => {
               rotate: scrollProgress > 0.6 ? 0 : 180
             }}
             transition={{ duration: 0.6, delay: 0.1, ease: 'backOut' }}
+          >            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden"
+            style={{
+              boxShadow: `
+                  inset -10px -10px 20px rgba(59,130,246,0.25),
+                  inset 10px 10px 20px rgba(168,85,247,0.25),
+                  inset 0 0 30px rgba(139,92,246,0.08)
+                `
+            }}
           >
-            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
               <img
                 src="/headshot.png"
                 alt="Alex Turianskyj headshot"

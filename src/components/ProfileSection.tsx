@@ -17,13 +17,15 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
 
   // Calculate responsive text size based on scroll progress
   const nameScale = 1 - (fastProgress * 0.2);
+
   // Responsive avatar margin using CSS classes
   const avatarMarginClass = fastProgress > 0.5
     ? 'mb-1 2xl:mb-1 3xl:mb-2'
     : 'mb-4 2xl:mb-5 3xl:mb-6';
+
   return (
     <motion.div
-      className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-10"
+      className="absolute inset-0 flex flex-col items-center justify-center text-center z-10"
       style={{
         transform: `translateY(${translateY}) scale(${scale})`,
         opacity: opacity,
@@ -38,8 +40,16 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
             scale: scrollProgress > 0.4 ? 0.3 : 1
           }}
           transition={{ duration: 0.25, ease: 'easeInOut' }}
+        >          <div
+          className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden relative"
+          style={{
+            boxShadow: `
+                inset -15px -15px 30px rgba(59,130,246,0.3),
+                inset 15px 15px 30px rgba(168,85,247,0.3),
+                inset 0 0 50px rgba(139,92,246,0.1)
+              `
+          }}
         >
-          <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
             <img
               src="/headshot.png"
               alt="Alex Turianskyj headshot"
