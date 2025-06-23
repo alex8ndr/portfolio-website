@@ -21,35 +21,40 @@ module.exports = {
       // All margin combinations - m, mb, etc
       pattern: /m(x|y|t|b|l|r)?-(0|1|2|3|4|5|6|7|8|9|10|11|12)/,
       variants: ['xl', '2xl', '3xl'],
-    },    {
+    }, {
       // All gap sizes 
       pattern: /gap-(0|1|2|3|4|5|6|7|8|9|10|11|12)/,
       variants: ['xl', '2xl', '3xl'],
     },
     // Height classes: h-[60vh] through h-[75vh] with responsive variants
-    'h-[60vh]', 'h-[61vh]', 'h-[62vh]', 'h-[63vh]', 'h-[64vh]', 'h-[65vh]', 'h-[66vh]', 'h-[67vh]', 
+    'h-[60vh]', 'h-[61vh]', 'h-[62vh]', 'h-[63vh]', 'h-[64vh]', 'h-[65vh]', 'h-[66vh]', 'h-[67vh]',
     'h-[68vh]', 'h-[69vh]', 'h-[70vh]', 'h-[71vh]', 'h-[72vh]', 'h-[73vh]', 'h-[74vh]', 'h-[75vh]',
-    'max-h-[60vh]', 'max-h-[61vh]', 'max-h-[62vh]', 'max-h-[63vh]', 'max-h-[64vh]', 'max-h-[65vh]', 
-    'max-h-[66vh]', 'max-h-[67vh]', 'max-h-[68vh]', 'max-h-[69vh]', 'max-h-[70vh]', 'max-h-[71vh]', 
+    'max-h-[60vh]', 'max-h-[61vh]', 'max-h-[62vh]', 'max-h-[63vh]', 'max-h-[64vh]', 'max-h-[65vh]',
+    'max-h-[66vh]', 'max-h-[67vh]', 'max-h-[68vh]', 'max-h-[69vh]', 'max-h-[70vh]', 'max-h-[71vh]',
     'max-h-[72vh]', 'max-h-[73vh]', 'max-h-[74vh]', 'max-h-[75vh]',
-    '2xl:h-[60vh]', '2xl:h-[61vh]', '2xl:h-[62vh]', '2xl:h-[63vh]', '2xl:h-[64vh]', '2xl:h-[65vh]', 
-    '2xl:h-[66vh]', '2xl:h-[67vh]', '2xl:h-[68vh]', '2xl:h-[69vh]', '2xl:h-[70vh]', '2xl:h-[71vh]', 
+    '2xl:h-[60vh]', '2xl:h-[61vh]', '2xl:h-[62vh]', '2xl:h-[63vh]', '2xl:h-[64vh]', '2xl:h-[65vh]',
+    '2xl:h-[66vh]', '2xl:h-[67vh]', '2xl:h-[68vh]', '2xl:h-[69vh]', '2xl:h-[70vh]', '2xl:h-[71vh]',
     '2xl:h-[72vh]', '2xl:h-[73vh]', '2xl:h-[74vh]', '2xl:h-[75vh]',
-    '2xl:max-h-[60vh]', '2xl:max-h-[61vh]', '2xl:max-h-[62vh]', '2xl:max-h-[63vh]', '2xl:max-h-[64vh]', 
-    '2xl:max-h-[65vh]', '2xl:max-h-[66vh]', '2xl:max-h-[67vh]', '2xl:max-h-[68vh]', '2xl:max-h-[69vh]', 
-    '2xl:max-h-[70vh]', '2xl:max-h-[71vh]', '2xl:max-h-[72vh]', '2xl:max-h-[73vh]', '2xl:max-h-[74vh]', 
+    '2xl:max-h-[60vh]', '2xl:max-h-[61vh]', '2xl:max-h-[62vh]', '2xl:max-h-[63vh]', '2xl:max-h-[64vh]',
+    '2xl:max-h-[65vh]', '2xl:max-h-[66vh]', '2xl:max-h-[67vh]', '2xl:max-h-[68vh]', '2xl:max-h-[69vh]',
+    '2xl:max-h-[70vh]', '2xl:max-h-[71vh]', '2xl:max-h-[72vh]', '2xl:max-h-[73vh]', '2xl:max-h-[74vh]',
     '2xl:max-h-[75vh]',
-    '3xl:h-[60vh]', '3xl:h-[61vh]', '3xl:h-[62vh]', '3xl:h-[63vh]', '3xl:h-[64vh]', '3xl:h-[65vh]', 
-    '3xl:h-[66vh]', '3xl:h-[67vh]', '3xl:h-[68vh]', '3xl:h-[69vh]', '3xl:h-[70vh]', '3xl:h-[71vh]', 
+    '3xl:h-[60vh]', '3xl:h-[61vh]', '3xl:h-[62vh]', '3xl:h-[63vh]', '3xl:h-[64vh]', '3xl:h-[65vh]',
+    '3xl:h-[66vh]', '3xl:h-[67vh]', '3xl:h-[68vh]', '3xl:h-[69vh]', '3xl:h-[70vh]', '3xl:h-[71vh]',
     '3xl:h-[72vh]', '3xl:h-[73vh]', '3xl:h-[74vh]', '3xl:h-[75vh]',
-    '3xl:max-h-[60vh]', '3xl:max-h-[61vh]', '3xl:max-h-[62vh]', '3xl:max-h-[63vh]', '3xl:max-h-[64vh]', 
-    '3xl:max-h-[65vh]', '3xl:max-h-[66vh]', '3xl:max-h-[67vh]', '3xl:max-h-[68vh]', '3xl:max-h-[69vh]', 
-    '3xl:max-h-[70vh]', '3xl:max-h-[71vh]', '3xl:max-h-[72vh]', '3xl:max-h-[73vh]', '3xl:max-h-[74vh]', 
+    '3xl:max-h-[60vh]', '3xl:max-h-[61vh]', '3xl:max-h-[62vh]', '3xl:max-h-[63vh]', '3xl:max-h-[64vh]',
+    '3xl:max-h-[65vh]', '3xl:max-h-[66vh]', '3xl:max-h-[67vh]', '3xl:max-h-[68vh]', '3xl:max-h-[69vh]',
+    '3xl:max-h-[70vh]', '3xl:max-h-[71vh]', '3xl:max-h-[72vh]', '3xl:max-h-[73vh]', '3xl:max-h-[74vh]',
     '3xl:max-h-[75vh]'
-  ], 
-  theme: {    
+  ],
+  theme: {
     extend: {
       screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
         '3xl': '1920px', // Custom breakpoint for very large screens
       },
       borderRadius: {
