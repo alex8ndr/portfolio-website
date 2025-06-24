@@ -495,25 +495,40 @@ const ProjectNode2D = ({
                   <div className={`flex ${project.buttons.length === 1 ? 'justify-center' : 'gap-2'} w-full px-2`}>
                     {project.buttons
                       .slice(0, 2)
-                      .map((button, buttonIndex) => (
-                        <motion.button
-                          key={buttonIndex}
-                          className={`${project.buttons!.length === 1 ? 'px-4' : 'flex-1 max-w-[120px]'} bg-gray-800/70 hover:bg-gray-700/80 text-white px-3 py-1.5 rounded text-xs font-medium border border-gray-600/50 hover:border-gray-500/70 flex items-center justify-center gap-1.5 transition-colors duration-200`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(button.url, '_blank');
-                          }}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <span className="text-xs flex-shrink-0">
-                            {getButtonIcon(button.type)}
-                          </span>
-                          <span className="text-xs leading-none">
-                            {button.label}
-                          </span>
-                        </motion.button>
-                      ))}
+                      .map((button, buttonIndex) => {
+                        const isDisabled = !button.url;
+                        const isSingle = (project.buttons?.length ?? 0) === 1;
+                        return (
+                          <motion.button
+                            key={buttonIndex}
+                            className={
+                              `${isSingle
+                                ? 'w-[80%] mx-auto px-6'
+                                : 'flex-auto min-w-0 px-3'} py-2 rounded-lg text-xs font-semibold border flex items-center justify-center gap-2 transition-all duration-200 shadow ${isDisabled ? 'bg-gray-700/60 border-gray-500/50 text-gray-300 cursor-not-allowed pointer-events-none' : ''}`
+                            }
+                            style={{
+                              background: `linear-gradient(90deg, ${project.color}22 70%, #1e293b 100%)`,
+                              borderColor: `${project.color}88`,
+                              color: '#fff',
+                              boxShadow: `0 1px 6px 0 ${project.color}22`,
+                            }}
+                            onClick={isDisabled ? undefined : (e) => {
+                              e.stopPropagation();
+                              window.open(button.url, '_blank');
+                            }}
+                            whileHover={isDisabled ? undefined : { scale: 1.05 }}
+                            whileTap={isDisabled ? undefined : { scale: 0.98 }}
+                            disabled={isDisabled}
+                          >
+                            <span className="text-xs flex-shrink-0">
+                              {getButtonIcon(button.type)}
+                            </span>
+                            <span className="text-xs leading-none truncate">
+                              {button.label}
+                            </span>
+                          </motion.button>
+                        );
+                      })}
                   </div>
                 ) : project.link ? (
                   <motion.div className={`${expandedTypography.linkHintSize} text-gray-400 opacity-80`}>

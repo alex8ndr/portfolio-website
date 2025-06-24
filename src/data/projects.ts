@@ -1,7 +1,7 @@
 export interface ProjectButton {
   label: string;
   url: string;
-  type: 'devpost' | 'github' | 'demo' | 'googleplay' | 'other';
+  type: 'devpost' | 'github' | 'demo' | 'googleplay' | 'location';
 }
 
 export interface ProjectContent {
@@ -111,6 +111,11 @@ export const projectContent: ProjectContent[] = [{
       label: 'Code',
       url: 'https://github.com/alex8ndr/portfolio-website',
       type: 'github',
+    },
+    {
+      label: 'You Are Here',
+      url: '',
+      type: 'location',
     },
   ],
   color: '#ef4444', // Red

@@ -17,6 +17,7 @@ import {
     FaJava,
     FaYoutube,
 } from 'react-icons/fa';
+import { MdLocationOn } from 'react-icons/md';
 import { RiFileExcel2Fill } from 'react-icons/ri';
 import {
     SiAngular,
@@ -82,6 +83,7 @@ export const getButtonIcon = (type: ProjectButton['type']) => {
         devpost: <SiDevpost />,
         demo: <FaExternalLinkAlt />,
         googleplay: <FaGooglePlay />,
+        location: <MdLocationOn />,
     };
     return icons[type] || <FaExternalLinkAlt />;
 };

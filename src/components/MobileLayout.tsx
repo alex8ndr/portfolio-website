@@ -244,21 +244,31 @@ const MobileProjectNode = ({ project, index, position, isExpanded, onTap }: Mobi
                                         </div>
                                     </div>
                                     {project.buttons && project.buttons.length > 0 ? (
-                                        <div className="flex gap-1.5 w-full px-0">
-                                            {project.buttons.slice(0, 2).map((button, buttonIndex) => (
-                                                <motion.button
-                                                    key={buttonIndex}
-                                                    className={`flex-1 bg-gray-800/70 active:bg-gray-700/90 text-white ${expandedConfig.buttonPadding} rounded-lg ${expandedConfig.buttonFontSize} font-medium border border-gray-600/50 active:border-gray-500/70 flex items-center justify-center gap-1.5 transition-colors duration-200 ${expandedConfig.buttonHeight}`}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        window.open(button.url, '_blank');
-                                                    }}
-                                                    whileTap={{ scale: 0.96 }}
-                                                >
-                                                    <span className={`${expandedConfig.buttonFontSize} flex-shrink-0`}>{getButtonIcon(button.type)}</span>
-                                                    <span className={`${expandedConfig.buttonFontSize} leading-none truncate`}>{button.label}</span>
-                                                </motion.button>
-                                            ))}
+                                        <div className={`flex ${project.buttons.length === 1 ? 'justify-center' : 'gap-1.5'} w-full px-0`}>
+                                            {project.buttons.slice(0, 2).map((button, buttonIndex) => {
+                                                const isDisabled = !button.url;
+                                                return (
+                                                    <motion.button
+                                                        key={buttonIndex}
+                                                        className={`flex-auto min-w-0 px-3 ${expandedConfig.buttonFontSize} ${expandedConfig.buttonPadding} ${expandedConfig.buttonHeight} rounded-lg font-medium border flex items-center justify-center gap-1.5 transition-colors duration-200 shadow ${isDisabled ? 'bg-gray-700/60 border-gray-500/50 text-gray-300 cursor-not-allowed pointer-events-none' : ''}`}
+                                                        style={{
+                                                            background: `linear-gradient(90deg, ${project.color}22 70%, #1e293b 100%)`,
+                                                            borderColor: `${project.color}88`,
+                                                            color: '#fff',
+                                                            boxShadow: `0 1px 6px 0 ${project.color}22`,
+                                                        }}
+                                                        onClick={isDisabled ? undefined : (e) => {
+                                                            e.stopPropagation();
+                                                            window.open(button.url, '_blank');
+                                                        }}
+                                                        whileTap={isDisabled ? undefined : { scale: 0.96 }}
+                                                        disabled={isDisabled}
+                                                    >
+                                                        <span className={`${expandedConfig.buttonFontSize} flex-shrink-0`}>{getButtonIcon(button.type)}</span>
+                                                        <span className={`${expandedConfig.buttonFontSize} leading-none whitespace-nowrap`}>{button.label}</span>
+                                                    </motion.button>
+                                                );
+                                            })}
                                         </div>
                                     ) : project.link ? (
                                         <motion.div className={`${expandedConfig.buttonFontSize} text-gray-400 opacity-80`}>Tap to visit →</motion.div>
