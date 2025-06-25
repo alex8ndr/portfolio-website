@@ -76,13 +76,13 @@ const MOBILE_CONFIG = {
 const MOBILE_NODE_POSITIONS: Record<string, { x: string | number; y: string | number; sizeCategory: 'large' | 'medium' | 'small' }> = {
     'daily-ball': { x: '15vw', y: '-32vh', sizeCategory: 'large' },     // top-left
     'vibe': { x: '-15vw', y: '-22vh', sizeCategory: 'large' },          // top-right
-    'choose-movie': { x: '20vw', y: '-14vh', sizeCategory: 'large' },   // upper-left
-    'portfolio-website': { x: '-18vw', y: '-5vh', sizeCategory: 'medium' }, // upper-right
-    'holoportation': { x: '15vw', y: '2vh', sizeCategory: 'medium' },    // center-left
+    'choose-movie': { x: '20vw', y: '-12vh', sizeCategory: 'large' },   // upper-left
+    'portfolio-website': { x: '-18vw', y: '-4vh', sizeCategory: 'medium' }, // upper-right
+    'holoportation': { x: '15vw', y: '4vh', sizeCategory: 'medium' },    // center-left
     'event-horizons': { x: '-10vw', y: '14vh', sizeCategory: 'small' },  // center-right
-    'unitrade': { x: '22vw', y: '20vh', sizeCategory: 'small' },         // lower-left
+    'unitrade': { x: '22vw', y: '18vh', sizeCategory: 'small' },         // lower-left
     'impostorbot': { x: '-20vw', y: '28vh', sizeCategory: 'small' },     // lower-right
-    'slightly-edited-songs': { x: '15vw', y: '35vh', sizeCategory: 'small' }, // bottom
+    'slightly-edited-songs': { x: '15vw', y: '32vh', sizeCategory: 'small' }, // bottom
 };
 
 interface MobileProjectNodeProps {
