@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { education, experiences } from '../data/experiences';
 import { projects, type Project } from '../data/projects';
@@ -90,10 +90,12 @@ interface MobileProjectNodeProps {
     index: number;
     position: { x: string | number; y: string | number; sizeCategory: 'large' | 'medium' | 'small' };
     isExpanded: boolean;
+    lastExpandedId: string | null;
     onTap: () => void;
 }
 
-const MobileProjectNode = ({ project, index, position, isExpanded, onTap }: MobileProjectNodeProps) => {
+
+const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedId, onTap }: MobileProjectNodeProps) => {
     const [isPressed, setIsPressed] = useState(false);
 
     const sizeConfig = MOBILE_CONFIG.sizes[position.sizeCategory];
@@ -111,12 +113,13 @@ const MobileProjectNode = ({ project, index, position, isExpanded, onTap }: Mobi
     const currentWidth = isExpanded ? expandedWidth : nodeSize;
     const currentHeight = isExpanded ? expandedHeight : nodeSize;
 
-    // Center and clamp both use the current size
     const calculatedLeft = `calc(50% + ${formatPosition(position.x)} - ${currentWidth / 2}px)`;
     const clampedLeft = `clamp(${horizontalSafeArea}, ${calculatedLeft}, calc(100vw - ${currentWidth}px - ${horizontalSafeArea}))`;
 
     const calculatedTop = `calc(50% + ${formatPosition(position.y)} - ${currentHeight / 2}px)`;
     const clampedTop = `clamp(${topSafeArea}, ${calculatedTop}, calc(100svh - ${currentHeight}px - ${bottomSafeArea}))`;
+
+    const zIndex = isExpanded || lastExpandedId === project.id ? 50 : 20 + index;
 
     return (
         <motion.div
@@ -125,20 +128,20 @@ const MobileProjectNode = ({ project, index, position, isExpanded, onTap }: Mobi
             style={{
                 left: clampedLeft,
                 top: clampedTop,
-                zIndex: isExpanded ? 50 : 20 + index,
+                zIndex,
             }}
             initial={{ scale: 0, opacity: 0 }}
             animate={{
                 scale: 1,
                 opacity: 1,
-                transition: { // Transition for the initial mount animation
+                transition: {
                     delay: index * 0.1,
                     type: "spring",
                     stiffness: 260,
                     damping: 20
                 }
             }}
-            transition={{ // Transition for layout changes (expand/collapse)
+            transition={{
                 layout: { type: "spring", stiffness: 170, damping: 26 }
             }}
             onTapStart={() => setIsPressed(true)}
@@ -283,8 +286,16 @@ const MobileProjectNode = ({ project, index, position, isExpanded, onTap }: Mobi
     );
 };
 
+
 const MobileLayout = () => {
     const [expandedProject, setExpandedProject] = useState<string | null>(null);
+    const [lastExpandedId, setLastExpandedId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (expandedProject !== null) {
+            setLastExpandedId(expandedProject);
+        }
+    }, [expandedProject]);
 
     useLayoutEffect(() => {
         if (typeof window !== 'undefined' && 'ontouchstart' in window) {
@@ -361,7 +372,15 @@ const MobileLayout = () => {
                 )}
                 <div className="absolute inset-0 flex items-center justify-center">
                     {projects.filter(project => MOBILE_NODE_POSITIONS[project.id]).map((project, index) => (
-                        <MobileProjectNode key={project.id} project={project} index={index} position={MOBILE_NODE_POSITIONS[project.id]} isExpanded={expandedProject === project.id} onTap={() => setExpandedProject(expandedProject === project.id ? null : project.id)} />
+                        <MobileProjectNode
+                            key={project.id}
+                            project={project}
+                            index={index}
+                            position={MOBILE_NODE_POSITIONS[project.id]}
+                            isExpanded={expandedProject === project.id}
+                            lastExpandedId={lastExpandedId}
+                            onTap={() => setExpandedProject(expandedProject === project.id ? null : project.id)}
+                        />
                     ))}
                 </div>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: expandedProject === null ? 1 : 0 }} transition={{ delay: 1 }} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center pointer-events-none">
