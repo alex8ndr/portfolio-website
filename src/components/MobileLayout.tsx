@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { education, experiences } from '../data/experiences';
 import { projects, type Project } from '../data/projects';
@@ -285,11 +285,30 @@ const MobileProjectNode = ({ project, index, position, isExpanded, onTap }: Mobi
 
 const MobileLayout = () => {
     const [expandedProject, setExpandedProject] = useState<string | null>(null);
+
+    useLayoutEffect(() => {
+        if (typeof window !== 'undefined' && 'ontouchstart' in window) {
+            const setVh = () => {
+                document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+            };
+            setVh();
+            window.addEventListener('resize', setVh);
+            return () => window.removeEventListener('resize', setVh);
+        }
+    }, []);
+
     const handleResumeView = () => {
         window.open('/Alex_Turianskyj_Resume.pdf', '_blank');
     };
     return (
-        <div className="min-h-svh bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+        <div
+            className="min-h-svh bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white"
+            style={{
+                height: '100svh',
+                minHeight: '100svh',
+                maxHeight: 'calc(var(--vh, 1svh) * 100)',
+            }}
+        >
             <div className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700">
                 <div className="flex items-center justify-between px-2.5 py-1.5" style={{ minWidth: 0 }}>
                     <div className="flex-1 flex items-center gap-0 min-w-0">
