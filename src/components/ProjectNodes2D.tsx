@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { projects, type Project } from '../data/projects';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { getButtonIcon, getProjectIcon, getTechIcons } from '../utils/iconMaps';
+import { isSkillOrSuperset } from '../utils/isSkillOrSuperset';
 
 const NODE_CONFIG = {
   sizes: {
@@ -128,17 +129,7 @@ const ProjectNode2D = ({
   const projectUsesSkill = (skillName: string): boolean => {
     if (!skillName) return false;
     const allSkills = [...project.techStack, ...(project.invisibleSkills || [])];
-    return allSkills.some(tech => {
-      const techLower = tech.toLowerCase();
-      const skillLower = skillName.toLowerCase();
-      // Prevent Java/JavaScript confusion
-      if (skillLower === 'java' && techLower === 'java') return true;
-      if (skillLower === 'javascript' && techLower === 'javascript') return true;
-      if (skillLower !== 'java' && skillLower !== 'javascript') {
-        return techLower.includes(skillLower) || skillLower.includes(techLower);
-      }
-      return false;
-    });
+    return allSkills.some(tech => isSkillOrSuperset(skillName, tech));
   };
   const isSkillHighlighted = hoveredSkill && projectUsesSkill(hoveredSkill);
   const shouldDim = hoveredSkill && !isSkillHighlighted;

@@ -125,7 +125,7 @@ export const projectContent: ProjectContent[] = [{
   name: 'Holoportation',
   description: 'Augmented reality app for real-time 3D reconstruction on HoloLens 2 using RGBD cameras',
   techStack: ['C++', 'C#', 'WinForms', 'Python', 'OpenCV'],
-  invisibleSkills: ['Git'],
+  invisibleSkills: ['Git', '.NET'],
   timeline: 'Sep 2024 – Apr 2025',
   buttons: [
     {
@@ -162,7 +162,7 @@ export const projectContent: ProjectContent[] = [{
   name: 'UniTrade',
   description: 'Student marketplace built in an 8-person Agile team',
   techStack: ['Java', 'Spring Boot', 'React', 'PostgreSQL'],
-  invisibleSkills: ['Git'],
+  invisibleSkills: ['Git', 'Postman'],
   timeline: 'Jan 2023 – Apr 2023',
   buttons: [
     {

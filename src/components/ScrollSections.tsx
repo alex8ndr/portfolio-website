@@ -1,16 +1,18 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useAppContext } from '../contexts/AppContext';
 import { education, experiences } from '../data/experiences';
 import { skillCategories, skills } from '../data/skills';
 import { useThemeColors } from '../hooks/useThemeColors';
+import { isSkillOrSuperset } from '../utils/isSkillOrSuperset';
 
 interface ScrollSectionsProps {
   scrollProgress: number;
   onSkillHover: (skill: string | null) => void;
+  onSkillHoverEnd?: () => void;
 }
 
-const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) => {
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
+  const { hoveredSkill, setHoveredSkill, clearHoveredSkill } = useAppContext();
   const colors = useThemeColors();
   // Breakpoint prefixes for responsive design
   const bp = {
@@ -99,26 +101,21 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
     maxHeight: `${breakpoints.small.maxHeight} ${bp.medium}${breakpoints.medium.maxHeight} ${bp.large}${breakpoints.large.maxHeight}`
   };
 
-  const handleSkillHover = (skill: string | null) => {
+  const handleSkillHover = (skill: string) => {
     setHoveredSkill(skill);
-    onSkillHover(skill);
+  };
+
+  const handleSkillHoverEnd = () => {
+    clearHoveredSkill();
   };
   const experienceUsesSkill = (experience: typeof experiences[0], skillName: string) => {
-    // Check both visible skills and invisible skills
     const allSkills = [...experience.skills, ...(experience.invisibleSkills || [])];
-    return allSkills.some(skill =>
-      skill.toLowerCase().includes(skillName.toLowerCase()) ||
-      skillName.toLowerCase().includes(skill.toLowerCase())
-    );
+    return allSkills.some(skill => isSkillOrSuperset(skillName, skill));
   };
 
   const educationUsesSkill = (skillName: string) => {
-    // Check only course skills since education no longer has direct skills
     return education.courses.some(course =>
-      course.skills.some(skill =>
-        skill.toLowerCase().includes(skillName.toLowerCase()) ||
-        skillName.toLowerCase().includes(skill.toLowerCase())
-      )
+      course.skills.some(skill => isSkillOrSuperset(skillName, skill))
     );
   };
 
@@ -161,7 +158,7 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onHoverStart={() => handleSkillHover(skill.name)}
-                  onHoverEnd={() => handleSkillHover(null)}
+                  onHoverEnd={handleSkillHoverEnd}
                   animate={{
                     opacity: hoveredSkill && !isHighlighted ? 0.3 : 1,
                   }}
@@ -246,7 +243,7 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                   if (!skill) return null;
 
                   const IconComponent = skill.icon;
-                  const isSkillHighlighted = hoveredSkill === skill.name;
+                  const isSkillHighlighted = hoveredSkill && isSkillOrSuperset(hoveredSkill, skill.name);
 
                   return (
                     <div
@@ -316,8 +313,7 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                 <div className="flex flex-wrap gap-1">
                   {education.courses.filter(course => course.visible !== false).map((course, index) => {
                     const courseUsesHoveredSkill = hoveredSkill && course.skills.some(skill =>
-                      skill.toLowerCase().includes(hoveredSkill.toLowerCase()) ||
-                      hoveredSkill.toLowerCase().includes(skill.toLowerCase())
+                      isSkillOrSuperset(hoveredSkill, skill)
                     );
 
                     return (

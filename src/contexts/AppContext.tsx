@@ -6,6 +6,7 @@ interface AppContextType {
   setScrollProgress: (progress: number) => void;
   hoveredSkill: string | null;
   setHoveredSkill: (skill: string | null) => void;
+  clearHoveredSkill: () => void;
   isMobile: boolean;
   setIsMobile: (isMobile: boolean) => void;
 }
@@ -20,8 +21,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return window.innerWidth <= 768;
   });
 
+
+
+  const clearTimeoutRef = React.useRef<number | null>(null);
+
+  const safeSetHoveredSkill = React.useCallback((skill: string | null) => {
+    if (clearTimeoutRef.current !== null) {
+      clearTimeout(clearTimeoutRef.current);
+      clearTimeoutRef.current = null;
+    }
+    setHoveredSkill(skill);
+  }, []);
+
+
+  const clearHoveredSkill = React.useCallback(() => {
+    if (clearTimeoutRef.current !== null) {
+      clearTimeout(clearTimeoutRef.current);
+      clearTimeoutRef.current = null;
+    }
+    clearTimeoutRef.current = window.setTimeout(() => {
+      setHoveredSkill(null);
+      clearTimeoutRef.current = null;
+    }, 40);
+  }, []);
+
   return (
-    <AppContext.Provider value={{ scrollProgress, setScrollProgress, hoveredSkill, setHoveredSkill, isMobile, setIsMobile }}>
+    <AppContext.Provider value={{ scrollProgress, setScrollProgress, hoveredSkill, setHoveredSkill: safeSetHoveredSkill, clearHoveredSkill, isMobile, setIsMobile }}>
       {children}
     </AppContext.Provider>
   );

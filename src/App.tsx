@@ -10,7 +10,7 @@ import { useResponsiveLayout } from './hooks/useResponsiveLayout';
 import { useThemeColors } from './hooks/useThemeColors';
 
 function App() {
-  const { isMobile, scrollProgress, hoveredSkill, setHoveredSkill } = useAppContext();
+  const { isMobile, scrollProgress, hoveredSkill, setHoveredSkill, clearHoveredSkill } = useAppContext();
   const themeColors = useThemeColors();
   useResponsiveLayout();
   useDesktopScroll();
@@ -33,9 +33,12 @@ function App() {
         <div className="absolute inset-0">
           <ProfileSection scrollProgress={scrollProgress} />
           <ProjectNodes2D scrollProgress={scrollProgress} hoveredSkill={hoveredSkill} />
-        </div>        {/* Scroll Sections - appear at bottom when scrolled */}        <ScrollSections
+        </div>
+        {/* Scroll Sections - appear at bottom when scrolled */}
+        <ScrollSections
           scrollProgress={scrollProgress}
           onSkillHover={setHoveredSkill}
+          onSkillHoverEnd={clearHoveredSkill}
         />
       </div>
     </div>
