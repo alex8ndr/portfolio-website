@@ -331,7 +331,7 @@ const MobileLayout = () => {
                 maxHeight: 'calc(var(--vh, 1svh) * 100)',
             }}
         >
-            <div className={`fixed top-0 left-0 right-0 z-50 ${colors.headerBackground} backdrop-blur-sm border-b ${colors.border}`}>
+            <div className={`fixed top-0 left-0 right-0 z-[999] ${colors.headerBackground} backdrop-blur-sm border-b ${colors.border}`}>
                 <div className="flex items-center justify-between px-2.5 py-1.5" style={{ minWidth: 0 }}>
                     <div className="flex-1 flex items-center gap-0 min-w-0">
                         <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${colors.gradientPrimary} p-0.5 mr-2 flex-shrink-0`}>
