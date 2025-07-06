@@ -1,50 +1,17 @@
-import { useEffect, useState } from 'react';
 import Background from './components/Background';
 import Header from './components/Header';
 import MobileLayout from './components/MobileLayout';
 import ProfileSection from './components/ProfileSection';
 import ProjectNodes2D from './components/ProjectNodes2D';
 import ScrollSections from './components/ScrollSections';
+import { useAppContext } from './contexts/AppContext';
+import { useResponsiveLayout } from './hooks/useResponsiveLayout';
+import { useDesktopScroll } from './hooks/useDesktopScroll';
 
 function App() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth <= 768;
-  });
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Desktop scroll handling
-  useEffect(() => {
-    // Only setup scroll handling for desktop
-    if (isMobile) return;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const maxScrollDistance = windowHeight * 1.5;
-      const progress = Math.min(currentScrollY / maxScrollDistance, 1);
-      setScrollProgress(progress);
-    };
-
-    document.body.style.height = `${window.innerHeight * 2}px`;
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      document.body.style.height = 'auto';
-    };
-  }, [isMobile]);
+  const { isMobile, scrollProgress, hoveredSkill, setHoveredSkill } = useAppContext();
+  useResponsiveLayout();
+  useDesktopScroll();
 
   if (isMobile) {
     return <MobileLayout />;
