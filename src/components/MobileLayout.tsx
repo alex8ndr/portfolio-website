@@ -1,10 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
+import { HiOutlineDocumentText } from 'react-icons/hi2';
+import { type ThemeColors } from '../config/theme';
 import { education, experiences } from '../data/experiences';
 import { projects, type Project } from '../data/projects';
 import { skillCategories, skills } from '../data/skills';
+import { useThemeColors } from '../hooks/useThemeColors';
 import { getButtonIcon, getProjectIcon, getTechIcons } from '../utils/iconMaps';
+import ThemeToggle from './ThemeToggle';
 const headshot = '/headshot.png';
 
 const MOBILE_CONFIG = {
@@ -92,10 +96,11 @@ interface MobileProjectNodeProps {
     isExpanded: boolean;
     lastExpandedId: string | null;
     onTap: () => void;
+    colors: ThemeColors;
 }
 
 
-const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedId, onTap }: MobileProjectNodeProps) => {
+const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedId, onTap, colors }: MobileProjectNodeProps) => {
     const [isPressed, setIsPressed] = useState(false);
 
     const sizeConfig = MOBILE_CONFIG.sizes[position.sizeCategory];
@@ -173,8 +178,7 @@ const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedI
                     transition={{ type: 'spring', stiffness: 170, damping: 26 }}
                 >
                     <motion.div
-                        className="absolute inset-0"
-                        style={{ background: `linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)` }}
+                        className={`absolute inset-0 ${colors.cardBackground} transition-colors duration-500`}
                         animate={{ borderRadius: isExpanded ? '12px' : '50%' }}
                         transition={{ duration: 0.4, ease: 'easeOut' }}
                     />
@@ -209,7 +213,7 @@ const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedI
                                     <motion.div className="mb-1.5" animate={{ scale: isPressed ? 1.1 : 1 }} transition={{ duration: 0.2, ease: 'easeInOut' }}>
                                         {getProjectIcon(project, sizeConfig.icon)}
                                     </motion.div>
-                                    <h3 className={`text-white ${sizeConfig.title} font-medium mb-1.5`}>{project.name}</h3>
+                                    <h3 className={`${colors.textPrimary} ${sizeConfig.title} font-medium mb-1.5 transition-colors duration-500`}>{project.name}</h3>
                                     <div className="flex items-center justify-center gap-1">
                                         {getTechIcons(project.techStack).slice(0, sizeConfig.techCount).map(({ tech, icon: IconComponent }, iconIndex) => (
                                             <IconComponent key={iconIndex} className={`${sizeConfig.techIcon} opacity-70`} style={{ color: project.color }} title={tech} />
@@ -229,19 +233,19 @@ const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedI
                                         <motion.div initial={{ scale: 1 }} animate={{ scale: 1.2 }} transition={{ duration: 0.3 }}>
                                             {getProjectIcon(project, expandedConfig.iconSize)}
                                         </motion.div>
-                                        <h3 className={`text-white ${expandedConfig.titleSize} leading-none font-bold text-center mb-1`} style={{ lineHeight: '0.8' }}>
+                                        <h3 className={`${colors.textPrimary} ${expandedConfig.titleSize} leading-none font-bold text-center mb-1 transition-colors duration-500`} style={{ lineHeight: '0.8' }}>
                                             {project.name}
                                         </h3>
                                     </div>
                                     <div className="flex flex-col items-center space-y-2 flex-1 justify-center">
-                                        <p className={`text-gray-300 ${expandedConfig.descriptionFontSize} text-center leading-relaxed px-2 overflow-hidden`} style={{ display: '-webkit-box', WebkitLineClamp: expandedConfig.descriptionLines, WebkitBoxOrient: 'vertical' as const, maxHeight: `${expandedConfig.descriptionLines * 1.2}rem` }}>
+                                        <p className={`${colors.textSecondary} ${expandedConfig.descriptionFontSize} text-center leading-relaxed px-2 overflow-hidden transition-colors duration-500`} style={{ display: '-webkit-box', WebkitLineClamp: expandedConfig.descriptionLines, WebkitBoxOrient: 'vertical' as const, maxHeight: `${expandedConfig.descriptionLines * 1.2}rem` }}>
                                             {project.description}
                                         </p>
                                         <div className="flex flex-wrap items-center justify-center gap-1 px-2">
                                             {getTechIcons(project.techStack).slice(0, expandedConfig.techCount).map(({ tech, icon: IconComponent }, iconIndex) => (
-                                                <div key={iconIndex} className="flex items-center gap-1 bg-gray-800/50 rounded-md px-1.5 py-0.5 text-xs">
+                                                <div key={iconIndex} className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs transition-colors duration-500">
                                                     <IconComponent className="text-xs" style={{ color: project.color }} />
-                                                    <span className="text-gray-300 text-xs whitespace-nowrap">{tech}</span>
+                                                    <span className={`${colors.textSecondary} text-xs whitespace-nowrap transition-colors duration-500`}>{tech}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -250,14 +254,18 @@ const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedI
                                         <div className={`flex ${project.buttons.length === 1 ? 'justify-center' : 'gap-1.5'} w-full px-0`}>
                                             {project.buttons.slice(0, 2).map((button, buttonIndex) => {
                                                 const isDisabled = !button.url;
+                                                // Theme-aware gradient backgrounds for buttons
+                                                const lightGradient = `linear-gradient(90deg, ${project.color}22 60%, #f3f4f6 100%)`;
+                                                const darkGradient = `linear-gradient(90deg, ${project.color}22 60%, #23293a 100%)`;
                                                 return (
                                                     <motion.button
                                                         key={buttonIndex}
-                                                        className={`flex-auto min-w-0 px-3 ${expandedConfig.buttonFontSize} ${expandedConfig.buttonPadding} ${expandedConfig.buttonHeight} rounded-lg font-medium border flex items-center justify-center gap-1.5 transition-colors duration-200 shadow ${isDisabled ? 'bg-gray-700/60 border-gray-500/50 text-gray-300 cursor-not-allowed pointer-events-none' : ''}`}
+                                                        className={`flex-auto min-w-0 px-3 ${expandedConfig.buttonFontSize} ${expandedConfig.buttonPadding} ${expandedConfig.buttonHeight} rounded-lg font-medium border flex items-center justify-center gap-1.5 transition-colors duration-200 shadow ${isDisabled ? `${colors.cardBackground} ${colors.border} ${colors.textTertiary} cursor-not-allowed pointer-events-none` : `${colors.border} ${colors.textPrimary} ${colors.buttonHover}`}`}
                                                         style={{
-                                                            background: `linear-gradient(90deg, ${project.color}22 70%, #1e293b 100%)`,
+                                                            background: isDisabled
+                                                                ? undefined
+                                                                : (colors.backgroundSolid === 'bg-blue-50' ? lightGradient : darkGradient),
                                                             borderColor: `${project.color}88`,
-                                                            color: '#fff',
                                                             boxShadow: `0 1px 6px 0 ${project.color}22`,
                                                         }}
                                                         onClick={isDisabled ? undefined : (e) => {
@@ -274,7 +282,7 @@ const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedI
                                             })}
                                         </div>
                                     ) : project.link ? (
-                                        <motion.div className={`${expandedConfig.buttonFontSize} text-gray-400 opacity-80`}>Tap to visit →</motion.div>
+                                        <motion.div className={`${expandedConfig.buttonFontSize} ${colors.textTertiary} opacity-80 transition-colors duration-500`}>Tap to visit →</motion.div>
                                     ) : null}
                                 </motion.div>
                             )}
@@ -311,20 +319,23 @@ const MobileLayout = () => {
     const handleResumeView = () => {
         window.open('/Alex_Turianskyj_Resume.pdf', '_blank');
     };
+
+    const colors = useThemeColors();
+
     return (
         <div
-            className="min-h-svh bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white"
+            className={`min-h-svh bg-gradient-to-br ${colors.background} ${colors.textPrimary}`}
             style={{
                 height: '100svh',
                 minHeight: '100svh',
                 maxHeight: 'calc(var(--vh, 1svh) * 100)',
             }}
         >
-            <div className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700">
+            <div className={`fixed top-0 left-0 right-0 z-50 ${colors.headerBackground} backdrop-blur-sm border-b ${colors.border}`}>
                 <div className="flex items-center justify-between px-2.5 py-1.5" style={{ minWidth: 0 }}>
                     <div className="flex-1 flex items-center gap-0 min-w-0">
-                        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-0.5 mr-2 flex-shrink-0">
-                            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden shadow-lg">
+                        <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${colors.gradientPrimary} p-0.5 mr-2 flex-shrink-0`}>
+                            <div className={`w-full h-full rounded-full ${colors.cardBackground} flex items-center justify-center overflow-hidden shadow-lg transition-colors duration-500`}>
                                 <img
                                     src={headshot}
                                     alt="Alex Turianskyj headshot"
@@ -334,35 +345,34 @@ const MobileLayout = () => {
                             </div>
                         </div>
                         <div className="min-w-0">
-                            <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent leading-tight truncate">
+                            <h1 className={`text-lg font-bold bg-gradient-to-r ${colors.gradientText} bg-clip-text text-transparent leading-tight truncate`}>
                                 Alex Turianskyj
                             </h1>
-                            <p className="text-xs text-white/80 leading-tight truncate">Software Developer</p>
+                            <p className={`text-xs ${colors.textSecondary} leading-tight truncate`}>Software Developer</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <motion.a href="https://linkedin.com/in/alex-turianskyj" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-800/50 border border-slate-700/50 transition-all duration-200 hover:bg-slate-700/50 hover:border-slate-600/50 active:bg-slate-600/50" whileTap={{ scale: 0.95 }}>
-                            <FaLinkedin className="text-xl text-gray-300 hover:text-white" />
+                        <ThemeToggle />
+                        <motion.a href="https://linkedin.com/in/alex-turianskyj" target="_blank" rel="noopener noreferrer" className={`p-2 rounded-lg ${colors.cardBackground} border ${colors.border} ${colors.buttonHover} transition-all duration-200`} whileTap={{ scale: 0.95 }}>
+                            <FaLinkedin className={`text-xl ${colors.textSecondary} hover:${colors.textPrimary}`} />
                         </motion.a>
-                        <motion.a href="https://github.com/alex8ndr" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-slate-800/50 border border-slate-700/50 transition-all duration-200 hover:bg-slate-700/50 hover:border-slate-600/50 active:bg-slate-600/50" whileTap={{ scale: 0.95 }}>
-                            <FaGithub className="text-xl text-gray-300 hover:text-white" />
+                        <motion.a href="https://github.com/alex8ndr" target="_blank" rel="noopener noreferrer" className={`p-2 rounded-lg ${colors.cardBackground} border ${colors.border} ${colors.buttonHover} transition-all duration-200`} whileTap={{ scale: 0.95 }}>
+                            <FaGithub className={`text-xl ${colors.textSecondary} hover:${colors.textPrimary}`} />
                         </motion.a>
+                        <motion.button
+                            onClick={handleResumeView}
+                            className={`p-2 rounded-lg border-2 ${colors.cardBackgroundActive} ${colors.border} shadow-md`}
+                            style={{
+                                borderColor: colors.textAccent.includes('blue') ? '#3b82f6' : '#a855f7',
+                                boxShadow: `0 0 10px ${colors.textAccent.includes('blue') ? '#3b82f6' : '#a855f7'}30`,
+                            }}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            aria-label="View Resume"
+                        >
+                            <HiOutlineDocumentText className={`text-xl ${colors.textAccent}`} />
+                        </motion.button>
                     </div>
-                    <motion.button
-                        onClick={handleResumeView}
-                        className="ml-2 px-2.5 py-2 bg-transparent rounded-md font-medium text-white text-sm transition-all duration-300"
-                        style={{
-                            border: '3px solid transparent',
-                            backgroundImage: 'linear-gradient(#0f172a, #0f172a), linear-gradient(to right, #a855f7, #3b82f6)',
-                            backgroundOrigin: 'border-box',
-                            backgroundClip: 'padding-box, border-box',
-                            boxShadow: '0 0 15px #a855f750',
-                        }}
-                        whileHover={{ scale: 1.05, boxShadow: '0 0 15px #a855f770' }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        Resume
-                    </motion.button>
                 </div>
 
             </div>
@@ -380,28 +390,29 @@ const MobileLayout = () => {
                             isExpanded={expandedProject === project.id}
                             lastExpandedId={lastExpandedId}
                             onTap={() => setExpandedProject(expandedProject === project.id ? null : project.id)}
+                            colors={colors}
                         />
                     ))}
                 </div>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: expandedProject === null ? 1 : 0 }} transition={{ delay: 1 }} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center pointer-events-none">
-                    <p className="text-gray-400 text-sm whitespace-nowrap">Tap project or scroll to explore</p>
+                    <p className={`${colors.textTertiary} text-sm whitespace-nowrap transition-colors duration-500`}>Tap project or scroll to explore</p>
                 </motion.div>
             </div>
-            <div className="relative z-20 bg-slate-900">
+            <div className={`relative z-20 ${colors.backgroundSolid}`}>
                 <div className="px-2 py-8">
                     <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-                        <h3 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Skills & Technologies</h3>
+                        <h3 className={`text-2xl font-bold mb-6 text-center bg-gradient-to-r ${colors.gradientText} bg-clip-text text-transparent`}>Skills & Technologies</h3>
                         <div className="space-y-3">
                             {Object.entries(skillCategories).map(([categoryName, categorySkills], categoryIndex) => (
-                                <motion.div key={categoryName} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: categoryIndex * 0.05, duration: 0.4 }} className="bg-slate-800/50 rounded-lg p-2 border border-gray-700/50">
-                                    <h4 className="text-base font-semibold mb-4 text-gray-200 text-center">{categoryName}</h4>
+                                <motion.div key={categoryName} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: categoryIndex * 0.05, duration: 0.4 }} className={`${colors.cardBackground} rounded-lg p-2 border ${colors.border}`}>
+                                    <h4 className={`text-base font-semibold mb-4 ${colors.textSecondary} text-center`}>{categoryName}</h4>
                                     <div className="grid grid-cols-4 gap-2">
                                         {categorySkills.slice(0, 8).map((skill, skillIndex) => {
                                             const IconComponent = skill.icon;
                                             return (
-                                                <motion.div key={skillIndex} className="flex flex-col items-center px-0 py-3 rounded-md border bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50 transition-all duration-300" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                                <motion.div key={skillIndex} className={`flex flex-col items-center px-0 py-3 rounded-md border ${colors.skillInactive} ${colors.skillHover} transition-all duration-300`} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                                     {IconComponent ? <IconComponent className={`text-xl mb-2 transition-all duration-300 ${skill.color}`} /> : null}
-                                                    <span className="text-xs text-gray-200 text-center font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full">{skill.name}</span>
+                                                    <span className={`text-xs ${colors.textSecondary} text-center font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>{skill.name}</span>
                                                 </motion.div>
                                             );
                                         })}
@@ -411,62 +422,62 @@ const MobileLayout = () => {
                         </div>
                     </motion.div>
                 </div>
-                <div className="px-4 py-8 bg-slate-800/20">
+                <div className={`px-4 py-8 ${colors.cardBackground}`}>
                     <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-                        <h3 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Experience</h3>
+                        <h3 className={`text-2xl font-bold mb-6 text-center bg-gradient-to-r ${colors.gradientText} bg-clip-text text-transparent`}>Experience</h3>
                         <div className="space-y-4 mb-6">
                             {experiences.slice(0, 3).map((exp, index) => (
-                                <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05, duration: 0.4 }} className="bg-slate-800/40 rounded-lg p-3 border border-slate-700/50" whileHover={{ scale: 1.01 }}>
+                                <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05, duration: 0.4 }} className={`${colors.cardBackground} rounded-lg p-3 border ${colors.border}`} whileHover={{ scale: 1.01 }}>
                                     <div className="flex gap-2 mb-2 flex-shrink-0">
                                         {exp.logo && <img src={exp.logo} alt={`${exp.company} logo`} className="w-10 h-10 object-contain rounded flex-shrink-0" />}
                                         <div className="flex-1 min-w-0">
-                                            <h5 className="text-sm font-semibold text-gray-200 mb-1 truncate">{exp.role}</h5>
+                                            <h5 className={`text-sm font-semibold ${colors.textSecondary} mb-1 truncate`}>{exp.role}</h5>
                                             <div className="flex justify-between items-center gap-1">
-                                                <p className="text-purple-400 text-xs truncate">{exp.company}</p>
-                                                <p className="text-xs text-gray-400 flex-shrink-0">{exp.period}</p>
+                                                <p className={`${colors.textAccent} text-xs truncate`}>{exp.company}</p>
+                                                <p className={`text-xs ${colors.textTertiary} flex-shrink-0`}>{exp.period}</p>
                                             </div>
                                         </div>
                                     </div>
-                                    <p className="text-gray-300 text-xs leading-relaxed mb-2">{exp.description}</p>
+                                    <p className={`${colors.textSecondary} text-xs leading-relaxed mb-2`}>{exp.description}</p>
                                     <div className="flex flex-wrap gap-1">
                                         {exp.skills.slice(0, 4).map((skillName, skillIndex) => {
                                             const skill = skills.find(s => s.name.toLowerCase() === skillName.toLowerCase()) || skills.find(s => s.name.toLowerCase().includes(skillName.toLowerCase()) || skillName.toLowerCase().includes(s.name.toLowerCase()));
-                                            if (!skill) return <div key={skillIndex} className="flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-gray-700/50 border border-gray-600/30"><span className="text-gray-300 truncate">{skillName}</span></div>;
+                                            if (!skill) return <div key={skillIndex} className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${colors.skillInactive}`}><span className={`${colors.textSecondary} truncate`}>{skillName}</span></div>;
                                             const IconComponent = skill.icon;
-                                            return <div key={skillIndex} className="flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-gray-700/50 border border-gray-600/30">{IconComponent ? <IconComponent className={`${skill.color} text-xs`} /> : null}<span className="text-gray-300 truncate">{skillName}</span></div>;
+                                            return <div key={skillIndex} className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${colors.skillInactive}`}>{IconComponent ? <IconComponent className={`${skill.color} text-xs`} /> : null}<span className={`${colors.textSecondary} truncate`}>{skillName}</span></div>;
                                         })}
                                     </div>
                                 </motion.div>
                             ))}
                         </div>
                         <div className="mb-6">
-                            <h4 className="text-lg font-bold mb-4 text-center bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Education</h4>
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.4 }} className="bg-slate-800/40 rounded-lg p-3 border border-slate-700/50" whileHover={{ scale: 1.01 }}>
+                            <h4 className={`text-lg font-bold mb-4 text-center bg-gradient-to-r ${colors.gradientText} bg-clip-text text-transparent`}>Education</h4>
+                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.4 }} className={`${colors.cardBackground} rounded-lg p-3 border ${colors.border}`} whileHover={{ scale: 1.01 }}>
                                 <div className="flex gap-2 mb-2 flex-shrink-0">
                                     {education.logo && <img src={education.logo} alt={`${education.institution} logo`} className="w-10 h-10 object-contain rounded flex-shrink-0" />}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start mb-1">
-                                            <h5 className="text-sm font-semibold text-gray-200 leading-tight">{education.degree}</h5>
-                                            <p className="text-xs text-gray-400 flex-shrink-0 ml-2">{education.period}</p>
+                                            <h5 className={`text-sm font-semibold ${colors.textSecondary} leading-tight`}>{education.degree}</h5>
+                                            <p className={`text-xs ${colors.textTertiary} flex-shrink-0 ml-2`}>{education.period}</p>
                                         </div>
                                         <div className="flex justify-between items-center gap-1">
-                                            <p className="text-purple-400 text-xs truncate">{education.institution}</p>
-                                            <p className="text-xs text-gray-400">GPA: {education.gpa}</p>
+                                            <p className={`${colors.textAccent} text-xs truncate`}>{education.institution}</p>
+                                            <p className={`text-xs ${colors.textTertiary}`}>GPA: {education.gpa}</p>
                                         </div>
                                     </div>
                                 </div>
                                 {education.courses && (
                                     <div className="mb-2">
-                                        <h6 className="text-xs font-semibold text-gray-300 mb-1">Key Courses:</h6>
-                                        <div className="flex flex-wrap gap-1">{education.courses.filter(course => course.visible !== false).map((course, index) => <span key={index} className="px-2 py-1 bg-gray-700/50 border border-gray-600/30 rounded-md text-xs text-gray-300 leading-tight">{course.name}</span>)}</div>
+                                        <h6 className={`text-xs font-semibold ${colors.textSecondary} mb-1`}>Key Courses:</h6>
+                                        <div className="flex flex-wrap gap-1">{education.courses.filter(course => course.visible !== false).map((course, index) => <span key={index} className={`px-2 py-1 ${colors.skillInactive} rounded-md text-xs ${colors.textSecondary} leading-tight`}>{course.name}</span>)}</div>
                                     </div>
                                 )}
                                 <div className="flex flex-wrap gap-1">
                                     {Array.from(new Set(education.courses.filter(course => course.visible !== false).flatMap(course => course.skills))).slice(0, 4).map((skillName, skillIndex) => {
                                         const skill = skills.find(s => s.name.toLowerCase() === skillName.toLowerCase()) || skills.find(s => s.name.toLowerCase().includes(skillName.toLowerCase()) || skillName.toLowerCase().includes(s.name.toLowerCase()));
-                                        if (!skill) return <div key={skillIndex} className="flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-gray-700/50 border border-gray-600/30"><span className="text-gray-300 truncate">{skillName}</span></div>;
+                                        if (!skill) return <div key={skillIndex} className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${colors.skillInactive}`}><span className={`${colors.textSecondary} truncate`}>{skillName}</span></div>;
                                         const IconComponent = skill.icon;
-                                        return <div key={skillIndex} className="flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-gray-700/50 border border-gray-600/30">{IconComponent ? <IconComponent className={`${skill.color} text-xs`} /> : null}<span className="text-gray-300 truncate">{skillName}</span></div>;
+                                        return <div key={skillIndex} className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${colors.skillInactive}`}>{IconComponent ? <IconComponent className={`${skill.color} text-xs`} /> : null}<span className={`${colors.textSecondary} truncate`}>{skillName}</span></div>;
                                     })}
                                 </div>
                             </motion.div>

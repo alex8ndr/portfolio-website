@@ -1,7 +1,8 @@
 import { createRoot } from 'react-dom/client';
-import './index.css';
 import App from './App.tsx';
 import { AppProvider } from './contexts/AppContext.tsx';
+import { ThemeProvider } from './contexts/ThemeContext.tsx';
+import './index.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -9,7 +10,9 @@ if (!rootElement) {
 }
 
 createRoot(rootElement).render(
-  <AppProvider>
-    <App />
-  </AppProvider>
+  <ThemeProvider>
+    <AppProvider>
+      <App />
+    </AppProvider>
+  </ThemeProvider>
 );

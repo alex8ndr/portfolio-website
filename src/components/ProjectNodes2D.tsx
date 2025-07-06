@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { projects, type Project } from '../data/projects';
+import { useThemeColors } from '../hooks/useThemeColors';
 import { getButtonIcon, getProjectIcon, getTechIcons } from '../utils/iconMaps';
 
 const NODE_CONFIG = {
@@ -123,6 +124,7 @@ const ProjectNode2D = ({
   hoveredSkill,
 }: ProjectNode2DProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const themeColors = useThemeColors();
   const projectUsesSkill = (skillName: string): boolean => {
     if (!skillName) return false;
     const allSkills = [...project.techStack, ...(project.invisibleSkills || [])];
@@ -327,12 +329,9 @@ const ProjectNode2D = ({
           ease: 'easeOut',
           opacity: { duration: NODE_CONFIG.skillHighlight.animationDuration }
         }}
-      >{/* Background layer */}
+      >        {/* Background layer */}
         <motion.div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)`,
-          }}
+          className={`absolute inset-0 ${themeColors.cardBackground}`}
           animate={{ borderRadius: isExpanded ? '12px' : '50%' }}
           transition={{ duration: animation.sizeDuration, ease: 'easeOut' }}
         />
@@ -390,7 +389,7 @@ const ProjectNode2D = ({
                 {getProjectIcon(project, currentTypography.iconSize)}
               </motion.div>
 
-              <h3 className={`text-white ${currentTypography.titleSize} font-medium ${spacing.normal.titleMarginBottom}`}>
+              <h3 className={`${themeColors.textPrimary} ${currentTypography.titleSize} font-medium ${spacing.normal.titleMarginBottom} transition-colors duration-500`}>
                 {project.name}
               </h3>
 
@@ -453,7 +452,7 @@ const ProjectNode2D = ({
                   </motion.div>
 
                   <h3
-                    className={`text-white ${expandedTypography.titleSize} leading-none font-bold text-center ${spacing.expanded.titleMarginBottom}`}
+                    className={`${themeColors.textPrimary} ${expandedTypography.titleSize} leading-none font-bold text-center ${spacing.expanded.titleMarginBottom} transition-colors duration-500`}
                     style={{ lineHeight: '0.8' }}
                   >
                     {project.name}
@@ -462,7 +461,7 @@ const ProjectNode2D = ({
 
                 <div className="flex flex-col items-center space-y-2 flex-1 justify-center">
                   <p
-                    className={`text-gray-300 ${expandedTypography.descriptionSize} text-center leading-relaxed px-2 overflow-hidden`}
+                    className={`${themeColors.textSecondary} ${expandedTypography.descriptionSize} text-center leading-relaxed px-2 overflow-hidden transition-colors duration-500`}
                     style={{
                       display: '-webkit-box',
                       WebkitLineClamp: 3,
@@ -479,13 +478,13 @@ const ProjectNode2D = ({
                       .map(({ tech, icon: IconComponent }, iconIndex) => (
                         <div
                           key={iconIndex}
-                          className={`flex items-center gap-1 bg-gray-800/50 rounded-md px-1.5 py-0.5 ${expandedTypography.techTextSize}`}
+                          className={`flex items-center gap-1 rounded-md px-1.5 py-0.5 ${expandedTypography.techTextSize} transition-colors duration-500`}
                         >
                           <IconComponent
                             className={`${expandedTypography.techIconSize}`}
                             style={{ color: project.color }}
                           />
-                          <span className={`text-gray-300 ${expandedTypography.techTextSize} whitespace-nowrap`}>
+                          <span className={`${themeColors.textSecondary} ${expandedTypography.techTextSize} whitespace-nowrap transition-colors duration-500`}>
                             {tech}
                           </span>
                         </div>
@@ -498,18 +497,25 @@ const ProjectNode2D = ({
                       .map((button, buttonIndex) => {
                         const isDisabled = !button.url;
                         const isSingle = (project.buttons?.length ?? 0) === 1;
+                        // Gradient backgrounds for buttons
+                        const lightGradient = `linear-gradient(90deg, ${project.color}22 60%, #f3f4f6 100%)`;
+                        const darkGradient = `linear-gradient(90deg, ${project.color}22 60%, #23293a 100%)`;
                         return (
                           <motion.button
                             key={buttonIndex}
                             className={
                               `${isSingle
                                 ? 'w-[80%] mx-auto px-6'
-                                : 'flex-auto min-w-0 px-3'} py-2 rounded-lg text-xs font-semibold border flex items-center justify-center gap-2 transition-all duration-200 shadow ${isDisabled ? 'bg-gray-700/60 border-gray-500/50 text-gray-300 cursor-not-allowed pointer-events-none' : ''}`
+                                : 'flex-auto min-w-0 px-3'} py-2 rounded-lg text-xs font-semibold border flex items-center justify-center gap-2 transition-all duration-200 shadow ` +
+                              (isDisabled
+                                ? `${themeColors.cardBackground} ${themeColors.border} ${themeColors.textTertiary} cursor-not-allowed pointer-events-none`
+                                : `${themeColors.border} ${themeColors.textPrimary} ${themeColors.buttonHover}`)
                             }
                             style={{
-                              background: `linear-gradient(90deg, ${project.color}22 70%, #1e293b 100%)`,
+                              background: isDisabled
+                                ? undefined
+                                : (themeColors.backgroundSolid === 'bg-blue-50' ? lightGradient : darkGradient),
                               borderColor: `${project.color}88`,
-                              color: '#fff',
                               boxShadow: `0 1px 6px 0 ${project.color}22`,
                             }}
                             onClick={isDisabled ? undefined : (e) => {
@@ -531,7 +537,7 @@ const ProjectNode2D = ({
                       })}
                   </div>
                 ) : project.link ? (
-                  <motion.div className={`${expandedTypography.linkHintSize} text-gray-400 opacity-80`}>
+                  <motion.div className={`${expandedTypography.linkHintSize} ${themeColors.textTertiary} opacity-80 transition-colors duration-500`}>
                     Click to visit →
                   </motion.div>
                 ) : null}

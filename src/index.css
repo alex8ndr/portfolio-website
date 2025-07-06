@@ -26,7 +26,7 @@ html::-webkit-scrollbar {
 
 :root {
 /* Site link color variables */
-  --site-link-gradient: linear-gradient(to right, #a855f7, #3b82f6);
+  --site-link-gradient: linear-gradient(to right, #3b82f6, #6366f1);
   --site-link-size: 1rem;
   --site-link-weight: 700;
   --site-link-hover-scale: 1.05;
@@ -59,6 +59,8 @@ html::-webkit-scrollbar {
 }
 
 .dark {
+  --site-link-gradient: linear-gradient(to right, #a855f7, #3b82f6);
+  
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
   --card: 240 10% 3.9%;
@@ -139,22 +141,36 @@ html::-webkit-scrollbar {
     scroll-behavior: smooth;
   }
   
-  /* Custom scrollbar for scroll sections */
+  /* Custom scrollbar for scroll sections - responsive to theme */
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
   }
   
-  .scrollbar-thin::-webkit-scrollbar-track {
+  .light .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 3px;
+  }
+  
+  .light .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.6);
+    border-radius: 3px;
+  }
+  
+  .light .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.8);
+  }
+  
+  .dark .scrollbar-thin::-webkit-scrollbar-track {
     background: rgba(30, 41, 59, 0.5);
     border-radius: 3px;
   }
   
-  .scrollbar-thin::-webkit-scrollbar-thumb {
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
     background: rgba(139, 92, 246, 0.5);
     border-radius: 3px;
   }
   
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgba(139, 92, 246, 0.7);
   }
 }

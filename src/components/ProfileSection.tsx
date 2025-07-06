@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
+import { useThemeColors } from '../hooks/useThemeColors';
 
 interface ProfileSectionProps {
   scrollProgress: number;
 }
 
 const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
+  const colors = useThemeColors();
   const fastProgress = Math.min(scrollProgress * 2, 1);
   const translateY = `${fastProgress * -26}vh`;
 
@@ -34,7 +36,7 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
     >
       <div className={avatarMarginClass}>
         <motion.div
-          className="w-24 h-24 2xl:w-28 2xl:h-28 3xl:w-32 3xl:h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1"
+          className={`w-24 h-24 2xl:w-28 2xl:h-28 3xl:w-32 3xl:h-32 mx-auto rounded-full bg-gradient-to-br ${colors.gradientPrimary} p-1`}
           animate={{
             opacity: scrollProgress > 0.4 ? 0 : 1,
             scale: scrollProgress > 0.4 ? 0.3 : 1
@@ -42,7 +44,7 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
           transition={{ duration: 0.25, ease: 'easeInOut' }}
         >
           <div
-            className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden relative"
+            className={`w-full h-full rounded-full ${colors.cardBackground} flex items-center justify-center overflow-hidden relative transition-colors duration-500`}
             style={{
               boxShadow: `
                 inset -15px -15px 30px rgba(59,130,246,0.3),
@@ -61,7 +63,7 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         </motion.div>
       </div>
       <motion.h1
-        className="text-2xl 2xl:text-3xl 3xl:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300"
+        className={`text-2xl 2xl:text-3xl 3xl:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText}`}
         animate={{
           scale: nameScale,
           opacity: scrollProgress > 0.4 ? 0 : 1,
@@ -71,13 +73,13 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
       >
         Alex Turianskyj
       </motion.h1>      <motion.p
-        className="text-base 2xl:text-lg 3xl:text-xl text-gray-300 mb-3"
+        className={`text-base 2xl:text-lg 3xl:text-xl ${colors.textSecondary} mb-3`}
         animate={{ opacity: textOpacity }}
         transition={{ duration: 0.1, ease: "linear" }}
       >
         Software Developer
       </motion.p><motion.div
-        className="text-xs 2xl:text-xs 3xl:text-sm text-gray-400 max-w-md mx-auto"
+        className={`text-xs 2xl:text-xs 3xl:text-sm ${colors.textTertiary} max-w-md mx-auto`}
         animate={{ opacity: textOpacity }}
         transition={{ duration: 0.1, ease: "linear" }}
       >

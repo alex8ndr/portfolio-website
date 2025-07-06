@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { education, experiences } from '../data/experiences';
 import { skillCategories, skills } from '../data/skills';
+import { useThemeColors } from '../hooks/useThemeColors';
 
 interface ScrollSectionsProps {
   scrollProgress: number;
@@ -10,6 +11,7 @@ interface ScrollSectionsProps {
 
 const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) => {
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const colors = useThemeColors();
   // Breakpoint prefixes for responsive design
   const bp = {
     medium: '2xl:',
@@ -130,19 +132,19 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
 
   if (sectionsProgress <= 0) return null;
   return (<motion.div
-    className={`absolute inset-x-0 text-white overflow-hidden ${sizes.containerHeight} ${sizes.maxHeight}`}
+    className={`absolute inset-x-0 ${colors.textPrimary} overflow-hidden ${sizes.containerHeight} ${sizes.maxHeight}`}
     style={{
       bottom: '2vh',
       opacity,
       transform: `translateY(${yTransform}%)`
     }}
     transition={{ duration: 0.1, ease: 'linear' }}
-  >    <div className={`max-w-[90rem] mx-auto ${sizes.containerX} ${sizes.containerY} h-full flex flex-col`}>      <section className={`flex-shrink-0 ${sizes.sectionMargin}`}>        <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 ${sizes.headingMargin}`}>
+  >    <div className={`max-w-[90rem] mx-auto ${sizes.containerX} ${sizes.containerY} h-full flex flex-col`}>      <section className={`flex-shrink-0 ${sizes.sectionMargin}`}>        <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} ${sizes.headingMargin}`}>
     Skills & Technologies
   </h2>
     <div className={`grid grid-cols-3 ${sizes.gaps}`}>
       {Object.entries(skillCategories).map(([category, skillList]) => (
-        <div key={category} className={`bg-slate-800/50 ${sizes.cardPadding} rounded-lg border border-gray-700/50`}>              <h3 className={`${sizes.subheading} font-semibold ${sizes.headingMargin} text-gray-200 text-center`}>
+        <div key={category} className={`${colors.cardBackground} ${sizes.cardPadding} rounded-lg border ${colors.border}`}>              <h3 className={`${sizes.subheading} font-semibold ${sizes.headingMargin} ${colors.textSecondary} text-center`}>
           {category}
         </h3>
           <div className={`grid grid-cols-4 ${sizes.smallGap}`}>
@@ -153,8 +155,8 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                 <motion.div
                   key={skill.name}
                   className={`flex flex-col items-center ${sizes.innerPadding} rounded-md border transition-all duration-300 cursor-pointer ${isHighlighted
-                    ? 'bg-slate-700/70 border-purple-500/50'
-                    : 'bg-slate-700/30 border-gray-600/30 hover:bg-slate-700/50'
+                    ? `${colors.skillActive}`
+                    : `${colors.skillInactive} ${colors.skillHover}`
                     }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -172,7 +174,7 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                       className={`${sizes.icon} mb-1 transition-all duration-300 ${isHighlighted ? skill.color + ' drop-shadow-lg' : skill.color}`}
                     />
                   )}
-                  <span className={`${sizes.body} text-gray-200 text-center font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>
+                  <span className={`${sizes.body} ${colors.textSecondary} text-center font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>
                     {skill.name}
                   </span>
                 </motion.div>
@@ -187,7 +189,7 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
 
         {/* Experience Section */}
         <section className="col-span-3 flex flex-col overflow-hidden min-h-0">
-          <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-2`}>
+          <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} mb-2`}>
             Experience
           </h2>
           <div className="flex-1 flex gap-2 overflow-hidden min-h-0">            {experiences.map((exp) => {
@@ -197,8 +199,8 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
             return (<motion.div
               key={`${exp.company}-${exp.period}`}
               className={`flex-1 ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex flex-col overflow-hidden min-h-0 ${isHighlighted
-                ? 'bg-slate-800/70 border-purple-500/50'
-                : 'bg-slate-800/50 border-gray-700'
+                ? `${colors.cardBackgroundActive} ${colors.borderActive}`
+                : `${colors.cardBackground} ${colors.border}`
                 }`}
               whileHover={{ scale: 1.01 }}
               animate={{
@@ -217,17 +219,19 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                   />
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className={`${sizes.subheading} font-semibold text-gray-200 mb-1 truncate`}>
+                  <h3 className={`${sizes.subheading} font-semibold ${colors.textSecondary} mb-1 truncate`}>
                     {exp.role}
                   </h3>
                   <div className="flex justify-between items-center gap-1">
-                    <p className={`text-purple-400 ${sizes.body} truncate`}>{exp.company}</p>
-                    <p className={`${sizes.body} text-gray-400 flex-shrink-0`}>{exp.period}</p>
+                    <p className={`${colors.textAccent} ${sizes.body} truncate`}>{exp.company}</p>
+                    <p className={`${sizes.body} ${colors.textTertiary} flex-shrink-0`}>{exp.period}</p>
                   </div>
                 </div>
               </div>
 
-              <p className={`text-gray-300 ${sizes.body} mb-2 flex-grow overflow-y-auto leading-relaxed lg:scrollbar-thin lg:scrollbar-track-gray-800 lg:scrollbar-thumb-gray-600 [&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar]:lg:w-2`}>{exp.description}</p>
+              <p className={`${colors.textSecondary} ${sizes.body} mb-2 flex-grow overflow-y-auto leading-relaxed lg:scrollbar-thin`} style={{
+                scrollbarColor: `${colors.scrollbarThumb} ${colors.scrollbarTrack}`
+              }}>{exp.description}</p>
 
               {/* Skills */}
               <div className="flex flex-wrap gap-1 flex-shrink-0">
@@ -248,14 +252,14 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                     <div
                       key={skillName}
                       className={`flex items-center gap-1 px-2 py-1 rounded-md ${sizes.body} transition-all duration-300 ${isSkillHighlighted
-                        ? 'bg-purple-500/30 border border-purple-400/50'
-                        : 'bg-gray-700/50 border border-gray-600/30'
+                        ? `${colors.skillActive}`
+                        : `${colors.skillInactive}`
                         }`}
                     >
                       {IconComponent && (
                         <IconComponent className={`${skill.color} ${sizes.body}`} />
                       )}
-                      <span className={`text-gray-300 ${sizes.body} truncate`}>{skillName}</span>
+                      <span className={`${colors.textSecondary} ${sizes.body} truncate`}>{skillName}</span>
                     </div>
                   );
                 })}
@@ -266,13 +270,13 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
           </div>
         </section>        {/* Education Section */}
         <section className="col-span-1 flex flex-col overflow-hidden min-h-0">
-          <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-2`}>
+          <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} mb-2`}>
             Education
           </h2>
           <motion.div
-            className={`bg-slate-800/50 ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex-1 flex flex-col overflow-hidden min-h-0 ${hoveredSkill && educationUsesSkill(hoveredSkill)
-              ? 'border-purple-500/50'
-              : 'border-gray-700'
+            className={`${colors.cardBackground} ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex-1 flex flex-col overflow-hidden min-h-0 ${hoveredSkill && educationUsesSkill(hoveredSkill)
+              ? `${colors.borderActive}`
+              : `${colors.border}`
               }`}
             whileHover={{ scale: 1.01 }}
             animate={{
@@ -282,7 +286,9 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
               opacity: { duration: 0.3 }
             }}
           >
-            <div className="space-y-2 flex-1 flex flex-col overflow-y-auto min-h-0 lg:scrollbar-thin lg:scrollbar-track-gray-800 lg:scrollbar-thumb-gray-600 [&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar]:lg:w-2">
+            <div className="space-y-2 flex-1 flex flex-col overflow-y-auto min-h-0" style={{
+              scrollbarColor: `${colors.scrollbarThumb} ${colors.scrollbarTrack}`
+            }}>
               <div className="flex-grow">
                 <div className="flex gap-2 mb-1">
                   {education.logo && (
@@ -293,15 +299,15 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className={`${sizes.subheading} font-semibold text-gray-200 mb-1 leading-tight`}>
+                    <h3 className={`${sizes.subheading} font-semibold ${colors.textSecondary} mb-1 leading-tight`}>
                       {education.degree}
                     </h3>
                     <div className="flex justify-between items-center gap-1">
-                      <p className={`text-purple-400 ${sizes.body} truncate`}>{education.institution}</p>
-                      <p className={`${sizes.body} text-gray-400 flex-shrink-0`}>{education.period}</p>
+                      <p className={`${colors.textAccent} ${sizes.body} truncate`}>{education.institution}</p>
+                      <p className={`${sizes.body} ${colors.textTertiary} flex-shrink-0`}>{education.period}</p>
                     </div>
                     <div className="flex justify-end">
-                      <p className={`${sizes.body} text-gray-400`}>GPA: {education.gpa}</p>
+                      <p className={`${sizes.body} ${colors.textTertiary}`}>GPA: {education.gpa}</p>
                     </div>
                   </div>
                 </div>
@@ -318,8 +324,8 @@ const ScrollSections = ({ scrollProgress, onSkillHover }: ScrollSectionsProps) =
                       <span
                         key={index}
                         className={`px-2 py-1 border rounded-md ${sizes.body} leading-tight transition-all duration-300 ${courseUsesHoveredSkill
-                          ? 'bg-purple-500/30 border-purple-400/50 text-purple-100 shadow-lg shadow-purple-500/20'
-                          : 'bg-gray-700/50 border-gray-600/30 text-gray-300'
+                          ? `${colors.skillActive} ${colors.textPrimary} shadow-lg`
+                          : `${colors.skillInactive} ${colors.textSecondary}`
                           }`}
                       >
                         {course.name}

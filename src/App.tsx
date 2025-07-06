@@ -5,11 +5,13 @@ import ProfileSection from './components/ProfileSection';
 import ProjectNodes2D from './components/ProjectNodes2D';
 import ScrollSections from './components/ScrollSections';
 import { useAppContext } from './contexts/AppContext';
-import { useResponsiveLayout } from './hooks/useResponsiveLayout';
 import { useDesktopScroll } from './hooks/useDesktopScroll';
+import { useResponsiveLayout } from './hooks/useResponsiveLayout';
+import { useThemeColors } from './hooks/useThemeColors';
 
 function App() {
   const { isMobile, scrollProgress, hoveredSkill, setHoveredSkill } = useAppContext();
+  const themeColors = useThemeColors();
   useResponsiveLayout();
   useDesktopScroll();
 
@@ -18,7 +20,7 @@ function App() {
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+    <div className={`fixed inset-0 bg-gradient-to-br ${themeColors.background} ${themeColors.textPrimary} overflow-hidden transition-colors duration-500`}>
       <div className="absolute inset-0 z-0">
         <Background />
       </div>

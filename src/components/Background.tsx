@@ -1,5 +1,6 @@
 import type React from 'react';
 import { useEffect, useRef } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface Particle {
     x: number;
@@ -65,20 +66,25 @@ const CONFIG = {
         gridOpacity: 0.15,
         gridParallax: 0.01,
     },
-    // Colors
-    colors: [
-        '#8B5CF6', '#3B82F6', '#06B6D4', '#10B981', '#F59E0B', '#EF4444',
-    ],
-    gridColor: '#1E293B',
 };
+
+// Theme-specific colors
+const getThemeColors = (isDark: boolean) => ({
+    particles: isDark
+        ? ['#8B5CF6', '#3B82F6', '#06B6D4', '#10B981', '#F59E0B', '#EF4444']
+        : ['#3B82F6', '#6366F1', '#0EA5E9', '#059669', '#D97706', '#DC2626'],
+    grid: isDark ? '#1E293B' : '#E2E8F0',
+});
 
 const Background: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const mousePosRef = useRef({ x: 0, y: 0 });
     const particlesRef = useRef<Particle[]>([]);
     const shapesRef = useRef<GeometricShape[]>([]);
-    const animationRef = useRef<number>();    // Initialize particles
+    const animationRef = useRef<number>();
+    const { isDark } = useTheme();    // Initialize particles
     const initParticles = () => {
+        const colors = getThemeColors(isDark);
         particlesRef.current = [];
         for (let i = 0; i < CONFIG.particles.count; i++) {
             const lifespan = CONFIG.particles.lifespan.min +
@@ -90,14 +96,15 @@ const Background: React.FC = () => {
                 vx: (Math.random() - 0.5) * CONFIG.particles.speed,
                 vy: (Math.random() - 0.5) * CONFIG.particles.speed,
                 size: CONFIG.particles.minSize + Math.random() * (CONFIG.particles.maxSize - CONFIG.particles.minSize),
-                opacity: CONFIG.particles.minOpacity, // Start all particles at minimum opacity
-                color: CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)],
+                opacity: CONFIG.particles.minOpacity,
+                color: colors.particles[Math.floor(Math.random() * colors.particles.length)],
                 life: lifespan,
                 maxLife: lifespan,
             });
         }
     };    // Initialize geometric shapes
     const initShapes = () => {
+        const colors = getThemeColors(isDark);
         shapesRef.current = [];
         const shapeTypes: ('triangle' | 'square' | 'hexagon' | 'diamond' | 'circle' | 'star')[] = [
             'triangle', 'square', 'hexagon', 'diamond', 'circle', 'star'
@@ -121,8 +128,8 @@ const Background: React.FC = () => {
                 y: row * cellHeight + cellHeight / 2 + offsetY,
                 rotation: Math.random() * 360,
                 size: CONFIG.shapes.minSize + Math.random() * (CONFIG.shapes.maxSize - CONFIG.shapes.minSize),
-                opacity: CONFIG.shapes.minOpacity, // Start all shapes at minimum opacity
-                color: CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)],
+                opacity: CONFIG.shapes.minOpacity,
+                color: colors.particles[Math.floor(Math.random() * colors.particles.length)],
                 type: shapeTypes[Math.floor(Math.random() * shapeTypes.length)],
             });
         }
@@ -193,6 +200,7 @@ const Background: React.FC = () => {
     };    // Update and draw particles
     const updateParticles = (ctx: CanvasRenderingContext2D) => {
         const mousePos = mousePosRef.current;
+        const colors = getThemeColors(isDark);
 
         particlesRef.current.forEach((particle) => {
             // Calculate distance to mouse
@@ -235,7 +243,7 @@ const Background: React.FC = () => {
                 particle.vx = (Math.random() - 0.5) * CONFIG.particles.speed;
                 particle.vy = (Math.random() - 0.5) * CONFIG.particles.speed;
                 particle.life = particle.maxLife;
-                particle.color = CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
+                particle.color = colors.particles[Math.floor(Math.random() * colors.particles.length)];
             }
 
             // Draw particle
@@ -275,11 +283,12 @@ const Background: React.FC = () => {
     };    // Draw grid pattern
     const drawGrid = (ctx: CanvasRenderingContext2D) => {
         const mousePos = mousePosRef.current;
+        const colors = getThemeColors(isDark);
         const offsetX = (mousePos.x * CONFIG.effects.gridParallax) % CONFIG.effects.gridSize;
         const offsetY = (mousePos.y * CONFIG.effects.gridParallax) % CONFIG.effects.gridSize;
 
         ctx.save();
-        ctx.strokeStyle = CONFIG.gridColor;
+        ctx.strokeStyle = colors.grid;
         ctx.lineWidth = 1;
         ctx.globalAlpha = CONFIG.effects.gridOpacity;
 
@@ -389,7 +398,7 @@ const Background: React.FC = () => {
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, []);
+    }, [isDark]); // Re-run when theme changes
     return (
         <canvas
             ref={canvasRef}

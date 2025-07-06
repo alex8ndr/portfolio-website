@@ -2,12 +2,18 @@ import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { HiMail } from 'react-icons/hi';
 import { SiDevpost } from 'react-icons/si';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemeColors } from '../hooks/useThemeColors';
+import ThemeToggle from './ThemeToggle';
 
 interface HeaderProps {
   scrollProgress: number;
 }
 
 const Header = ({ scrollProgress }: HeaderProps) => {
+  const themeColors = useThemeColors();
+  const { isDark } = useTheme();
+
   const handleResumeView = () => {
     window.open('/Alex_Turianskyj_Resume.pdf', '_blank');
   };
@@ -42,14 +48,14 @@ const Header = ({ scrollProgress }: HeaderProps) => {
   return (
     <>
       <motion.header
-        className="fixed top-0 left-0 right-0 z-40 h-12 2xl:h-16 3xl:h-20 px-4 flex items-center bg-slate-900/80 backdrop-blur-sm"
+        className={`fixed top-0 left-0 right-0 z-40 h-12 2xl:h-16 3xl:h-20 px-4 flex items-center ${themeColors.headerBackground} backdrop-blur-sm transition-colors duration-500`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
       >        <div className="flex-1 flex items-center">
           <a
             href="https://alext.dev"
-            className="font-montserrat font-extrabold text-lg 2xl:text-xl 3xl:text-2xl tracking-tight bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text transition-all duration-300 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded cursor-pointer select-none mx-6"
+            className={`font-montserrat font-extrabold text-lg 2xl:text-xl 3xl:text-2xl tracking-tight bg-gradient-to-r ${themeColors.gradientPrimary} text-transparent bg-clip-text transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded cursor-pointer select-none mx-6`}
             style={{ letterSpacing: '-0.01em' }}
           >
             alext.dev
@@ -67,7 +73,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
         >
           {/* Profile image with colored border */}
           <motion.div
-            className="w-10 h-10 2xl:w-12 2xl:h-12 3xl:w-14 3xl:h-14 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-0.5"
+            className={`w-10 h-10 2xl:w-12 2xl:h-12 3xl:w-14 3xl:h-14 rounded-full bg-gradient-to-br ${themeColors.gradientPrimary} p-0.5`}
             initial={{ scale: 0 }}
             animate={{
               scale: scrollProgress > 0.6 ? 1 : 0,
@@ -75,13 +81,20 @@ const Header = ({ scrollProgress }: HeaderProps) => {
             }}
             transition={{ duration: 0.6, delay: 0.1, ease: 'backOut' }}
           >
-            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden"
+            <div
+              className={`w-full h-full rounded-full ${isDark ? 'bg-slate-800' : 'bg-white'} flex items-center justify-center overflow-hidden transition-colors duration-500`}
               style={{
-                boxShadow: `
-                  inset -10px -10px 20px rgba(59,130,246,0.25),
-                  inset 10px 10px 20px rgba(168,85,247,0.25),
-                  inset 0 0 30px rgba(139,92,246,0.08)
-                `
+                boxShadow: isDark
+                  ? `
+                    inset -10px -10px 20px rgba(59,130,246,0.25),
+                    inset 10px 10px 20px rgba(168,85,247,0.25),
+                    inset 0 0 30px rgba(139,92,246,0.08)
+                  `
+                  : `
+                    inset -10px -10px 20px rgba(59,130,246,0.15),
+                    inset 10px 10px 20px rgba(99,102,241,0.15),
+                    inset 0 0 30px rgba(59,130,246,0.05)
+                  `
               }}
             >
               <img
@@ -95,7 +108,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
 
           <div className="flex flex-col min-w-0">
             <motion.div
-              className="text-base 2xl:text-xl 3xl:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 leading-tight truncate"
+              className={`text-base 2xl:text-xl 3xl:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeColors.gradientText} leading-tight truncate`}
               initial={{ opacity: 0, y: 10 }}
               animate={{
                 opacity: scrollProgress > 0.6 ? 1 : 0,
@@ -106,7 +119,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
               Alex Turianskyj
             </motion.div>
             <motion.div
-              className="text-[10px] 2xl:text-xs 3xl:text-sm text-gray-400 font-medium leading-tight truncate mt-0.5"
+              className={`text-[10px] 2xl:text-xs 3xl:text-sm ${themeColors.textTertiary} font-medium leading-tight truncate mt-0.5 transition-colors duration-500`}
               initial={{ opacity: 0, y: 10 }}
               animate={{
                 opacity: scrollProgress > 0.6 ? 1 : 0,
@@ -120,6 +133,9 @@ const Header = ({ scrollProgress }: HeaderProps) => {
         </motion.div>
         <div className="flex-1 flex justify-end">
           <div className="flex items-center gap-4">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Social Icons */}
             <div className="flex items-center gap-3">
               {socialLinks.map((link, index) => {
@@ -131,7 +147,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
                     target={link.href.startsWith('mailto:') ? undefined : '_blank'}
                     rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
                     aria-label={link.ariaLabel}
-                    className="p-2 rounded-full text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10"
+                    className={`p-2 rounded-full ${themeColors.textSecondary} hover:${themeColors.textPrimary} transition-all duration-300 ${themeColors.buttonHover}`}
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
@@ -148,17 +164,19 @@ const Header = ({ scrollProgress }: HeaderProps) => {
             {/* Download Resume Button */}
             <motion.button
               onClick={handleResumeView}
-              className="relative px-4 py-1 2xl:px-6 2xl:py-1.5 3xl:px-8 3xl:py-2 bg-transparent rounded-lg font-medium text-white transition-all duration-300 text-xs 2xl:text-sm 3xl:text-base"
+              className={`relative px-4 py-1 2xl:px-6 2xl:py-1.5 3xl:px-8 3xl:py-2 bg-transparent rounded-lg font-medium ${themeColors.textPrimary} transition-all duration-300 text-xs 2xl:text-sm 3xl:text-base`}
               style={{
                 border: '3px solid transparent',
-                backgroundImage: 'linear-gradient(#0f172a, #0f172a), linear-gradient(to right, #a855f7, #3b82f6)',
+                backgroundImage: isDark
+                  ? 'linear-gradient(#0f172a, #0f172a), linear-gradient(to right, #a855f7, #3b82f6)'
+                  : 'linear-gradient(#ffffff, #ffffff), linear-gradient(to right, #3b82f6, #6366f1)',
                 backgroundOrigin: 'border-box',
                 backgroundClip: 'padding-box, border-box',
-                boxShadow: '0 0 20px #a855f760',
+                boxShadow: isDark ? '0 0 20px #a855f760' : '0 0 20px #3b82f660',
               }}
               whileHover={{
                 scale: 1.05,
-                boxShadow: '0 0 20px #a855f780'
+                boxShadow: isDark ? '0 0 20px #a855f780' : '0 0 20px #3b82f680'
               }}
               whileTap={{ scale: 0.95 }}
             >
