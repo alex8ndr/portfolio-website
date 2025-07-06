@@ -283,10 +283,8 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
               opacity: { duration: 0.3 }
             }}
           >
-            <div className="space-y-2 flex-1 flex flex-col overflow-y-auto min-h-0" style={{
-              scrollbarColor: `${colors.scrollbarThumb} ${colors.scrollbarTrack}`
-            }}>
-              <div className="flex-grow">
+            <div className="flex flex-col h-full">
+              <div>
                 <div className="flex gap-2 mb-1">
                   {education.logo && (
                     <img
@@ -308,29 +306,34 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
                     </div>
                   </div>
                 </div>
-              </div>              {/* Courses at the bottom */}
-              <div className="mt-2 flex-shrink-0">
-                <div className="flex flex-wrap gap-1">
-                  {education.courses.filter(course => course.visible !== false).map((course, index) => {
-                    const courseUsesHoveredSkill = hoveredSkill && course.skills.some(skill =>
-                      isSkillOrSuperset(hoveredSkill, skill)
-                    );
-
-                    return (
-                      <span
-                        key={index}
-                        className={`px-2 py-1 border rounded-md ${sizes.body} leading-tight transition-all duration-300 ${courseUsesHoveredSkill
-                          ? `${colors.skillActive} ${colors.textPrimary} shadow-lg`
-                          : `${colors.skillInactive} ${colors.textSecondary}`
-                          }`}
-                      >
-                        {course.name}
-                      </span>
-                    );
-                  })}
-                </div>
               </div>
 
+              <div className="relative flex-1 mt-2 min-h-0">
+                <div
+                  className="absolute bottom-0 left-0 right-0 max-h-full overflow-y-auto"
+                  style={{ scrollbarColor: `${colors.scrollbarThumb} ${colors.scrollbarTrack}` }}
+                >
+                  <div className="flex flex-wrap gap-1">
+                    {education.courses.filter(course => course.visible !== false).map((course, index) => {
+                      const courseUsesHoveredSkill = hoveredSkill && course.skills.some(skill =>
+                        isSkillOrSuperset(hoveredSkill, skill)
+                      );
+
+                      return (
+                        <span
+                          key={index}
+                          className={`px-2 py-1 border rounded-md ${sizes.body} leading-tight transition-all duration-300 ${courseUsesHoveredSkill
+                            ? `${colors.skillActive} ${colors.textPrimary} shadow-lg`
+                            : `${colors.skillInactive} ${colors.textSecondary}`
+                            }`}
+                        >
+                          {course.name}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </section>

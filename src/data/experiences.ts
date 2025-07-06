@@ -17,10 +17,10 @@ export const experiences: Experience[] = [
         role: 'Software Developer Intern',
         period: 'May 2025 – Aug 2025',
         location: 'Montreal, QC',
-        description: "Enhancing real-time collaboration in Fusion, Autodesk's flagship cloud-based 3D design and manufacturing platform.",
+        description: "Enhance Fusion's concurrent properties panel for collaborative editing using TypeScript and React. Authored Jest tests and resolved UI bugs to improve usability and visual consistency. Addressed critical backend issues in C++ to ensure cache and analytics integrity. Managed feature development and bug resolution in Jira.",
         logo: '/logos/autodesk.jpeg',
         skills: ['TypeScript', 'React', 'C++', 'Jest'],
-        invisibleSkills: ['Git'],
+        invisibleSkills: ['Git', 'Catch2', 'Jira'],
     }, {
         id: 'matrox',
         company: 'Matrox',
