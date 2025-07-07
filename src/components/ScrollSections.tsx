@@ -196,7 +196,7 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
             return (<motion.div
               key={`${exp.company}-${exp.period}`}
               className={`flex-1 ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex flex-col overflow-hidden min-h-0 ${isHighlighted
-                ? `${colors.cardBackgroundActive} ${colors.borderActive}`
+                ? `${colors.cardBackground} ${colors.borderActive}`
                 : `${colors.cardBackground} ${colors.border}`
                 }`}
               whileHover={{ scale: 1.01 }}
@@ -248,15 +248,15 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
                   return (
                     <div
                       key={skillName}
-                      className={`flex items-center gap-1 px-2 py-1 rounded-md ${sizes.body} transition-all duration-300 ${isSkillHighlighted
-                        ? `${colors.skillActive}`
-                        : `${colors.skillInactive}`
-                        }`}
+                      className={`flex items-center gap-1 px-2 py-1 rounded-md ${sizes.body} transition-all duration-300 cursor-pointer border ${isSkillHighlighted
+                        ? `${colors.skillActive} ${colors.textPrimary} shadow-lg`
+                        : `${colors.skillInactive} ${colors.textSecondary}`
+                        } hover:${colors.skillHoverBg} hover:${colors.skillHoverBorder}`}
                     >
                       {IconComponent && (
                         <IconComponent className={`${skill.color} ${sizes.body}`} />
                       )}
-                      <span className={`${colors.textSecondary} ${sizes.body} truncate`}>{skillName}</span>
+                      <span className={`truncate`}>{skillName}</span>
                     </div>
                   );
                 })}
@@ -322,10 +322,10 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
                       return (
                         <span
                           key={index}
-                          className={`px-2 py-1 border rounded-md ${sizes.body} leading-tight transition-all duration-300 ${courseUsesHoveredSkill
+                          className={`px-2 py-1 border rounded-md ${sizes.body} leading-tight transition-all duration-300 cursor-pointer ${courseUsesHoveredSkill
                             ? `${colors.skillActive} ${colors.textPrimary} shadow-lg`
                             : `${colors.skillInactive} ${colors.textSecondary}`
-                            }`}
+                            } hover:${colors.skillHoverBg} hover:${colors.skillHoverBorder} hover:text-white`}
                         >
                           {course.name}
                         </span>

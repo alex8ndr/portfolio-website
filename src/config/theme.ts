@@ -32,9 +32,11 @@ export const themeConfig = {
         buttonHover: 'hover:bg-blue-100/80',
 
         // Special elements
-        skillActive: 'bg-blue-500/20 border-blue-400/60',
+        skillActive: 'bg-blue-600/30 border-blue-500',
         skillInactive: 'bg-slate-100/60 border-slate-300/40',
         skillHover: 'hover:bg-blue-50/80',
+        skillHoverBg: 'bg-blue-200',
+        skillHoverBorder: 'border-blue-400',
 
         // Scrollbar
         scrollbarTrack: 'rgba(148, 163, 184, 0.3)',
@@ -74,9 +76,11 @@ export const themeConfig = {
         buttonHover: 'hover:bg-slate-700/50',
 
         // Special elements
-        skillActive: 'bg-slate-700/70 border-purple-500/50',
+        skillActive: 'bg-purple-600/30 border-purple-500',
         skillInactive: 'bg-slate-700/30 border-gray-600/30',
-        skillHover: 'hover:bg-slate-700/50',
+        skillHover: 'bg-slate-700/50',
+        skillHoverBg: 'bg-purple-500/80',
+        skillHoverBorder: 'border-purple-400',
 
         // Scrollbar
         scrollbarTrack: 'rgba(30, 41, 59, 0.5)',
