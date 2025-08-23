@@ -136,7 +136,7 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
       transform: `translateY(${yTransform}%)`
     }}
     transition={{ duration: 0.1, ease: 'linear' }}
-  >    <div className={`max-w-[90rem] mx-auto ${sizes.containerX} ${sizes.containerY} h-full flex flex-col`}>      <section className={`flex-shrink-0 ${sizes.sectionMargin}`}>        <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} ${sizes.headingMargin}`}>
+  >    <div className={`max-w-[95rem] mx-auto ${sizes.containerX} ${sizes.containerY} h-full flex flex-col`}>      <section className={`flex-shrink-0 ${sizes.sectionMargin}`}>        <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} ${sizes.headingMargin}`}>
     Skills & Technologies
   </h2>
     <div className={`grid grid-cols-3 ${sizes.gaps}`}>
@@ -325,7 +325,7 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
                           className={`px-2 py-1 border rounded-md ${sizes.body} leading-tight transition-all duration-300 cursor-pointer ${courseUsesHoveredSkill
                             ? `${colors.skillActive} ${colors.textPrimary} shadow-lg`
                             : `${colors.skillInactive} ${colors.textSecondary}`
-                            } hover:${colors.skillHoverBg} hover:${colors.skillHoverBorder} hover:text-white`}
+                            } hover:${colors.skillHoverBg} hover:${colors.skillHoverBorder}`}
                         >
                           {course.name}
                         </span>

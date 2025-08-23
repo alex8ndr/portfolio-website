@@ -104,7 +104,7 @@ export const projectContent: ProjectContent[] = [{
   name: 'Portfolio Website',
   description: 'Interactive portfolio with 2D project visualization and responsive design',
   techStack: ['TypeScript', 'React', 'Vite'],
-  invisibleSkills: ['Git'],
+  invisibleSkills: ['Git', 'GitHub Actions'],
   timeline: '2024 – Present',
   buttons: [
     {
@@ -162,7 +162,7 @@ export const projectContent: ProjectContent[] = [{
   name: 'UniTrade',
   description: 'Student marketplace built in an 8-person Agile team',
   techStack: ['Java', 'Spring Boot', 'React', 'PostgreSQL'],
-  invisibleSkills: ['Git', 'Postman'],
+  invisibleSkills: ['Git', 'Postman', 'GitHub Actions'],
   timeline: 'Jan 2023 – Apr 2023',
   buttons: [
     {
