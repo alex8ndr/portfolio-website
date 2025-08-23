@@ -1,31 +1,115 @@
-<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">  <defs>
-    <linearGradient id="nameGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Alex Turianskyj – Software Developer</title>
+  <desc id="desc">Personal social preview card featuring name, role, location and logo.</desc>
+
+  <defs>
+    <!-- Brand gradients -->
+    <linearGradient id="g-accent-horizontal" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="50%" stop-color="#6366f1" />
       <stop offset="100%" stop-color="#3b82f6" />
     </linearGradient>
-    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#a855f7" />
-      <stop offset="100%" stop-color="#3b82f6" />
+    <linearGradient id="g-accent-diag" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333ea" />
+      <stop offset="40%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#0ea5e9" />
     </linearGradient>
-    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#a855f7" />
+    <linearGradient id="g-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c084fc" />
       <stop offset="100%" stop-color="#60a5fa" />
     </linearGradient>
+    <radialGradient id="g-radial-glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(900 120) rotate(45) scale(520 340)">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35" />
+      <stop offset="70%" stop-color="#0f172a" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="g-radial-accent" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(250 500) rotate(45) scale(430 280)">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.3" />
+      <stop offset="70%" stop-color="#0f172a" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Noise texture -->
+    <filter id="f-noise" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="noise" />
+      <feColorMatrix in="noise" type="saturate" values="0" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.05" />
+      </feComponentTransfer>
+    </filter>
+
+    <!-- Soft shadow for floating elements -->
+    <filter id="f-soft-shadow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#000" flood-opacity="0.4" />
+    </filter>
+
+    <!-- Gradient stroke mask for subtle outline -->
+    <linearGradient id="g-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.2" />
+    </linearGradient>
+
+    <!-- Clip path for decorative angled stripe -->
+    <clipPath id="clip-stripe">
+      <path d="M0 480 L0 630 L1200 630 L1200 350 Z" />
+    </clipPath>
   </defs>
-  
-  <!-- Background -->
-  <rect width="1200" height="630" fill="#0f172a"/>
-  
-  <!-- Left side content -->
-  <text x="120" y="220" font-family="Montserrat, Arial, sans-serif" font-size="72" font-weight="700" fill="url(#nameGradient)">Alex Turianskyj</text>
-  <text x="120" y="295" font-family="Montserrat, Arial, sans-serif" font-size="40" font-weight="600" fill="#3b82f6">Software Developer</text>
-  <text x="120" y="350" font-family="Montserrat, Arial, sans-serif" font-size="32" fill="#cbd5e1">Montreal, QC</text>
-  <text x="120" y="410" font-family="Montserrat, Arial, sans-serif" font-size="32" fill="#cbd5e1">Software Engineering Co-op @ McGill</text>
-  <text x="120" y="460" font-family="Montserrat, Arial, sans-serif" font-size="32" fill="#cbd5e1">Intern @ Autodesk</text>
-  
-  <!-- Right side AT logo -->
-  <circle cx="970" cy="275" r="110" fill="url(#bgGradient)" />
-  <circle cx="970" cy="275" r="98" fill="#1e293b" />
-  <text x="970" y="315" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="90" font-weight="bold" fill="url(#textGradient)">AT</text>
-  <text x="970" y="470" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="44" font-weight="600" fill="#fff">alext.dev</text>
+
+  <!-- Base background -->
+  <rect width="1200" height="630" fill="#0f172a" />
+
+  <!-- Decorative gradients -->
+  <rect width="1200" height="630" fill="url(#g-radial-glow)" />
+  <rect width="1200" height="630" fill="url(#g-radial-accent)" />
+
+  <!-- Subtle diagonal stripe with gradient overlay -->
+  <g clip-path="url(#clip-stripe)" opacity="0.18">
+    <rect width="1200" height="630" fill="url(#g-accent-diag)" />
+    <rect width="1200" height="630" fill="#0f172a" fill-opacity="0.65" />
+  </g>
+
+  <!-- Noise layer -->
+  <rect width="1200" height="630" filter="url(#f-noise)" opacity="0.35" />
+
+  <!-- Left vertical accent line adjusted for more breathing room -->
+  <rect x="80" y="190" width="4" height="270" rx="2" fill="url(#g-accent-horizontal)" />
+
+  <!-- Content group -->
+  <g font-family="Montserrat, Arial, sans-serif">
+    <!-- Name shifted downward for vertical balance -->
+    <text x="120" y="240" font-size="72" font-weight="700" fill="url(#g-accent-horizontal)">Alex Turianskyj</text>
+    <!-- Role -->
+    <text x="120" y="315" font-size="40" font-weight="600" fill="#60a5fa">Software Developer</text>
+    <!-- Meta info lines -->
+    <g font-size="32" fill="#cbd5e1" font-weight="500">
+      <text x="120" y="370">Montreal, QC</text>
+      <text x="120" y="430">Software Engineering Co-op @ McGill</text>
+    </g>
+  </g>
+
+  <!-- Logo / Monogram card -->
+  <g filter="url(#f-soft-shadow)">
+    <circle cx="970" cy="250" r="118" fill="url(#g-accent-diag)" opacity="0.9" />
+    <circle cx="970" cy="250" r="102" fill="#1e293b" stroke="url(#g-stroke)" stroke-width="2" />
+    <text x="970" y="287" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="96" font-weight="700" fill="url(#g-text)">AT</text>
+  </g>
+
+  <!-- Domain -->
+  <g font-family="Montserrat, Arial, sans-serif" text-anchor="middle">
+    <text x="970" y="480" font-size="44" font-weight="600" fill="#f1f5f9">alext.dev</text>
+  </g>
+
+  <!-- Corner ornament top-left -->
+  <g opacity="0.35">
+    <path d="M80 90 L160 90" stroke="url(#g-accent-horizontal)" stroke-width="3" stroke-linecap="round" />
+    <path d="M80 90 L80 150" stroke="url(#g-accent-horizontal)" stroke-width="3" stroke-linecap="round" />
+  </g>
+  <!-- Corner ornament bottom-right -->
+  <g opacity="0.28">
+    <path d="M1120 560 L1040 560" stroke="url(#g-accent-horizontal)" stroke-width="3" stroke-linecap="round" />
+    <path d="M1120 560 L1120 500" stroke="url(#g-accent-horizontal)" stroke-width="3" stroke-linecap="round" />
+  </g>
+
+  <!-- Brackets removed per request -->
+
+  <!-- Fine grain overlay for crispness (optional) -->
+  <rect width="1200" height="630" filter="url(#f-noise)" opacity="0.08" />
 </svg>
