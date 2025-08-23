@@ -14,19 +14,19 @@ const NODE_CONFIG = {
   },
   rings: {
     small: {
-      large: { radius: 180 },
-      medium: { radius: 280 },
-      small: { radius: 380 },
+      large: { radius: 200 },
+      medium: { radius: 300 },
+      small: { radius: 400 },
     },
     medium: {
-      large: { radius: 220 },
-      medium: { radius: 340 },
-      small: { radius: 460 },
+      large: { radius: 240 },
+      medium: { radius: 360 },
+      small: { radius: 480 },
     },
     large: {
-      large: { radius: 250 },
-      medium: { radius: 400 },
-      small: { radius: 550 },
+      large: { radius: 260 },
+      medium: { radius: 420 },
+      small: { radius: 560 },
     },
   },
   margins: {

@@ -72,18 +72,20 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         transition={{ duration: 0.25, ease: "easeInOut" }}
       >
         Alex Turianskyj
-      </motion.h1>      <motion.p
-        className={`text-base 2xl:text-lg 3xl:text-xl ${colors.textSecondary} mb-3`}
+      </motion.h1>
+      <motion.div
+        className={`text-sm 2xl:text-base 3xl:text-lg ${colors.textSecondary} mb-3 max-w-md 2xl:max-w-lg 3xl:max-w-xl mx-auto`}
+        animate={{ opacity: textOpacity }}
+        transition={{ duration: 0.12, ease: "linear" }}
+      >
+        <p className="leading-snug">Hi! I&apos;m Alex, a Software Engineering co-op student at McGill graduating Dec 2025. I&apos;ve interned at Autodesk, Matrox, and Hydro‑Québec and enjoy building user-focused full-stack apps and projects.</p>
+      </motion.div>
+      <motion.div
+        className={`text-xs 2xl:text-xs 3xl:text-sm ${colors.textTertiary} max-w-xs mx-auto`}
         animate={{ opacity: textOpacity }}
         transition={{ duration: 0.1, ease: "linear" }}
       >
-        Software Developer
-      </motion.p><motion.div
-        className={`text-xs 2xl:text-xs 3xl:text-sm ${colors.textTertiary} max-w-md mx-auto`}
-        animate={{ opacity: textOpacity }}
-        transition={{ duration: 0.1, ease: "linear" }}
-      >
-        <p>Hover over the nodes or scroll for more</p>
+        <p>Hover over the nodes to explore my projects, or scroll to learn more about my experience and skills.</p>
       </motion.div>
     </motion.div>
   );
