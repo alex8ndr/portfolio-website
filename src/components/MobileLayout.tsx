@@ -97,10 +97,11 @@ interface MobileProjectNodeProps {
     lastExpandedId: string | null;
     onTap: () => void;
     colors: ThemeColors;
+    topSafeArea: number;
 }
 
 
-const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedId, onTap, colors }: MobileProjectNodeProps) => {
+const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedId, onTap, colors, topSafeArea }: MobileProjectNodeProps) => {
     const [isPressed, setIsPressed] = useState(false);
 
     const sizeConfig = MOBILE_CONFIG.sizes[position.sizeCategory];
@@ -111,8 +112,8 @@ const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedI
 
     const formatPosition = (pos: string | number) => (typeof pos === 'string' ? pos : `${pos}px`);
 
-    const topSafeArea = '75px';
-    const bottomSafeArea = '60px';
+    const topSafeAreaPx = `${topSafeArea}px`;
+    const bottomSafeArea = '16px';
     const horizontalSafeArea = '16px';
 
     const currentWidth = isExpanded ? expandedWidth : nodeSize;
@@ -121,8 +122,9 @@ const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedI
     const calculatedLeft = `calc(50% + ${formatPosition(position.x)} - ${currentWidth / 2}px)`;
     const clampedLeft = `clamp(${horizontalSafeArea}, ${calculatedLeft}, calc(100vw - ${currentWidth}px - ${horizontalSafeArea}))`;
 
-    const calculatedTop = `calc(50% + ${formatPosition(position.y)} - ${currentHeight / 2}px)`;
-    const clampedTop = `clamp(${topSafeArea}, ${calculatedTop}, calc(100svh - ${currentHeight}px - ${bottomSafeArea}))`;
+    const globalYOffset = '8vh';
+    const calculatedTop = `calc(50% + ${globalYOffset} + ${formatPosition(position.y)} - ${currentHeight / 2}px)`;
+    const clampedTop = `clamp(${topSafeAreaPx}, ${calculatedTop}, calc(100svh - ${currentHeight}px - ${bottomSafeArea}))`;
 
     const zIndex = isExpanded || lastExpandedId === project.id ? 50 : 20 + index;
 
@@ -298,7 +300,7 @@ const MobileProjectNode = ({ project, index, position, isExpanded, lastExpandedI
 const MobileLayout = () => {
     const [expandedProject, setExpandedProject] = useState<string | null>(null);
     const [lastExpandedId, setLastExpandedId] = useState<string | null>(null);
-
+    const topSafeArea = 130;
     useEffect(() => {
         if (expandedProject !== null) {
             setLastExpandedId(expandedProject);
@@ -316,6 +318,7 @@ const MobileLayout = () => {
         }
     }, []);
 
+
     const handleResumeView = () => {
         window.open('/Alex_Turianskyj_Resume.pdf', '_blank');
     };
@@ -331,8 +334,8 @@ const MobileLayout = () => {
                 maxHeight: 'calc(var(--vh, 1svh) * 100)',
             }}
         >
-            <div className={`fixed top-0 left-0 right-0 z-[999] ${colors.headerBackground} backdrop-blur-sm border-b ${colors.border}`}>
-                <div className="flex items-center justify-between px-2.5 py-1.5" style={{ minWidth: 0 }}>
+            <div className="fixed top-0 left-0 right-0 z-[999]">
+                <div className={`flex items-center justify-between px-2.5 pt-1.5 pb-1 ${colors.headerBackground} backdrop-blur-sm border-b ${colors.border}`} style={{ minWidth: 0 }}>
                     <div className="flex-1 flex items-center gap-0 min-w-0">
                         <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${colors.gradientPrimary} p-0.5 mr-2 flex-shrink-0`}>
                             <div className={`w-full h-full rounded-full ${colors.cardBackground} flex items-center justify-center overflow-hidden shadow-lg transition-colors duration-500`}>
@@ -374,11 +377,28 @@ const MobileLayout = () => {
                         </motion.button>
                     </div>
                 </div>
-
             </div>
-            <div className="relative h-svh pt-16">
+            <div className="relative h-svh">
+                <div
+                    className="absolute left-0 right-0 top-[55px] px-4 pt-1 pb-3 z-30"
+                >
+                    <p
+                        className={`${colors.textTertiary} transition-colors duration-500 text-center mx-auto max-w-[750px] leading-[1.25] text-[11px] p-sm:text-[12px] p-md:text-[13px] p-lg:text-[14px] line-clamp-3`}
+                    >
+                        Hi! I'm Alex, a Software Engineering co-op student at McGill graduating Dec 2025. I've interned at Autodesk, Matrox, and Hydro‑Québec and enjoy building user-focused applications.
+                    </p>
+                    <p className={`${colors.textTertiary} mt-1 text-center mx-auto max-w-[750px] leading-tight text-[10px] p-sm:text-[11px] p-md:text-[12px] p-lg:text-[13px] truncate`}>
+                        Tap on project nodes to expand, or scroll for more about my experience.
+                    </p>
+                </div>
                 {expandedProject !== null && (
-                    <motion.div className="absolute inset-0 z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onTap={() => setExpandedProject(null)} />
+                    <motion.div
+                        className="fixed inset-0 z-40"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setExpandedProject(null)}
+                    />
                 )}
                 <div className="absolute inset-0 flex items-center justify-center">
                     {projects.filter(project => MOBILE_NODE_POSITIONS[project.id]).map((project, index) => (
@@ -391,12 +411,10 @@ const MobileLayout = () => {
                             lastExpandedId={lastExpandedId}
                             onTap={() => setExpandedProject(expandedProject === project.id ? null : project.id)}
                             colors={colors}
+                            topSafeArea={topSafeArea}
                         />
                     ))}
                 </div>
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: expandedProject === null ? 1 : 0 }} transition={{ delay: 1 }} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center pointer-events-none">
-                    <p className={`${colors.textTertiary} text-sm whitespace-nowrap transition-colors duration-500`}>Tap project or scroll to explore</p>
-                </motion.div>
             </div>
             <div className={`relative z-20 ${colors.backgroundSolid}`}>
                 <div className="px-2 py-8">

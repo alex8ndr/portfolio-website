@@ -50,6 +50,9 @@ module.exports = {
   theme: {
     extend: {
       screens: {
+        'p-sm': '380px',   // small phones
+        'p-md': '420px',   // medium phones
+        'p-lg': '460px',   // large phones 
         'sm': '640px',
         'md': '768px',
         'lg': '1024px',
