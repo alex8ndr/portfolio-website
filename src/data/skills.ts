@@ -45,7 +45,7 @@ export const skillsData: Omit<Skill, 'icon'>[] = [
     { name: 'Selenium', color: 'text-green-500', category: 'tools' },
     { name: 'Unity', color: 'text-gray-300', category: 'tools' },
     // Additional
-    { name: 'Jira', color: 'text-yellow-500', category: 'tools' },
+    { name: 'Jira', color: 'text-blue-600', category: 'tools' },
     { name: 'Unix', color: 'text-yellow-500', category: 'tools' },
     { name: 'Google Colab', color: 'text-yellow-600', category: 'tools' },
 ];
