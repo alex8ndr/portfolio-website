@@ -23,26 +23,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
 
-  const clearTimeoutRef = React.useRef<number | null>(null);
-
   const safeSetHoveredSkill = React.useCallback((skill: string | null) => {
-    if (clearTimeoutRef.current !== null) {
-      clearTimeout(clearTimeoutRef.current);
-      clearTimeoutRef.current = null;
-    }
     setHoveredSkill(skill);
   }, []);
 
-
   const clearHoveredSkill = React.useCallback(() => {
-    if (clearTimeoutRef.current !== null) {
-      clearTimeout(clearTimeoutRef.current);
-      clearTimeoutRef.current = null;
-    }
-    clearTimeoutRef.current = window.setTimeout(() => {
-      setHoveredSkill(null);
-      clearTimeoutRef.current = null;
-    }, 40);
+    setHoveredSkill(null);
   }, []);
 
   return (

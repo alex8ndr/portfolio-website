@@ -104,10 +104,6 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
   const handleSkillHover = (skill: string) => {
     setHoveredSkill(skill);
   };
-
-  const handleSkillHoverEnd = () => {
-    clearHoveredSkill();
-  };
   const experienceUsesSkill = (experience: typeof experiences[0], skillName: string) => {
     const allSkills = [...experience.skills, ...(experience.invisibleSkills || [])];
     return allSkills.some(skill => isSkillOrSuperset(skillName, skill));
@@ -139,12 +135,12 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
   >    <div className={`max-w-[95rem] mx-auto ${sizes.containerX} ${sizes.containerY} h-full flex flex-col`}>      <section className={`flex-shrink-0 ${sizes.sectionMargin}`}>        <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} ${sizes.headingMargin}`}>
     Skills & Technologies
   </h2>
-    <div className={`grid grid-cols-3 ${sizes.gaps}`}>
+    <div className={`grid grid-cols-3 ${sizes.gaps}`}> {/* categories grid wrapper */}
       {Object.entries(skillCategories).map(([category, skillList]) => (
         <div key={category} className={`${colors.cardBackground} ${sizes.cardPadding} rounded-lg border ${colors.border}`}>              <h3 className={`${sizes.subheading} font-semibold ${sizes.headingMargin} ${colors.textSecondary} text-center`}>
           {category}
         </h3>
-          <div className={`grid grid-cols-4 ${sizes.smallGap}`}>
+          <div className={`grid grid-cols-4 ${sizes.smallGap}`} onMouseLeave={clearHoveredSkill}>
             {skillList.slice(0, 8).map((skill) => {
               const IconComponent = skill.icon;
               const isHighlighted = hoveredSkill === skill.name;
@@ -158,7 +154,6 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onHoverStart={() => handleSkillHover(skill.name)}
-                  onHoverEnd={handleSkillHoverEnd}
                   animate={{
                     opacity: hoveredSkill && !isHighlighted ? 0.3 : 1,
                   }}
