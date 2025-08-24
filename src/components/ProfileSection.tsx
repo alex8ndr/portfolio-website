@@ -31,16 +31,14 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
   }
   const suppressEntrance = initialScrollRef.current;
   return (
-    <motion.div
-      className="absolute inset-0 flex flex-col items-center justify-center text-center z-10"
+    <div
+      className="absolute inset-0 flex flex-col items-center justify-center text-center z-10 will-change-transform"
       style={{
         transform: `translateY(${translateY}) scale(${scale})`,
         opacity: opacity,
         pointerEvents: scrollProgress > 0.4 ? 'none' : 'auto',
+        transition: 'transform 40ms linear'
       }}
-      initial={suppressEntrance ? false : { opacity: 0, scale: 0.95 }}
-      animate={{ opacity, transform: `translateY(${translateY}) scale(${scale})` }}
-      transition={{ type: "tween", ease: "easeOut", duration: 0.05 }}
     >
       <div className={avatarMarginClass}>
         <motion.div
@@ -99,7 +97,7 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
       >
         <p>Hover over the nodes to explore my projects, or scroll to learn more about my experience and skills.</p>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { SCROLL_CONFIG } from '../config/scroll';
 import { useAppContext } from '../contexts/AppContext';
 import { education, experiences } from '../data/experiences';
 import { skillCategories, skills } from '../data/skills';
@@ -115,8 +116,8 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
     );
   };
 
-  const sectionsStartProgress = 0.2;
-  const sectionsFullProgress = 0.6;
+  const sectionsStartProgress = SCROLL_CONFIG.sectionsStart;
+  const sectionsFullProgress = SCROLL_CONFIG.sectionsFull;
   const sectionsProgress = Math.max(0, Math.min(1,
     (scrollProgress - sectionsStartProgress) / (sectionsFullProgress - sectionsStartProgress)
   ));

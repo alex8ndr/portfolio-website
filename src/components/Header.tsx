@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { HiMail } from 'react-icons/hi';
 import { SiDevpost } from 'react-icons/si';
+import { SCROLL_CONFIG, progressToScrollY } from '../config/scroll';
 import { useTheme } from '../contexts/ThemeContext';
 import { useThemeColors } from '../hooks/useThemeColors';
 import ThemeToggle from './ThemeToggle';
@@ -52,14 +53,48 @@ const Header = ({ scrollProgress }: HeaderProps) => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-      >        <div className="flex-1 flex items-center">
+      >
+        <div className="flex-1 flex items-center gap-10 pl-2">
           <a
             href="https://alext.dev"
-            className={`font-montserrat font-extrabold text-lg 2xl:text-xl 3xl:text-2xl tracking-tight bg-gradient-to-r ${themeColors.gradientPrimary} text-transparent bg-clip-text transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded cursor-pointer select-none mx-6`}
+            className={`font-montserrat font-extrabold leading-none -translate-y-[1px] text-lg 2xl:text-xl 3xl:text-2xl tracking-tight bg-gradient-to-r ${themeColors.gradientPrimary} text-transparent bg-clip-text transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded cursor-pointer select-none ml-4`}
             style={{ letterSpacing: '-0.01em' }}
           >
             alext.dev
           </a>
+          <div className="hidden md:flex items-center gap-10 ml-2 relative">
+            {(() => {
+              const tabs = [
+                { key: 'projects', label: 'Profile & Projects', target: 0 },
+                { key: 'skills', label: 'Skills & Experience', target: SCROLL_CONFIG.sectionsFull + 0.05 }
+              ];
+              const active = scrollProgress < SCROLL_CONFIG.sectionsStart ? 'projects' : 'skills';
+              return (
+                <>
+                  {tabs.map(t => (
+                    <button
+                      key={t.key}
+                      onClick={() => {
+                        const y = progressToScrollY(t.target, window.innerHeight);
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                      }}
+                      className={`relative font-semibold tracking-wide text-xs 2xl:text-sm 3xl:text-base leading-none pt-0.5 transition-colors duration-300 ${active === t.key ? themeColors.textPrimary : themeColors.textSecondary} hover:${themeColors.textPrimary}`}
+                    >
+                      {t.label}
+                      {active === t.key && (
+                        <motion.span
+                          layoutId="header-underline"
+                          className="pointer-events-none absolute left-0 right-0 -bottom-1 h-[2px] rounded-full"
+                          style={{ background: 'linear-gradient(to right,#6366f1,#3b82f6)' }}
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </button>
+                  ))}
+                </>
+              );
+            })()}
+          </div>
         </div>
         {/* Name and initials - centered with flex, will shrink if needed */}
         <motion.div

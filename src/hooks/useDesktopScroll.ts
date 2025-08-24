@@ -1,5 +1,6 @@
 
 import { useLayoutEffect } from 'react';
+import { SCROLL_CONFIG } from '../config/scroll';
 import { useAppContext } from '../contexts/AppContext';
 
 export const useDesktopScroll = () => {
@@ -11,12 +12,12 @@ export const useDesktopScroll = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const maxScrollDistance = windowHeight * 1.5;
+      const maxScrollDistance = windowHeight * SCROLL_CONFIG.maxScrollFactor;
       const progress = Math.min(currentScrollY / maxScrollDistance, 1);
       setScrollProgress(progress);
     };
 
-    document.body.style.height = `${window.innerHeight * 2}px`;
+    document.body.style.height = `${window.innerHeight * SCROLL_CONFIG.bodyHeightFactor}px`;
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
 
