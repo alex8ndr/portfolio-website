@@ -14,7 +14,11 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    const maxScrollDistance = window.innerHeight * 1.5;
+    return Math.min(window.scrollY / maxScrollDistance, 1);
+  });
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === 'undefined') return false;

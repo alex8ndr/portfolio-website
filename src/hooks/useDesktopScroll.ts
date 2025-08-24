@@ -1,11 +1,11 @@
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useAppContext } from '../contexts/AppContext';
 
 export const useDesktopScroll = () => {
   const { isMobile, setScrollProgress } = useAppContext();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isMobile) return;
 
     const handleScroll = () => {

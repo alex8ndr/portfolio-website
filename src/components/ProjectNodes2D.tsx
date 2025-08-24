@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { projects, type Project } from '../data/projects';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { getButtonIcon, getProjectIcon, getTechIcons } from '../utils/iconMaps';
@@ -260,13 +260,15 @@ const ProjectNode2D = ({
   const { animation, spacing } = NODE_CONFIG;
   const currentTypography = getTypography();
   const expandedTypography = getExpandedTypography();
+  const hasInitialScroll = scrollProgress > 0.0001;
+  const firstRenderRef = useRef(true);
   return (<motion.div
     className="absolute z-20"
     style={{
       left: `calc(50% + ${x}px - ${isExpanded ? NODE_CONFIG.expanded.width / 2 : getOriginalSize() / 2}px)`,
       top: `calc(50% + ${y}px - ${isExpanded ? getExpandedHeight(project) / 2 : getOriginalSize() / 2}px)`,
     }}
-    initial={{ scale: 0, opacity: 0 }}
+    initial={hasInitialScroll ? false : { scale: 0, opacity: 0 }}
     animate={{
       scale: getScrollScale(),
       opacity: 1,
@@ -275,17 +277,18 @@ const ProjectNode2D = ({
       zIndex: isExpanded ? 50 : 20,
     }}
     transition={{
-      delay: index * animation.initialDelay,
+      delay: hasInitialScroll ? 0 : index * animation.initialDelay,
       duration: 0.8,
       type: 'spring',
       scale: {
         duration: 0.3,
-        ease: [0.25, 0.46, 0.45, 0.94] // Custom easing for smoother scaling
+        ease: [0.25, 0.46, 0.45, 0.94]
       },
-      left: { duration: animation.positionDuration, ease: 'easeOut' },
-      top: { duration: animation.positionDuration, ease: 'easeOut' },
+      left: { duration: hasInitialScroll && firstRenderRef.current ? 0 : animation.positionDuration, ease: 'easeOut' },
+      top: { duration: hasInitialScroll && firstRenderRef.current ? 0 : animation.positionDuration, ease: 'easeOut' },
       zIndex: { duration: 0 },
     }}
+    onAnimationComplete={() => { if (firstRenderRef.current) firstRenderRef.current = false; }}
   >
     <motion.div
       className="relative cursor-pointer"
@@ -550,7 +553,12 @@ interface ProjectNodes2DProps {
 
 const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [containerBounds, setContainerBounds] = useState({ width: 1200, height: 800 });
+  const [containerBounds, setContainerBounds] = useState(() => {
+    if (typeof window === 'undefined') return { width: 1200, height: 800 };
+    const baseWidth = Math.min(window.innerWidth * 0.9, 1600);
+    const baseHeight = Math.min(window.innerHeight * 0.8, 1000);
+    return { width: baseWidth, height: baseHeight };
+  });
 
   useEffect(() => {
     const updateBounds = () => {
