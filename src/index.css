@@ -24,6 +24,27 @@ html::-webkit-scrollbar {
   display: none;
 }
 
+/* Temporarily suppress transitions for one frame during theme swap */
+.theme-switching *,
+.theme-switching {
+  transition: none !important;
+  animation: none !important;
+}
+
+@keyframes theme-fade-out {
+  0% { opacity: 1; }
+  60% { opacity: 0.25; }
+  100% { opacity: 0; }
+}
+
+.theme-fade-overlay {
+  animation: theme-fade-out 0.6s linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-fade-overlay { animation: none; display: none; }
+}
+
 :root {
 /* Site link color variables */
   --site-link-gradient: linear-gradient(to right, #3b82f6, #6366f1);
