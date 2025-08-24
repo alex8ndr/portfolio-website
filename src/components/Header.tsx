@@ -154,7 +154,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
               Alex Turianskyj
             </motion.div>
             <motion.div
-              className={`text-[10px] 2xl:text-xs 3xl:text-sm ${themeColors.textTertiary} font-medium leading-tight truncate mt-0.5 transition-colors duration-500`}
+              className={`text-[10px] 2xl:text-[13px] 3xl:text-[15px] ${themeColors.textTertiary} font-medium leading-tight truncate mt-0.5 transition-colors duration-500`}
               initial={{ opacity: 0, y: 10 }}
               animate={{
                 opacity: scrollProgress > 0.6 ? 1 : 0,
