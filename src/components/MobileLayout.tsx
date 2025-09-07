@@ -357,10 +357,10 @@ const MobileLayout = () => {
                     <div className="flex items-center gap-2">
                         <ThemeToggle />
                         <motion.a href="https://linkedin.com/in/alex-turianskyj" target="_blank" rel="noopener noreferrer" className={`p-2 rounded-lg ${colors.cardBackground} border ${colors.border} ${colors.buttonHover} transition-all duration-200`} whileTap={{ scale: 0.95 }}>
-                            <FaLinkedin className={`text-xl ${colors.textSecondary} hover:${colors.textPrimary}`} />
+                            <FaLinkedin className={`text-xl ${colors.textSecondary}`} />
                         </motion.a>
                         <motion.a href="https://github.com/alex8ndr" target="_blank" rel="noopener noreferrer" className={`p-2 rounded-lg ${colors.cardBackground} border ${colors.border} ${colors.buttonHover} transition-all duration-200`} whileTap={{ scale: 0.95 }}>
-                            <FaGithub className={`text-xl ${colors.textSecondary} hover:${colors.textPrimary}`} />
+                            <FaGithub className={`text-xl ${colors.textSecondary}`} />
                         </motion.a>
                         <motion.button
                             onClick={handleResumeView}
@@ -369,7 +369,6 @@ const MobileLayout = () => {
                                 borderColor: colors.textAccent.includes('blue') ? '#3b82f6' : '#a855f7',
                                 boxShadow: `0 0 10px ${colors.textAccent.includes('blue') ? '#3b82f6' : '#a855f7'}30`,
                             }}
-                            whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
                             aria-label="View Resume"
                         >
@@ -428,8 +427,8 @@ const MobileLayout = () => {
                                         {categorySkills.slice(0, 8).map((skill, skillIndex) => {
                                             const IconComponent = skill.icon;
                                             return (
-                                                <motion.div key={skillIndex} className={`flex flex-col items-center px-0 py-3 rounded-md border ${colors.skillInactive} ${colors.skillHover} transition-all duration-300`} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                                    {IconComponent ? <IconComponent className={`text-xl mb-2 transition-all duration-300 ${skill.color}`} /> : null}
+                                                <motion.div key={skillIndex} className={`flex flex-col items-center px-0 py-3 rounded-md border ${colors.skillInactive}`}>
+                                                    {IconComponent ? <IconComponent className={`text-xl mb-2 ${skill.color}`} /> : null}
                                                     <span className={`text-xs ${colors.textSecondary} text-center font-medium leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>{skill.name}</span>
                                                 </motion.div>
                                             );
@@ -445,7 +444,7 @@ const MobileLayout = () => {
                         <h3 className={`text-2xl font-bold mb-6 text-center bg-gradient-to-r ${colors.gradientText} bg-clip-text text-transparent`}>Experience</h3>
                         <div className="space-y-4 mb-6">
                             {experiences.slice(0, 3).map((exp, index) => (
-                                <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05, duration: 0.4 }} className={`${colors.cardBackground} rounded-lg p-3 border ${colors.border}`} whileHover={{ scale: 1.01 }}>
+                                <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05, duration: 0.4 }} className={`${colors.cardBackground} rounded-lg p-3 border ${colors.border}`}>
                                     <div className="flex gap-2 mb-2 flex-shrink-0">
                                         {exp.logo && <img src={exp.logo} alt={`${exp.company} logo`} className="w-10 h-10 object-contain rounded flex-shrink-0" />}
                                         <div className="flex-1 min-w-0">
@@ -470,7 +469,7 @@ const MobileLayout = () => {
                         </div>
                         <div className="mb-6">
                             <h4 className={`text-lg font-bold mb-4 text-center bg-gradient-to-r ${colors.gradientText} bg-clip-text text-transparent`}>Education</h4>
-                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.4 }} className={`${colors.cardBackground} rounded-lg p-3 border ${colors.border}`} whileHover={{ scale: 1.01 }}>
+                            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.4 }} className={`${colors.cardBackground} rounded-lg p-3 border ${colors.border}`}>
                                 <div className="flex gap-2 mb-2 flex-shrink-0">
                                     {education.logo && <img src={education.logo} alt={`${education.institution} logo`} className="w-10 h-10 object-contain rounded flex-shrink-0" />}
                                     <div className="flex-1 min-w-0">

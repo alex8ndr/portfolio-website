@@ -159,7 +159,8 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
                     opacity: hoveredSkill && !isHighlighted ? 0.3 : 1,
                   }}
                   transition={{
-                    opacity: { duration: 0.3 }
+                    opacity: { duration: 0.1 },
+                    scale: { duration: 0.1 }
                   }}
                 >
                   {IconComponent && (
@@ -191,11 +192,10 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
 
             return (<motion.div
               key={`${exp.company}-${exp.period}`}
-              className={`flex-1 ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex flex-col overflow-hidden min-h-0 ${isHighlighted
+              className={`flex-1 ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex flex-col overflow-hidden min-h-0 hover:border-blue-400/60 ${isHighlighted
                 ? `${colors.cardBackground} ${colors.borderActive}`
                 : `${colors.cardBackground} ${colors.border}`
                 }`}
-              whileHover={{ scale: 1.01 }}
               animate={{
                 opacity: shouldDim ? 0.3 : 1,
               }}
@@ -267,11 +267,10 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
             Education
           </h2>
           <motion.div
-            className={`${colors.cardBackground} ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex-1 flex flex-col overflow-hidden min-h-0 ${hoveredSkill && educationUsesSkill(hoveredSkill)
+            className={`${colors.cardBackground} ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex-1 flex flex-col overflow-hidden min-h-0 hover:border-blue-400/60 ${hoveredSkill && educationUsesSkill(hoveredSkill)
               ? `${colors.borderActive}`
               : `${colors.border}`
               }`}
-            whileHover={{ scale: 1.01 }}
             animate={{
               opacity: hoveredSkill && !educationUsesSkill(hoveredSkill) ? 0.3 : 1,
             }}
