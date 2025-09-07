@@ -49,6 +49,7 @@ const Header = ({ scrollProgress }: HeaderProps) => {
   return (
     <>
       <motion.header
+        id="site-header"
         className={`fixed top-0 left-0 right-0 z-40 h-12 2xl:h-16 3xl:h-20 px-4 flex items-center ${themeColors.headerBackground} backdrop-blur-sm transition-colors duration-500`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}

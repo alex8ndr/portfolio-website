@@ -112,6 +112,7 @@ interface ProjectNode2DProps {
   horizontalX: number;
   hoveredSkill: string | null;
   sortedIndex: number;
+  headerHeight: number;
 }
 
 const ProjectNode2D = ({
@@ -123,6 +124,7 @@ const ProjectNode2D = ({
   scrollProgress,
   horizontalX,
   hoveredSkill,
+  headerHeight,
 }: ProjectNode2DProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const themeColors = useThemeColors();
@@ -177,16 +179,35 @@ const ProjectNode2D = ({
     const minY = -(height / 2) + scaledMargins.top;
 
     const clampedCircularX = Math.max(minX, Math.min(maxX, circularX));
-    const clampedCircularY = Math.max(minY, Math.min(maxY, adjustedCircularY)); const horizontalY = -(height / 2) + scaledMargins.top + NODE_CONFIG.horizontal.yOffset;    // Animate between circular and horizontal positions
+    const clampedCircularY = Math.max(minY, Math.min(maxY, adjustedCircularY)); const horizontalY = -(height / 2) + scaledMargins.top + NODE_CONFIG.horizontal.yOffset;
+
+    let startY = clampedCircularY;
+
+    // Adjust start position if it would overlap the header
+    if (headerHeight > 0) {
+      const { sizes } = NODE_CONFIG;
+      const baseSize = sizes[project.size as keyof typeof sizes] || sizes.medium;
+      const safety = 8;
+      const containerHalf = containerBounds.height / 2;
+
+      // Clamp to safe position below header
+      const minTopRelative = (headerHeight + safety) - containerHalf + (baseSize / 2);
+
+      if (startY < minTopRelative) {
+        startY = minTopRelative;
+      }
+    }
+
+    // Animate between circular and horizontal positions
     const animationProgress = Math.min(Math.max(scrollProgress * 1.5, 0), 1);
     const easedProgress = animationProgress < 0.5
       ? 2 * animationProgress * animationProgress
-      : 1 - Math.pow(-2 * animationProgress + 2, 2) / 2;    // Interpolate between circular and horizontal positions with bounds checking
+      : 1 - Math.pow(-2 * animationProgress + 2, 2) / 2;    // Interpolate from startY to horizontalY
     const deltaX = horizontalX - clampedCircularX;
-    const deltaY = horizontalY - clampedCircularY;
+    const deltaY = horizontalY - startY;
 
     const x = clampedCircularX + (deltaX * easedProgress);
-    const y = clampedCircularY + (deltaY * easedProgress);
+    const y = startY + (deltaY * easedProgress);
 
     return { x, y };
   };
@@ -560,6 +581,8 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
     return { width: baseWidth, height: baseHeight };
   });
 
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+
   useEffect(() => {
     const updateBounds = () => {
       const baseWidth = Math.min(window.innerWidth * 0.9, 1600);
@@ -572,6 +595,27 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
     }; updateBounds();
     window.addEventListener('resize', updateBounds);
     return () => window.removeEventListener('resize', updateBounds);
+  }, []);
+
+  useEffect(() => {
+    const measureHeader = () => {
+      const el = document.getElementById('site-header');
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setHeaderHeight(rect.height);
+    };
+    measureHeader();
+    window.addEventListener('resize', measureHeader);
+    let ro: ResizeObserver | null = null;
+    const el = document.getElementById('site-header');
+    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+      ro = new ResizeObserver(() => measureHeader());
+      if (el) ro.observe(el);
+    }
+    return () => {
+      window.removeEventListener('resize', measureHeader);
+      if (ro && el) ro.unobserve(el);
+    };
   }, []);
 
   // Calculate horizontal positions for all projects based on their circular X positions
@@ -707,6 +751,7 @@ const ProjectNodes2D = ({ scrollProgress, hoveredSkill }: ProjectNodes2DProps) =
           horizontalX={project.horizontalX}
           hoveredSkill={hoveredSkill}
           sortedIndex={project.sortedIndex}
+          headerHeight={headerHeight}
         />
       ))}
     </div>
