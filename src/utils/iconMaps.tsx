@@ -15,6 +15,7 @@ import {
     FaGithub,
     FaGooglePlay,
     FaJava,
+    FaNetworkWired,
     FaYoutube,
 } from 'react-icons/fa';
 import { MdLocationOn } from 'react-icons/md';
@@ -26,6 +27,7 @@ import {
     SiCypress,
     SiDevpost,
     SiDjango,
+    SiDocker,
     SiDotnet,
     SiGit,
     SiGithubactions,
@@ -54,13 +56,15 @@ import {
     SiSharp,
     SiSpring,
     SiStreamlit,
+    SiSwagger,
     SiTailwindcss,
     SiTypescript,
     SiUnity,
     SiVite
 } from 'react-icons/si';
 import { TbSql } from 'react-icons/tb';
-import { Project, ProjectButton } from '../data/projects';
+import { VscAzure } from 'react-icons/vsc';
+import type { Project, ProjectButton } from '../data/projects';
 
 // Maps project IDs to icons
 export const getProjectIcon = (project: Project, iconClass: string = '') => {
@@ -144,14 +148,20 @@ export const skillIconMap: { [key: string]: any } = {
 
     // Tools
     Git: SiGit,
+    Docker: SiDocker,
+    Azure: VscAzure,
     Unix: SiLinux,
     Postman: SiPostman,
     JUnit: SiJunit5,
     Selenium: SiSelenium,
     'Google Colab': SiGooglecolab,
     Cypress: SiCypress,
+    Swagger: SiSwagger,
     'GitHub Actions': SiGithubactions,
     Jira: SiJira,
+
+    // Additional
+    'TCP/IP': FaNetworkWired,
 
     // Legacy mappings for compatibility
     WinForms: DiDotnet,

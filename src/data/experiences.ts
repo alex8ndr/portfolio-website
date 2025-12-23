@@ -70,16 +70,19 @@ export const education: Education = {
     gpa: '3.68/4.00',
     logo: '/logos/mcgill.jpeg', courses: [
         { name: 'Algorithms and Data Structures', skills: ['Java', 'JUnit'], visible: true },
-        { name: 'Operating Systems', skills: ['Unix', 'Bash'], visible: true },
-        { name: 'Database Systems', skills: ['SQL', 'PostgreSQL'], visible: true },
-        { name: 'Applied Machine Learning', skills: ['Python', 'PyTorch', 'Google Colab', 'NumPy', 'Pandas', 'matplotlib'], visible: true },
-        { name: 'Design Principles', skills: ['Python'], visible: true },
+        { name: 'Operating Systems', skills: ['Linux', 'Bash', 'C'], visible: true },
         { name: 'Software Engineering', skills: ['Java', 'JUnit', 'JavaScript', 'Git', 'GitHub Actions', 'Spring Boot'], visible: true },
-        { name: 'Signals and Networks', skills: [], visible: true },
-        { name: 'Computer Organization', skills: ['Assembly'], visible: true },
-        { name: 'Discrete Structures', skills: [], visible: true },
+        { name: 'Applied Machine Learning', skills: ['Python', 'PyTorch', 'Google Colab', 'NumPy', 'Pandas', 'matplotlib'], visible: true },
+        { name: 'Design Principles', skills: ['Python'], visible: false },
+        { name: 'Database Systems', skills: ['SQL', 'PostgreSQL'], visible: true },
+        { name: 'Software Delivery', skills: ['Git', 'Docker', 'Azure', 'GitHub Actions'], visible: true },
+        { name: 'Computer Vision', skills: ['Python', 'OpenCV', 'NumPy'], visible: true },
 
+        // Hidden courses
+        { name: 'Computer Networks', skills: ['Python', 'TCP/IP'], visible: false },
+        { name: 'Computer Organization', skills: ['Assembly'], visible: false },
+        { name: 'Discrete Structures', skills: [], visible: false },
         { name: 'Digital Logic', skills: [], visible: false },
-        { name: 'Software Systems', skills: ['Unix', 'Bash'], visible: false },
+        { name: 'Software Systems', skills: ['Linux', 'Bash'], visible: false },
     ],
 };

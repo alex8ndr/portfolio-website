@@ -1,4 +1,4 @@
-import { IconType } from 'react-icons';
+import type { IconType } from 'react-icons';
 import { getSkillIcon } from '../utils/iconMaps';
 
 export interface Skill {
@@ -26,25 +26,29 @@ export const skillsData: Omit<Skill, 'icon'>[] = [
     { name: 'React', color: 'text-cyan-400', category: 'frameworks' },
     { name: 'Spring Boot', color: 'text-green-500', category: 'frameworks' },
     { name: '.NET', color: 'text-purple-600', category: 'frameworks' },
+    { name: 'OpenCV', color: 'text-green-600', category: 'frameworks' },
+    { name: 'NumPy', color: 'text-blue-600', category: 'frameworks' },
+    { name: 'Azure', color: 'text-blue-600', category: 'frameworks' },
+    { name: 'Unity', color: 'text-gray-400', category: 'frameworks' },
+    // Additional
+    { name: 'Pandas', color: 'text-blue-500', category: 'frameworks' },
     { name: 'NgRx', color: 'text-purple-600', category: 'frameworks' },
     { name: 'PyTorch', color: 'text-orange-600', category: 'frameworks' },
-    { name: 'Pandas', color: 'text-blue-500', category: 'frameworks' },
-    { name: 'NumPy', color: 'text-blue-600', category: 'frameworks' },
-    // Additional
     { name: 'matplotlib', color: 'text-blue-400', category: 'frameworks' },
     { name: 'Windows Forms', color: 'text-purple-600', category: 'frameworks' },
-    { name: 'Jest', color: 'text-red-500', category: 'frameworks' },
 
     // Tools (Top 8)
     { name: 'Git', color: 'text-orange-600', category: 'tools' },
     { name: 'GitHub Actions', color: 'text-blue-500', category: 'tools' },
+    { name: 'Docker', color: 'text-blue-400', category: 'tools' },
     { name: 'PostgreSQL', color: 'text-blue-700', category: 'tools' },
     { name: 'Postman', color: 'text-orange-500', category: 'tools' },
     { name: 'Cypress', color: 'text-green-500', category: 'tools' },
+    { name: 'Jest', color: 'text-red-500', category: 'tools' },
     { name: 'JUnit', color: 'text-green-600', category: 'tools' },
-    { name: 'Selenium', color: 'text-green-500', category: 'tools' },
-    { name: 'Unity', color: 'text-gray-300', category: 'tools' },
     // Additional
+    { name: 'Swagger', color: 'text-green-500', category: 'tools' },
+    { name: 'Selenium', color: 'text-green-500', category: 'tools' },
     { name: 'Jira', color: 'text-blue-600', category: 'tools' },
     { name: 'Unix', color: 'text-yellow-500', category: 'tools' },
     { name: 'Google Colab', color: 'text-yellow-600', category: 'tools' },
@@ -58,6 +62,6 @@ export const skills: Skill[] = skillsData.map(skill => ({
 
 export const skillCategories = {
     'Programming Languages': skills.filter(s => s.category === 'programming'),
-    'Frameworks & Libraries': skills.filter(s => s.category === 'frameworks'),
-    'Tools': skills.filter(s => s.category === 'tools'),
+    'Frameworks & Platforms': skills.filter(s => s.category === 'frameworks'),
+    'Tools & Testing': skills.filter(s => s.category === 'tools'),
 };
