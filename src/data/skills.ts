@@ -36,6 +36,7 @@ export const skillsData: Omit<Skill, 'icon'>[] = [
     { name: 'PyTorch', color: 'text-orange-600', category: 'frameworks' },
     { name: 'matplotlib', color: 'text-blue-400', category: 'frameworks' },
     { name: 'Windows Forms', color: 'text-purple-600', category: 'frameworks' },
+    { name: 'GraphQL', color: 'text-pink-500', category: 'frameworks' },
 
     // Tools (Top 8)
     { name: 'Git', color: 'text-orange-600', category: 'tools' },
@@ -52,6 +53,8 @@ export const skillsData: Omit<Skill, 'icon'>[] = [
     { name: 'Jira', color: 'text-blue-600', category: 'tools' },
     { name: 'Unix', color: 'text-yellow-500', category: 'tools' },
     { name: 'Google Colab', color: 'text-yellow-600', category: 'tools' },
+    { name: 'AWS', color: 'text-orange-400', category: 'tools' },
+    { name: 'Catch2', color: 'text-red-400', category: 'tools' },
 ];
 
 // Skills array with icons from iconMap

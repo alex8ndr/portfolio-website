@@ -31,8 +31,8 @@ export interface Project extends ProjectContent {
 export const projectLayouts: ProjectLayout[] = [
   // Large projects (inner ring)
   { id: 'daily-ball', size: 'large', position: 3.25 },
-  { id: 'vibe', size: 'large', position: 1.75 },
-  { id: 'choose-movie', size: 'large', position: 0.5 },
+  { id: 'vibe', size: 'large', position: 0.5 },
+  { id: 'choose-movie', size: 'large', position: 1.75 },
 
   // Medium projects (middle ring)
   { id: 'portfolio-website', size: 'medium', position: 1.05 },
@@ -48,7 +48,7 @@ export const projectLayouts: ProjectLayout[] = [
 export const projectContent: ProjectContent[] = [{
   id: 'daily-ball',
   name: 'Daily Ball',
-  description: 'Hypercasual 2D mobile game with over 1000 downloads on Google Play',
+  description: 'Physics-based 2D mobile game with over 1000 downloads on Google Play',
   techStack: ['Unity', 'C#'],
   invisibleSkills: ['Git'],
   timeline: 'May 2023 – Jul 2024',
@@ -66,15 +66,15 @@ export const projectContent: ProjectContent[] = [{
 {
   id: 'vibe',
   name: 'Vibe',
-  description: 'Content-based music recommender with over 1 million songs',
-  techStack: ['Python', 'Streamlit', 'Pandas', 'NumPy', 'SciPy'],
+  description: 'Content-based music recommender with 4M+ songs and 200k+ artists',
+  techStack: ['Python', 'SvelteKit', 'FastAPI', 'Polars', 'Docker'],
   invisibleSkills: ['Git'],
-  timeline: 'Sep 2023 – Nov 2023',
+  timeline: 'Jan 2026 – Mar 2026',
   link: 'https://vibe.alext.dev',
   buttons: [
     {
       label: 'Code',
-      url: 'https://github.com/alex8ndr/vibe',
+      url: 'https://github.com/alex8ndr/vibe-next',
       type: 'github',
     },
     { label: 'Launch', url: 'https://vibe.alext.dev', type: 'demo' },
@@ -124,7 +124,7 @@ export const projectContent: ProjectContent[] = [{
   id: 'holoportation',
   name: 'Holoportation',
   description: 'Augmented reality app for real-time 3D reconstruction on HoloLens 2 using RGBD cameras',
-  techStack: ['C++', 'C#', 'WinForms', 'Python', 'OpenCV'],
+  techStack: ['C#', 'C++', 'Python', '.NET', 'OpenCV'],
   invisibleSkills: ['Git', '.NET'],
   timeline: 'Sep 2024 – Apr 2025',
   buttons: [

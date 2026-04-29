@@ -8,39 +8,57 @@ export interface Experience {
     logo?: string; // URL to company logo
     skills: string[]; // Skills used in this experience
     invisibleSkills?: string[]; // Hidden skills for highlighting (e.g., Git)
+    widthFactor?: number;
 }
 
 export const experiences: Experience[] = [
     {
-        id: 'autodesk',
+        id: 'autodesk-aps',
         company: 'Autodesk',
-        role: 'Software Developer Intern',
+        role: 'Software Developer, APS (Contract)',
+        period: 'Feb 2026 – Present',
+        location: 'Montreal, QC',
+        description: 'Extending an Apollo Federation supergraph on AWS for core APS data access, including a zero-downtime GraphOS pipeline upgrade across multiple subgraphs. Added field-level tracing through DGS context propagation and improved production observability with Catchpoint and Splunk automation.',
+        logo: '/logos/autodesk.jpeg',
+        skills: ['Spring Boot', 'GraphQL', 'AWS'],
+        invisibleSkills: ['Git', 'Spinnaker', 'Splunk', 'Slack'],
+        widthFactor: 1,
+    },
+    {
+        id: 'autodesk-fusion',
+        company: 'Autodesk',
+        role: 'Software Developer Intern, Fusion',
         period: 'May 2025 – Aug 2025',
         location: 'Montreal, QC',
         description: "Enhanced Fusion's concurrent properties panel for collaborative editing using TypeScript and React. Resolved persistent bugs and authored Jest and Cypress tests, improving the panel's usability and stability. Addressed critical C++ backend issues to ensure cache and analytics integrity.",
         logo: '/logos/autodesk.jpeg',
-        skills: ['TypeScript', 'React', 'C++', 'Cypress', 'Jest', 'Jira'],
-        invisibleSkills: ['Git', 'Catch2'],
-    }, {
+        skills: ['TypeScript', 'React', 'C++', 'Cypress', 'Jest'],
+        invisibleSkills: ['Git', 'LaunchDarkly'],
+        widthFactor: 1,
+    },
+    {
         id: 'matrox',
         company: 'Matrox',
         role: 'Software Engineering Intern',
         period: 'Jan 2024 – Aug 2024',
         location: 'Montreal, QC',
-        description: 'Developed an internal Angular app for remote KVM extender analysis and debugging with custom logging via WebSocket. Built bespoke UI components and REST API endpoints to control the device\'s volume and keyboard layout, translating Figma designs into code with NgRx state management.',
+        description: 'Developed a TypeScript monitoring dashboard with live device charting for remote analysis. Built Angular + NgRx components from Figma and extended ASP.NET Core APIs for full-stack features, while engineering a SignalR logging provider and architecture updates that increased log retention by 75%.',
         logo: '/logos/matrox.jpeg',
-        skills: ['TypeScript', 'Angular', 'NgRx', 'C#', '.NET', 'JUnit', 'Selenium'],
+        skills: ['TypeScript', 'Angular', 'NgRx', 'C#', '.NET', 'Selenium'],
         invisibleSkills: ['Git', 'Postman'],
-    }, {
+        widthFactor: 1,
+    },
+    {
         id: 'hydro-quebec',
         company: 'Hydro-Québec',
         role: 'Software Development Intern',
         period: 'May 2023 – Aug 2023',
         location: 'Montreal, QC',
-        description: 'Developed VBA macros for Excel automation, reducing validation processing time by over 95%. Engineered an interactive testing tool for substation devices using Windows Forms and DTM with modular JavaScript tests. Optimized data handling through structured JSON storage for config data and test results.',
+        description: 'Automated substation data validation in Excel with VBA macros, reducing processing time by over 95%. Engineered a JavaScript testing tool and JSON schema for efficient storage and analysis of test results.',
         logo: '/logos/hydro-quebec.jpeg',
-        skills: ['VBA', 'JavaScript', 'Windows Forms'],
+        skills: ['VBA', 'JavaScript'],
         invisibleSkills: [],
+        widthFactor: 1,
     },
 ];
 
@@ -67,7 +85,7 @@ export const education: Education = {
     degree: 'B.Eng. Software Engineering Co-op',
     period: 'Aug 2021 – Dec 2025',
     location: 'Montreal, QC',
-    gpa: '3.68/4.00',
+    gpa: '3.69/4.00',
     logo: '/logos/mcgill.jpeg', courses: [
         { name: 'Algorithms and Data Structures', skills: ['Java', 'JUnit'], visible: true },
         { name: 'Operating Systems', skills: ['Linux', 'Bash', 'C'], visible: true },

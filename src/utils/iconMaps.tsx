@@ -8,6 +8,7 @@ import {
 } from 'react-icons/bs';
 import { DiDotnet } from 'react-icons/di';
 import {
+    FaAws,
     FaCalendarAlt,
     FaCode,
     FaExternalLinkAlt,
@@ -29,10 +30,12 @@ import {
     SiDjango,
     SiDocker,
     SiDotnet,
+    SiFastapi,
     SiGit,
     SiGithubactions,
     SiGnubash,
     SiGooglecolab,
+    SiGraphql,
     SiHtml5,
     SiJavascript,
     SiJest,
@@ -128,6 +131,8 @@ export const skillIconMap: { [key: string]: any } = {
     Angular: SiAngular,
     '.NET': SiDotnet,
     'Spring Boot': SiSpring,
+    FastAPI: SiFastapi,
+    GraphQL: SiGraphql,
     Unity: SiUnity,
     'Windows Forms': DiDotnet,
     Django: SiDjango,
@@ -142,17 +147,22 @@ export const skillIconMap: { [key: string]: any } = {
     // Data Science & ML
     Pandas: SiPandas,
     NumPy: SiNumpy,
+    Polars: SiPandas,
     SciPy: SiScipy,
     OpenCV: SiOpencv,
     Streamlit: SiStreamlit,
+    SvelteKit: SiJavascript,
 
     // Tools
     Git: SiGit,
     Docker: SiDocker,
+    AWS: FaAws,
     Azure: VscAzure,
     Unix: SiLinux,
     Postman: SiPostman,
     JUnit: SiJunit5,
+    Pytest: SiPython,
+    Catch2: FaCode,
     Selenium: SiSelenium,
     'Google Colab': SiGooglecolab,
     Cypress: SiCypress,

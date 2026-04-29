@@ -78,8 +78,8 @@ const MOBILE_CONFIG = {
 };
 
 const MOBILE_NODE_POSITIONS: Record<string, { x: string | number; y: string | number; sizeCategory: 'large' | 'medium' | 'small' }> = {
-    'daily-ball': { x: '15vw', y: '-32vh', sizeCategory: 'large' },     // top-left
-    'vibe': { x: '-15vw', y: '-22vh', sizeCategory: 'large' },          // top-right
+    'daily-ball': { x: '-15vw', y: '-22vh', sizeCategory: 'large' },    // top-left
+    'vibe': { x: '15vw', y: '-32vh', sizeCategory: 'large' },           // top-right
     'choose-movie': { x: '20vw', y: '-12vh', sizeCategory: 'large' },   // upper-left
     'portfolio-website': { x: '-18vw', y: '-4vh', sizeCategory: 'medium' }, // upper-right
     'holoportation': { x: '15vw', y: '4vh', sizeCategory: 'medium' },    // center-left
@@ -384,7 +384,7 @@ const MobileLayout = () => {
                     <p
                         className={`${colors.textTertiary} transition-colors duration-500 text-center mx-auto max-w-[750px] leading-[1.25] text-[11px] p-sm:text-[12px] p-md:text-[13px] p-lg:text-[14px] line-clamp-3`}
                     >
-                        Hi! I'm Alex, a Software Engineering co-op student at McGill graduating Dec 2025. I've interned at Autodesk, Matrox, and Hydro‑Québec and enjoy building user-focused applications.
+                        Hi! I&apos;m Alex, a software developer in Montreal and a recent McGill Software Engineering grad, currently working at Autodesk.
                     </p>
                     <p className={`${colors.textTertiary} mt-1 text-center mx-auto max-w-[750px] leading-tight text-[10px] p-sm:text-[11px] p-md:text-[12px] p-lg:text-[13px] truncate`}>
                         Tap on project nodes to expand, or scroll for more about my experience.
@@ -443,7 +443,7 @@ const MobileLayout = () => {
                     <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
                         <h3 className={`text-2xl font-bold mb-6 text-center bg-gradient-to-r ${colors.gradientText} bg-clip-text text-transparent`}>Experience</h3>
                         <div className="space-y-4 mb-6">
-                            {experiences.slice(0, 3).map((exp, index) => (
+                            {experiences.map((exp, index) => (
                                 <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05, duration: 0.4 }} className={`${colors.cardBackground} rounded-lg p-3 border ${colors.border}`}>
                                     <div className="flex gap-2 mb-2 flex-shrink-0">
                                         {exp.logo && <img src={exp.logo} alt={`${exp.company} logo`} className="w-10 h-10 object-contain rounded flex-shrink-0" />}

@@ -87,7 +87,7 @@ const ProfileSection = ({ scrollProgress }: ProfileSectionProps) => {
         animate={{ opacity: textOpacity, y: 0 }}
         transition={{ duration: 0.12, ease: "linear" }}
       >
-        <p className="leading-snug">Hi! I&apos;m Alex, a Software Engineering co-op student at McGill graduating Dec 2025. I&apos;ve interned at Autodesk, Matrox, and Hydro‑Québec and enjoy building user-focused full-stack apps and projects.</p>
+        <p className="leading-snug">Hi! I&apos;m Alex, a software developer in Montreal and a recent McGill Software Engineering grad, currently working at Autodesk.</p>
       </motion.div>
       <motion.div
         className={`text-xs 2xl:text-xs 3xl:text-sm ${colors.textTertiary} max-w-xs mx-auto`}

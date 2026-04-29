@@ -133,7 +133,7 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
       transform: `translateY(${yTransform}%)`
     }}
     transition={{ duration: 0.1, ease: 'linear' }}
-  >    <div className={`max-w-[95rem] mx-auto ${sizes.containerX} ${sizes.containerY} h-full flex flex-col`}>      <section className={`flex-shrink-0 ${sizes.sectionMargin}`}>        <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} ${sizes.headingMargin}`}>
+  >    <div className={`max-w-[105rem] mx-auto ${sizes.containerX} ${sizes.containerY} h-full flex flex-col`}>      <section className={`flex-shrink-0 ${sizes.sectionMargin}`}>        <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} ${sizes.headingMargin}`}>
     Skills & Technologies
   </h2>
     <div className={`grid grid-cols-3 ${sizes.gaps}`}> {/* categories grid wrapper */}
@@ -179,20 +179,20 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
       ))}
     </div>
   </section>      {/* Experience & Education */}
-      <div className={`flex-1 grid grid-cols-4 ${sizes.gaps} overflow-hidden min-h-0`}>
+      <div className={`flex-1 flex ${sizes.gaps} overflow-hidden min-h-0`}>
 
-        {/* Experience Section */}
-        <section className="col-span-3 flex flex-col overflow-hidden min-h-0">
+        <section className="flex-1 flex flex-col overflow-hidden min-h-0">
           <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} mb-2`}>
             Experience
           </h2>
-          <div className="flex-1 flex gap-2 overflow-hidden min-h-0">            {experiences.map((exp) => {
+          <div className="flex-1 flex gap-2 overflow-hidden min-h-0">{experiences.map((exp) => {
             const isHighlighted = hoveredSkill && experienceUsesSkill(exp, hoveredSkill);
             const shouldDim = hoveredSkill && !isHighlighted;
 
             return (<motion.div
               key={`${exp.company}-${exp.period}`}
-              className={`flex-1 ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex flex-col overflow-hidden min-h-0 hover:border-blue-400/60 ${isHighlighted
+              style={{ flex: exp.widthFactor ?? 1 }}
+              className={`min-w-0 ${sizes.cardPadding} rounded-lg border transition-all duration-300 flex flex-col overflow-hidden min-h-0 hover:border-blue-400/60 ${isHighlighted
                 ? `${colors.cardBackground} ${colors.borderActive}`
                 : `${colors.cardBackground} ${colors.border}`
                 }`}
@@ -261,8 +261,8 @@ const ScrollSections = ({ scrollProgress }: ScrollSectionsProps) => {
             );
           })}
           </div>
-        </section>        {/* Education Section */}
-        <section className="col-span-1 flex flex-col overflow-hidden min-h-0">
+        </section>
+        <section className="flex flex-col overflow-hidden min-h-0 shrink-0" style={{ width: '21rem' }}>
           <h2 className={`${sizes.heading} font-bold text-center text-transparent bg-clip-text bg-gradient-to-r ${colors.gradientText} mb-2`}>
             Education
           </h2>
